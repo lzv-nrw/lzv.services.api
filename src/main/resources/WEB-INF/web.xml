@@ -30,6 +30,14 @@
     <servlet-name>css</servlet-name>
     <url-pattern>/css/*</url-pattern>
    </servlet-mapping>
+  <servlet>
+    <servlet-name>fonts</servlet-name>
+    <jsp-file>/WEB-INF/classes/fonts/wix-madefor-display-v10-latin_latin-ext-regular.woff2</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>fonts</servlet-name>
+    <url-pattern>/fonts/*</url-pattern>
+   </servlet-mapping>
       <servlet>
     <servlet-name>jspFileUpload</servlet-name>
     <jsp-file>/WEB-INF/classes/jsp/ValidateForm.jsp</jsp-file>
