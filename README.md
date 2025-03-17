@@ -53,5 +53,16 @@ For testing or development purposes lzv.services.pdf brings a jetty server with 
 
 - After cloning software with git and changed into newly created directory `lzv.services.pdf` you can either run `mvn jetty:run`from console or
 - import lzv.services.pdf as new maven project into Eclipse and run jetty by configure "Run Configuration" with goal jetty:run
+- jetty starts a Web server running under `http://localhost:8080`
+- you can reach the available services by within our browser via `http://localhost:8080/pdfs/about` which gives you a list of available services. 
   
+## Use API calls ##
+
+With cUrl or any other tool for web requests you can request the available endpoints.
+
+- use `curl -XGET -H "Accept: application/json" http://localhost/pdfs/version > test.json` will write `[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
+- use 
+`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/pdfs/validate` will give you the validation result for the pdfa_1b.pdf test file as html response
+ 
+
 
