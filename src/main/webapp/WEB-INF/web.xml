@@ -39,5 +39,4 @@
     <url-pattern>/upload/*</url-pattern>
   </servlet-mapping>
 
-
 </web-app>

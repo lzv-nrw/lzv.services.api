@@ -30,7 +30,7 @@
     <servlet-name>css</servlet-name>
     <url-pattern>/css/*</url-pattern>
    </servlet-mapping>
-      <servlet>
+   <servlet>
     <servlet-name>jspFileUpload</servlet-name>
     <jsp-file>/WEB-INF/classes/jsp/ValidateForm.jsp</jsp-file>
   </servlet>

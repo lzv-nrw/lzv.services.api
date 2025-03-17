@@ -37,7 +37,7 @@ public class ServiceImpl {
   private InputStream pdfStream = null;
   private File pdfFile = null;
 
-  private static Logger log = LogManager.getLogger(ServiceImpl.class);
+  final static Logger log = LogManager.getLogger(ServiceImpl.class);
 
   public ServiceImpl() {
     GFFoundryProvider.setFoundry();
@@ -76,7 +76,7 @@ public class ServiceImpl {
 
     StringBuffer bResult = new StringBuffer();
     bResult.append("Datei-Pfad: " + pdfFile.getAbsolutePath() + "</p><p>");
-    bResult.append("Eregbnis : " + validatePDF(pdfStream) + "</p>");
+    bResult.append("Ergebnis : " + validatePDF(pdfStream) + "</p>");
     
     return bResult.toString();
   }

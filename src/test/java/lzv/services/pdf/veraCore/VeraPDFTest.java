@@ -27,6 +27,7 @@ public class VeraPDFTest {
    */
   public static void main(String[] args) {
     
+    log.info("Teste Jetzt");
     VeraPDFTest vpt = new VeraPDFTest();
     vpt.getVeraPDFVersion();
     ServiceImpl.listFoundries();
