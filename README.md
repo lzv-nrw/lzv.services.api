@@ -1,3 +1,4 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d24b672713a646e48b2b3a66e2e08de5)](https://app.codacy.com/gh/lzv-nrw/lzv.services.pdf/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 # About #
 
