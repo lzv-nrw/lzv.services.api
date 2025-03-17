@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html"
 	pageEncoding="UTF-8"%>
 
-<%=de.nrw.hbz.lzv.services.restService.JerseyServiceImpl.getHtmlHead() %>
+<%=de.nrw.hbz.lzv.services.template.HtmlTemplate.getHtmlHead() %>
 
 	<h1>PDF Upload zur Nutzung des lzv-Services veraPDF-Validierung</h1>
 		<div class="verapdf-form validation">
@@ -13,4 +13,4 @@
 			</form>
 		</div>
 
-<%=de.nrw.hbz.lzv.services.restService.JerseyServiceImpl.getHtmlFoot() %>
+<%=de.nrw.hbz.lzv.services.template.HtmlTemplate.getHtmlFoot() %>

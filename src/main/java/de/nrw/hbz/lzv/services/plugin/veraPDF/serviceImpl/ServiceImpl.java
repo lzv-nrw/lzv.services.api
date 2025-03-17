@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.plugin.veraImpl;
+package de.nrw.hbz.lzv.services.plugin.veraPDF.serviceImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,9 +23,9 @@ import org.verapdf.pdfa.VeraPDFFoundry;
 import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.results.ValidationResult;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
-import org.verapdf.processor.reports.enums.JobEndStatus;
 
 import de.nrw.hbz.lzv.services.fileUtil.FileUtil;
+import de.nrw.hbz.lzv.services.plugin.veraPDF.provider.GFFoundryProvider;
 
 /**
  * 

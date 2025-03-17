@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html"
 	pageEncoding="UTF-8"%>
 
-<%=de.nrw.hbz.lzv.services.restService.JerseyServiceImpl.getHtmlHead() %>
+<%=de.nrw.hbz.lzv.services.template.HtmlTemplate.getHtmlHead() %>
 
 	<h1>LZV-Services für PDF-Dateien</h1>
 	<p>Folgende Services stehen zur Verfügung</p>
@@ -11,4 +11,4 @@
 	<li><a href="upload">PDF-Datei zum Validieren mit veraPDF hochladen</a>
 	</ul>
 
-<%=de.nrw.hbz.lzv.services.restService.JerseyServiceImpl.getHtmlFoot() %>
+<%=de.nrw.hbz.lzv.services.template.HtmlTemplate.getHtmlFoot() %>

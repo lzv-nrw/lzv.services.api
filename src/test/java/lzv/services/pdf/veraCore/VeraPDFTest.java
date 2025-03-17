@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
-import de.nrw.hbz.lzv.services.plugin.veraImpl.ServiceImpl;
+import de.nrw.hbz.lzv.services.plugin.veraPDF.serviceImpl.ServiceImpl;
 
 
 /**

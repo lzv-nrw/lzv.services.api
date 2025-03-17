@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.restService;
+package de.nrw.hbz.lzv.services.plugin.veraPDF.restServiceImpl;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -20,8 +20,8 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import de.nrw.hbz.lzv.services.fileUtil.FileUtil;
-import de.nrw.hbz.lzv.services.plugin.veraImpl.ServiceImpl;
+import de.nrw.hbz.lzv.services.plugin.veraPDF.serviceImpl.ServiceImpl;
+import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
  * Implementation of Restful Endpoints
@@ -47,10 +47,10 @@ public class JerseyServiceImpl {
     ServiceImpl sImpl = new ServiceImpl();
     result = sImpl.validatePDF(fileInputStream);
 
-    StringBuffer htmlResult = new StringBuffer(getHtmlHead());
+    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
     htmlResult.append("<h1>Ergebnis der Prüfung</h1>" + result);
     htmlResult.append("<p><a href=\"upload\">Weitere PDF-Datei prüfen</a>");
-    htmlResult.append(getHtmlFoot());
+    htmlResult.append(HtmlTemplate.getHtmlFoot());
 
     return htmlResult.toString();
 
@@ -62,14 +62,14 @@ public class JerseyServiceImpl {
   public String getVersionHTML() {
 
     StringBuffer sbVersion = new StringBuffer();
-    sbVersion.append(getHtmlHead());
+    sbVersion.append(HtmlTemplate.getHtmlHead());
     sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
     sbVersion.append("<ul>");
     sbVersion.append("<li>Version der verwendeten veraPDF-Libraries: " + ServiceImpl.getVersion() + "</li>");
     sbVersion.append("<li>Verzeichnis-Pfad der Applikation: " + System.getProperty("user.dir") + "</li>");
     sbVersion.append("<li>Derzeitiger Pfad: " + new File("").getAbsolutePath() + "</li>");
     sbVersion.append("</ul>");
-    sbVersion.append(getHtmlFoot());
+    sbVersion.append(HtmlTemplate.getHtmlFoot());
 
     String version = sbVersion.toString();
     return version;
@@ -87,30 +87,6 @@ public class JerseyServiceImpl {
 
     String version = sbVersion.toString();
     return version;
-  }
-
-  /**
-   * @return a HTML-Document Head
-   */
-  public static String getHtmlHead() {
-    StringBuffer headSb = new StringBuffer();
-    headSb.append("<html>\n" + "<head>\n" + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
-        + "<link rel=\"stylesheet\" href=\"css\" />\n" + "<title>hbz lzv services</title>\n" + "</head>\n<body>\n"
-        + "<div class=\"main\">");
-
-    return headSb.toString();
-  }
-
-  /**
-   * @return a HTML-Document Foot
-   */
-  public static String getHtmlFoot() {
-    StringBuffer footSb = new StringBuffer();
-    footSb.append("</div>\n<div class=\"footer\">");
-    footSb.append("<hr/><a class=\"fanker\" href=\"about\">Über</a><a class=\"fanker\" href=\"version\">veraPDF-Version</a>");
-    footSb.append("</body>\n</html>");
-
-    return footSb.toString();
   }
 
 }

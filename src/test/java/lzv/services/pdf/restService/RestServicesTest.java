@@ -12,7 +12,7 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.junit.Test;
 
 import de.nrw.hbz.lzv.services.fileUtil.FileUtil;
-import de.nrw.hbz.lzv.services.restService.JerseyServiceImpl;
+import de.nrw.hbz.lzv.services.plugin.veraPDF.restServiceImpl.JerseyServiceImpl;
 
 /**
  * 
