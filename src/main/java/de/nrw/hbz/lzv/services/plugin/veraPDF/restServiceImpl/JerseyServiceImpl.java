@@ -63,11 +63,11 @@ public class JerseyServiceImpl {
 
     StringBuffer sbVersion = new StringBuffer();
     sbVersion.append(HtmlTemplate.getHtmlHead());
-    sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
+    //sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
     sbVersion.append("<ul>");
     sbVersion.append("<li>Version der verwendeten veraPDF-Libraries: " + ServiceImpl.getVersion() + "</li>");
-    sbVersion.append("<li>Verzeichnis-Pfad der Applikation: " + System.getProperty("user.dir") + "</li>");
-    sbVersion.append("<li>Derzeitiger Pfad: " + new File("").getAbsolutePath() + "</li>");
+    //sbVersion.append("<li>Verzeichnis-Pfad der Applikation: " + System.getProperty("user.dir") + "</li>");
+    //sbVersion.append("<li>Derzeitiger Pfad: " + new File("").getAbsolutePath() + "</li>");
     sbVersion.append("</ul>");
     sbVersion.append(HtmlTemplate.getHtmlFoot());
 
