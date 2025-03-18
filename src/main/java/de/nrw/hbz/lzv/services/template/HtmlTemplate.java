@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import de.nrw.hbz.lzv.services.plugin.veraPDF.template.VeraPDFTemplate;
+import de.nrw.hbz.lzv.services.plugin.verapdf.template.VeraPDFTemplate;
 
 /**
  * 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.plugin.veraPDF.template;
+package de.nrw.hbz.lzv.services.plugin.verapdf.template;
 
 import java.util.ArrayList;
 import java.util.Hashtable;

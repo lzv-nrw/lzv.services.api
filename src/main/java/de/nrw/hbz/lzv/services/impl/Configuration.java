@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import de.nrw.hbz.lzv.services.configurationUtil.PropertiesLoader;
+import de.nrw.hbz.lzv.services.configuration.util.PropertiesLoader;
 
 /**
  * 

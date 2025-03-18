@@ -1,15 +1,16 @@
 /**
  * 
  */
-package lzv.services.pdf.restService;
+package lzv.services.pdf.rest.service;
 
 import java.io.File;
 import java.io.InputStream;
 
 import org.junit.Test;
-import static org.junit.Assert.assertNotNull;
 
-import de.nrw.hbz.lzv.services.fileUtil.FileUtil;
+import de.nrw.hbz.lzv.services.file.util.FileUtil;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * 

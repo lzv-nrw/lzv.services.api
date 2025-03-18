@@ -1,7 +1,7 @@
 /**
  * 
  */
-package lzv.services.pdf.veraCore;
+package lzv.services.pdf.veracore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
-import de.nrw.hbz.lzv.services.plugin.veraPDF.serviceImpl.ServiceImpl;
+import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 
 
 /**

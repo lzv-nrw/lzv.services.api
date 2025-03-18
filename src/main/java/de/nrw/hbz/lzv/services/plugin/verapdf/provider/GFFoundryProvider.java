@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.plugin.veraPDF.provider;
+package de.nrw.hbz.lzv.services.plugin.verapdf.provider;
 
 import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 
