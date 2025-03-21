@@ -10,10 +10,13 @@ Recently the API is limited to PDF services. It currently make use of veraPDF to
     
 API for veraPDF encloses:
 
-- about: lists services available (GET, html)
-- version: returns version of veraPDF libraries in use (GET, html, json)
-- upload: form for uploading PDF to validate
-- validate: service for veraPDF validation (POST, html)
+  - about: lists services available (GET, html)
+  
+  - version: returns version of veraPDF libraries in use (GET, html, json)
+
+  - upload: form for uploading PDF to validate
+  
+  - validate: service for veraPDF validation (POST, html)
 
 ## License ##
 
@@ -25,10 +28,13 @@ veraPDF is licensed under [GNU General public license GPLv3+](https://docs.verap
 
 For compilation and packaging:
 
-- OpenJDK 1.11
-- Maven 3.x (e.g.MVN 3.9.9) for integration and deployment
-- git 2.x
-- (Eclipse 2024/12 for convenience)
+  - OpenJDK 1.11
+
+  - Maven 3.x (e.g.MVN 3.9.9) for integration and deployment
+
+  - git 2.x
+
+  - (Eclipse 2024/12 for convenience)
 
 For server deployment:
  
@@ -39,8 +45,8 @@ For server deployment:
 ## Installation ##
 
 Server installation (requires running Tomcat 10) 
-- Clone Repository with `git clone https://github.com/lzv-nrw/lzv.services.pdf.git`
-- change into local directory `cd lzv.services.pdf`
+- Clone Repository with `git clone https://github.com/lzv-nrw/lzv.services.api.git`
+- change into local directory `cd lzv.services.api`
 - run `mvn clean test war:war`
 
 If all tests successfully passed you will find file `lzv-api.war` in newly created directory `target`
@@ -51,7 +57,7 @@ If all tests successfully passed you will find file `lzv-api.war` in newly creat
 
 For testing or development purposes lzv.services.pdf brings a jetty server with it. 
 
-- After cloning software with git and changed into newly created directory `lzv.services.pdf` you can either run `mvn jetty:run`from console or
+- After cloning software with git and changed into newly created directory `lzv.services.api` you can either run `mvn jetty:run`from console or
 - import lzv.services.pdf as new maven project into Eclipse and run jetty by configure "Run Configuration" with goal jetty:run
 - jetty starts a Web server running under `http://localhost:8080`
 - you can reach the available services by within our browser via `http://localhost:8080/lzv-api/about` which gives you a list of available services. 
