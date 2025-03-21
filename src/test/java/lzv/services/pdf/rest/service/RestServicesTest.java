@@ -8,6 +8,8 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.text.ParseException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.junit.Test;
 
@@ -19,11 +21,14 @@ import de.nrw.hbz.lzv.services.plugin.verapdf.service.rest.impl.JerseyServiceImp
  */
 public class RestServicesTest {
 
+  final static Logger logger = LogManager.getLogger(RestServicesTest.class);
+
   /**
    * @param args
    */
   public static void main(String[] args) {
     
+    logger.info("Hier bin ich");
     RestServicesTest rst = new RestServicesTest();
     rst.validate();
   }

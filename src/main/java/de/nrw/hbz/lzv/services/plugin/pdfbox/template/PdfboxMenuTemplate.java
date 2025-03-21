@@ -5,21 +5,23 @@ package de.nrw.hbz.lzv.services.plugin.pdfbox.template;
 
 import java.util.ArrayList;
 
+import de.nrw.hbz.lzv.services.model.MenuTemplate;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
  * 
  */
- public class MenuTemplate {
+ public class PdfboxMenuTemplate extends MenuTemplate {
 
    static final String NAME = "PDFbox";
 
-    public MenuTemplate() {
+    public PdfboxMenuTemplate() {
       initMenu();
     }
     
-    private void initMenu() {
-      HtmlTemplate.appendMenu(MenuTemplate.NAME, setMenuPlug(setMenuEntry()));     
+    @Override
+    public void initMenu() {
+      HtmlTemplate.appendMenu(PdfboxMenuTemplate.NAME, setMenuPlug(setMenuEntry()));     
     }
     
     /**
@@ -27,8 +29,7 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
      */
     private  ArrayList<String> setMenuEntry() {
       ArrayList<String> menuEntry = new ArrayList<>();
-      menuEntry.add("<a href=\"/lzv-jsp/pdfbox/upload\">PDF-Validierung</a>");
-      menuEntry.add("<a href=\"/lzv-api/pdf/version\">pdfBox-Version</a>");
+      menuEntry.add("<a href=\"/lzv-jsp/pdfbox/upload\">PDF-Versionserkennung</a>");
       return menuEntry;
     }
     
@@ -36,11 +37,11 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
       StringBuffer menuPlug = new StringBuffer();
       menuPlug = new StringBuffer();
       menuPlug.append("<div class=\"dropdown\"><div class=\"menu\"><img class=\"menu\" src=\"/lzv-jsp/images/pdfbox-favicon.ico\" />"
-          + "veraPDF<div class=\"submenu\"><ul>");
+          + "PDFbox<div class=\"submenu\"><ul>");
           for(int i=0; i< menuEntries.size(); i++) {
             menuPlug.append("<li>" + menuEntries.get(i) + "</li>");
           }
-          menuPlug.append("</ul></div></div>");
+          menuPlug.append("</ul></div></div></div>");
           return menuPlug.toString();
     }
     

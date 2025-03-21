@@ -18,6 +18,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import de.nrw.hbz.lzv.services.file.util.FileUtil;
 import de.nrw.hbz.lzv.services.plugin.callaspilot.service.impl.PilotRunner;
+import de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -37,34 +38,28 @@ import jakarta.ws.rs.core.MediaType;
  * creation date: 26.07.2013
  *
  */
-@Path("callas/")
+@Path("/pdfbox")
 public class JerseyServiceImpl {
 
 	// Initiate Logger for JerseyServiceImpl
-	private static Logger log = LogManager.getLogger(JerseyServiceImpl.class);
+	private static Logger logger = LogManager.getLogger(JerseyServiceImpl.class);
 
 	
   @POST
-  @Path("validate")
+  @Path("/pversion")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-  public String validatePdfA(@FormDataParam("file") InputStream fileInputStream,
+  public String pversion(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
 
-    File file = FileUtil.saveTmpFile(fileInputStream, "callas");
-		String paramString = null;
-		//create a unique temporary file prefix
-		String fileName = file.getAbsolutePath();
-		
-		PilotRunner pRunner = new PilotRunner();
-		pRunner.executePdfATool(paramString, file.getAbsolutePath());
-		
-		return "<html> " + "<title>" + "Access to converted file" + "</title>"
-		        + "<body><h1>" + "Converted file:" + "</h1>" +
-		        	"<ul>" +
-		        	"<li>Result: " + fileName + "</li>" +
-		        	"<li>From :" + "</li>" +
-		        	"</ul></body>" + "</html> ";
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfbox");
+    
+    ServiceImpl serviceImpl = new ServiceImpl();
+    String pdfVersion = serviceImpl.getPdfVersion(file);
+    
+    logger.debug("Found version: " + pdfVersion + " for file " + ContentDisposition.getFileName());
+    return "<h1>Die getestete PDF-Datei " + ContentDisposition.getFileName() + 
+        " hat die Version: " + pdfVersion + "</h1>";
 
 	}
 			  

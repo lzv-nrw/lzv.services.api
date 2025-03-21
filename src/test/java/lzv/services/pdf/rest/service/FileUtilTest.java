@@ -31,7 +31,7 @@ public class FileUtilTest {
   @Test
   public void saveFile() {
     InputStream pis = FileUtil.loadFile(new File("src/test/resources/pdf.pdf"));
-    File tmpFile = FileUtil.saveTmpFile(pis, "pdf.pdf");
+    File tmpFile = FileUtil.saveTempFile(pis, "pdf.pdf");
     System.out.println(tmpFile.getAbsolutePath());
     assertNotNull(tmpFile.getAbsolutePath());
   }

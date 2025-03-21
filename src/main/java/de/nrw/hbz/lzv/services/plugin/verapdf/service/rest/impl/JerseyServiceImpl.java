@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import de.nrw.hbz.lzv.services.file.util.FileUtil;
 import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
@@ -32,10 +33,10 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 public class JerseyServiceImpl {
 
   // Initiate Logger for JerseyServiceImpl
-  private static Logger log = LogManager.getLogger(JerseyServiceImpl.class);
+  private static Logger logger = LogManager.getLogger(JerseyServiceImpl.class);
 
   public JerseyServiceImpl() {
-    log.info("Jersey Service startet");
+    logger.info("Jersey Service startet");
   }
 
   @POST
@@ -67,7 +68,8 @@ public class JerseyServiceImpl {
     sbVersion.append(HtmlTemplate.getHtmlHead());
     //sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
     sbVersion.append("<ul>");
-    sbVersion.append("<li>Version der verwendeten veraPDF-Libraries: " + ServiceImpl.getVersion() + "</li>");
+    sbVersion.append("<li>Version der verwendeten veraPDF-Libraries: " + 
+    ServiceImpl.getVersion() + "</li>");
     //sbVersion.append("<li>Verzeichnis-Pfad der Applikation: " + System.getProperty("user.dir") + "</li>");
     //sbVersion.append("<li>Derzeitiger Pfad: " + new File("").getAbsolutePath() + "</li>");
     sbVersion.append("</ul>");
@@ -78,17 +80,59 @@ public class JerseyServiceImpl {
   }
 
   @GET
-  @Path("version")
+  @Path("/version")
   @Produces({ MediaType.APPLICATION_JSON })
   public String getVersionJson() {
     StringBuffer sbVersion = new StringBuffer();
     sbVersion.append("[{\"plugin\" : \"PDFA-Validation with veraPDF\",");
     sbVersion.append("\"serviceInfo\" : {");
-    sbVersion.append("\"veraPDF Version\" : " + "\"" + ServiceImpl.getVersion() + "\"");
+    sbVersion.append("\"veraPDF Version\" : " + "\"" + 
+    ServiceImpl.getVersion() + "\"");
     sbVersion.append("}}]");
 
     String version = sbVersion.toString();
     return version;
+  }
+
+  @POST
+  @Path("/pversion")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public String pversion(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
+
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
+    
+    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
+    String result = serviceImpl.getPdfVersion(file);
+    
+    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n" + result);
+    htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a>");
+    
+    htmlResult.append(HtmlTemplate.getHtmlFoot());
+    return htmlResult.toString();
+
+  }
+
+  @POST
+  @Path("/format")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public String format(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
+
+    
+    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
+    String result = serviceImpl.getFileFormat(fileInputStream);
+    
+    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n" + result);
+    htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a>");
+    
+    htmlResult.append(HtmlTemplate.getHtmlFoot());
+    return htmlResult.toString();
+
   }
 
 }

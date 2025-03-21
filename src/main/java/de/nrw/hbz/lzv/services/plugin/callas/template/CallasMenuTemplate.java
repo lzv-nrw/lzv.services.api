@@ -5,22 +5,24 @@ package de.nrw.hbz.lzv.services.plugin.callas.template;
 
 import java.util.ArrayList;
 
+import de.nrw.hbz.lzv.services.model.MenuTemplate;
+import de.nrw.hbz.lzv.services.plugin.verapdf.template.VeraMenuTemplate;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
  * 
  */
-public class MenuTemplate {
+public class CallasMenuTemplate extends MenuTemplate {
 
   static final String NAME = "pdfaPilot";
   
-  public MenuTemplate() {
+  public CallasMenuTemplate() {
     initMenu();
   }
   
-  private void initMenu() {
-    HtmlTemplate.appendMenu(MenuTemplate.NAME, setMenuPlug(setMenuEntry()));
-    
+  @Override
+  public void initMenu() {
+    HtmlTemplate.appendMenu(CallasMenuTemplate.NAME, setMenuPlug(setMenuEntry()));    
   }
   
   /**
@@ -37,11 +39,11 @@ public class MenuTemplate {
     StringBuffer menuPlug = new StringBuffer();
     menuPlug = new StringBuffer();
     menuPlug.append("<div class=\"dropdown\"><div class=\"menu\"><img class=\"menu\" src=\"/lzv-jsp/images/callas-favicon.ico\" />"
-        + "veraPDF<div class=\"submenu\"><ul>");
+        + "pdfaPilot<div class=\"submenu\"><ul>");
         for(int i=0; i< menuEntries.size(); i++) {
           menuPlug.append("<li>" + menuEntries.get(i) + "</li>");
         }
-        menuPlug.append("</ul></div></div>");
+        menuPlug.append("</ul></div></div></div>");
         return menuPlug.toString();
   }
   

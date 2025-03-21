@@ -73,7 +73,7 @@ public class JerseyServiceImpl {
   public String validatePdfA(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
 
-    File file = FileUtil.saveTmpFile(fileInputStream, "callas");
+    File file = FileUtil.saveTempFile(fileInputStream, "callas");
 		String paramString = null;
 		//create a unique temporary file prefix
 		String fileName = file.getAbsolutePath();

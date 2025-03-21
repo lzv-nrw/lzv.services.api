@@ -24,6 +24,7 @@ package de.nrw.hbz.lzv.services.file.util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import java.io.*;
 
 
@@ -81,21 +82,77 @@ public class FileUtil {
 		return inputFile.getName();
 	}
 	
-	public static File saveTmpFile(InputStream uploadedStream, String fileName) {
-	  File tmpFile = null;
-	  String splitString = "[.]";
-	  String[] fileNameParts = fileName.split(splitString);
-	  String fileNameSuffix = fileNameParts[fileNameParts.length -1];
-	  String fileNamePrefix = fileName.replace("." + fileNameSuffix, "");
-	  try {
+	
+	 /**
+   * <p><em>Title: Save InputSream to an temporary File</em></p>
+   * <p>Description: </p>
+   * 
+   * @return 
+   */
+  public static File saveTempFile(InputStream is, String fileName){
+
+    File tmpFile = null;
+    String splitString = "[.]";
+    String[] fileNameParts = fileName.split(splitString);
+    String fileNameSuffix = fileNameParts[fileNameParts.length -1];
+    String fileNamePrefix = fileName.replace("." + fileNameSuffix, "");
+    
+    try {
       tmpFile = File.createTempFile(fileNamePrefix + "_", "." + fileNameSuffix);
+
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-	  
-	  return tmpFile;
-	}
+
+    BufferedInputStream bis = new BufferedInputStream(is);
+    BufferedOutputStream bos = null;
+    FileOutputStream fos = null;
+    try {
+      fos = new FileOutputStream(tmpFile);
+      bos = new BufferedOutputStream(fos);
+      int i = -1;
+      while((i = bis.read()) != -1){
+        bos.write(i);
+      }
+      bos.flush();
+
+    }catch(Exception e){
+      log.error(e);
+    }finally{
+      if(bos != null){
+        try{
+          bos.close();
+        }catch(IOException ioExc){
+          log.error(ioExc);
+        }
+      }
+      if(fos != null){
+        try{
+          fos.close();
+        }catch(IOException ioExc){
+          log.error(ioExc);
+        }
+      }
+      if(bis != null){
+        try{
+          bis.close();
+        }catch(IOException ioExc){
+          log.error(ioExc);
+        }
+      }
+      if(is != null){
+        try{
+          is.close();
+        }catch(IOException ioExc){
+          log.error(ioExc);
+        }
+      }
+      
+
+    }
+    return tmpFile; 
+  }
 
 	/**
 	 * Method appends a String to File

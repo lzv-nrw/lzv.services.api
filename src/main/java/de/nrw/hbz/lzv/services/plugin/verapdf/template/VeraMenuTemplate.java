@@ -5,21 +5,23 @@ package de.nrw.hbz.lzv.services.plugin.verapdf.template;
 
 import java.util.ArrayList;
 
+import de.nrw.hbz.lzv.services.model.MenuTemplate;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
  * 
  */
-public class MenuTemplate {
+public class VeraMenuTemplate extends MenuTemplate{
 
   static final String NAME = "veraPDF";
 
-  public MenuTemplate() {
+  public VeraMenuTemplate() {
     initMenu();
   }
   
-  private void initMenu() {
-    HtmlTemplate.appendMenu(MenuTemplate.NAME, setMenuPlug(setMenuEntry()));    
+  @Override
+  public void initMenu() {
+    HtmlTemplate.appendMenu(VeraMenuTemplate.NAME, setMenuPlug(setMenuEntry()));    
   }
   
   /**
@@ -40,7 +42,7 @@ public class MenuTemplate {
         for(int i=0; i< menuEntries.size(); i++) {
           menuPlug.append("<li>" + menuEntries.get(i) + "</li>");
         }
-        menuPlug.append("</ul></div></div>");
+        menuPlug.append("</ul></div></div></div>");
         return menuPlug.toString();
   }
   
