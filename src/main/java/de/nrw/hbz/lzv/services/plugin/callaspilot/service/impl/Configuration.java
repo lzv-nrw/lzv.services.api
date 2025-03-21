@@ -46,7 +46,7 @@ public class Configuration {
 	private static void setDefaultProp(){
 		defProp.setProperty("host", "localhost");
 		defProp.setProperty("port", "8080");
-		defProp.setProperty("path", "pdfs");
+		defProp.setProperty("path", "lzv-api");
 		defProp.setProperty("tempDir", "temp");
 		defProp.setProperty("resultDir", "result");
 		defProp.setProperty("userDir", "ulbm");

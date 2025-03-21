@@ -1,13 +1,12 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/d24b672713a646e48b2b3a66e2e08de5)](https://app.codacy.com/gh/lzv-nrw/lzv.services.pdf/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-# About #
+# LZV Services API #
 
-## About the lzv.services.pdf ##
+## About ##
 
-The LZV Services for PDF Files are WEB-API based services to validate PDF/A.
+The LZV Services API provides a RESTFul-API for to validate file formats and migrate file formats.
 
-They currently make use of veraPDF to check if a PDF file is compliant to any PDF/A flavour. 
-Integration of Callas PDF/A-Pilot is on the roadmap as the Callas Tool also provide PDF/A generation.
+Recently the API is limited to PDF services. It currently make use of veraPDF to check if a PDF file is compliant to any PDF/A flavour. Integration of Callas PDF/A-Pilot is on the roadmap as the Callas Tool also provide PDF/A generation.
     
 API for veraPDF encloses:
 
@@ -44,7 +43,7 @@ Server installation (requires running Tomcat 10)
 - change into local directory `cd lzv.services.pdf`
 - run `mvn clean test war:war`
 
-If all tests successfully passed you will find file `pdfs.war` in newly created directory `target`
+If all tests successfully passed you will find file `lzv-api.war` in newly created directory `target`
 
 - copy file into webapps directory in your Tomcat container application server
 
@@ -55,15 +54,15 @@ For testing or development purposes lzv.services.pdf brings a jetty server with 
 - After cloning software with git and changed into newly created directory `lzv.services.pdf` you can either run `mvn jetty:run`from console or
 - import lzv.services.pdf as new maven project into Eclipse and run jetty by configure "Run Configuration" with goal jetty:run
 - jetty starts a Web server running under `http://localhost:8080`
-- you can reach the available services by within our browser via `http://localhost:8080/pdfs/about` which gives you a list of available services. 
+- you can reach the available services by within our browser via `http://localhost:8080/lzv-api/about` which gives you a list of available services. 
   
 ## Use API calls ##
 
 With cUrl or any other tool for web requests you can request the available endpoints.
 
-- use `curl -XGET -H "Accept: application/json" http://localhost/pdfs/version > test.json` will write `[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
+- use `curl -XGET -H "Accept: application/json" http://localhost/lzv-api/version > test.json` will write `[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
 - use 
-`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/pdfs/validate` will give you the validation result for the pdfa_1b.pdf test file as html response
+`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/validate` will give you the validation result for the pdfa_1b.pdf test file as html response
  
 
 

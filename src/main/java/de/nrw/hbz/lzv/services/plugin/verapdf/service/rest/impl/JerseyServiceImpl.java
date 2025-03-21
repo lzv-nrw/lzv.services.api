@@ -1,8 +1,9 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.plugin.verapdf.rest.service.impl;
+package de.nrw.hbz.lzv.services.plugin.verapdf.service.rest.impl;
 
+import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -26,7 +27,8 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 /**
  * Implementation of Restful Endpoints
  */
-@Path("/")
+// @ApplicationPath("verapdf/")
+@Path("/verapdf")
 public class JerseyServiceImpl {
 
   // Initiate Logger for JerseyServiceImpl
@@ -37,7 +39,7 @@ public class JerseyServiceImpl {
   }
 
   @POST
-  @Path("validate")
+  @Path("/validate")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String validatePdfA(@FormDataParam("file") InputStream fileInputStream,
@@ -49,7 +51,7 @@ public class JerseyServiceImpl {
 
     StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
     htmlResult.append("<h1>Ergebnis der Prüfung</h1>" + result);
-    htmlResult.append("<p><a href=\"upload\">Weitere PDF-Datei prüfen</a>");
+    htmlResult.append("<p><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Datei prüfen</a>");
     htmlResult.append(HtmlTemplate.getHtmlFoot());
 
     return htmlResult.toString();
@@ -57,7 +59,7 @@ public class JerseyServiceImpl {
   }
 
   @GET
-  @Path("version")
+  @Path("/version")
   @Produces({ MediaType.TEXT_HTML })
   public String getVersionHTML() {
 
