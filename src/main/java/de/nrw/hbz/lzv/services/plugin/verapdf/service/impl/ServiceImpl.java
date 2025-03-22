@@ -16,6 +16,7 @@ import org.verapdf.ReleaseDetails;
 import org.verapdf.core.EncryptedPdfException;
 import org.verapdf.core.ModelParsingException;
 import org.verapdf.core.ValidationException;
+import org.verapdf.model.coslayer.CosDocument;
 import org.verapdf.pdfa.Foundries;
 import org.verapdf.pdfa.PDFAParser;
 import org.verapdf.pdfa.PDFAValidator;
@@ -108,9 +109,7 @@ public class ServiceImpl {
         log.info("\t" + flavour);
         validator = ValidatorFactory.createValidator(PDFAFlavour.fromString(flavour), true);
         ValidationResult vResult = validate(fileInputStream);
-
-        // JobEndStatus jeb = vResult.getJobEndStatus();
-
+        
         if (vResult.isCompliant()) {
           result = "<p class=\"success\">PDF is compliant to PDF/A, Version " + pdfParser.getFlavour().getId() + "</p>";
         }

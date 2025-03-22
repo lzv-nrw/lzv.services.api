@@ -10,7 +10,6 @@ Recently the API is limited to PDF services. It currently make use of veraPDF to
     
 API for veraPDF encloses:
 
-
 - about: lists services available (GET, html)
   
 - version: returns version of veraPDF libraries in use (GET, html, json)

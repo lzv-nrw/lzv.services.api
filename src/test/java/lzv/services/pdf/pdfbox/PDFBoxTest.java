@@ -32,6 +32,7 @@ public class PDFBoxTest {
     logger.debug("Starte PDFBoxTest als Hauptklasse");
     PDFBoxTest vpt = new PDFBoxTest();
     vpt.getPDFVersion();
+    vpt.editInfo();
     
 
   }
@@ -47,6 +48,16 @@ public class PDFBoxTest {
    // System.out.println("Huhu: " + test);
    logger.info("Ergebnis: " + test);
    // assertNotNull(ServiceImpl.getVersion());
+   assertNotNull(test);
+  }
+  
+  @Test
+  public void editInfo() {
+    ServiceImpl boxService = new ServiceImpl();
+    File pdf = new File("src/test/resources/pdf.pdf");
+    String fileName = boxService.editPDFInfo(pdf, "title", "Dies ist ein PDF zum Testen");
+    logger.info(fileName);
+    
   }
   
 
