@@ -31,6 +31,7 @@ public class RestServicesTest {
     logger.info("Hier bin ich");
     RestServicesTest rst = new RestServicesTest();
     rst.validate();
+    rst.editPdf();
   }
 
   @Test
@@ -58,4 +59,23 @@ public class RestServicesTest {
     }
   }
   
+  @Test
+  public void editPdf() {
+    // TODO: learn how to set FormDataContentDisposition correctly
+    JerseyServiceImpl jSI = new JerseyServiceImpl();
+    FormDataContentDisposition contDisp;
+
+    File testFile = new File("src/test/resources/pdfa_1b.pdf");
+    try {
+      contDisp = new FormDataContentDisposition("form-data;name=pdfa_1b.pdf;filename=pdfa_1b.pdf");
+      File editedFile =  jSI.editMD(FileUtil.loadFile(testFile), contDisp, "Author", "aquast");
+      
+      logger.info(editedFile.getAbsolutePath());
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+  }
+
 }

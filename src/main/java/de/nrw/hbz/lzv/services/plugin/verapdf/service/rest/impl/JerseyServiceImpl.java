@@ -44,14 +44,19 @@ public class JerseyServiceImpl {
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String validatePdfA(@FormDataParam("file") InputStream fileInputStream,
-      @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
 
+    String fileName = "-";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+    
     String result = "<p class=\"error\">Datei konnte nicht verarbeitet werden</p>";
     ServiceImpl sImpl = new ServiceImpl();
     result = sImpl.validatePDF(fileInputStream);
 
     StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>" + result);
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n<p>Dateiname: " + fileName +"</p>\n" + result);
     htmlResult.append("<p><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Datei prüfen</a>");
     htmlResult.append(HtmlTemplate.getHtmlFoot());
 
@@ -99,15 +104,20 @@ public class JerseyServiceImpl {
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String pversion(@FormDataParam("file") InputStream fileInputStream,
-      @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
 
+    String fileName = "unknown";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+        
     File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
     
     de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
     String result = serviceImpl.getPdfVersion(file);
     
     StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n" + result);
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n<p>Dateiname: " + fileName +"</p>\n" + result);
     htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a>");
     
     htmlResult.append(HtmlTemplate.getHtmlFoot());
@@ -120,19 +130,60 @@ public class JerseyServiceImpl {
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String format(@FormDataParam("file") InputStream fileInputStream,
-      @FormDataParam("FileMD") FormDataContentDisposition ContentDisposition) {
-
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
+    
+    String fileName = null;
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
     
     de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
     String result = serviceImpl.getFileFormat(fileInputStream);
     
     StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n" + result);
-    htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a>");
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n<p>Dateiname: " + fileName +"</p>\n" + result);
+
+    htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a></p>");
     
     htmlResult.append(HtmlTemplate.getHtmlFoot());
     return htmlResult.toString();
 
   }
+  
+  @POST
+  @Path("/editMD")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public File editMD(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition,
+      @QueryParam("field") String key, @QueryParam("value") String value) {
+    
+    // TODO: implement missing code
+    String fileName = "-";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }    
+    File origFile = FileUtil.saveTempFile(fileInputStream, fileName);
+    
+    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
+    File editedFile = serviceImpl.editPDFInfo(origFile, key, value);
+    
+    FileUtil.copyFile(editedFile, fileName);
+    File resultFile = new File(fileName); 
+    logger.info(new File(fileName).getAbsolutePath());
+  
+  return resultFile;
+  }  
+
+  @POST
+  @Path("/getFileUrl")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public String getFileUrl() {
+    
+    // logger.info(new File(fileName).getAbsolutePath());
+  
+  return null;
+  }  
 
 }

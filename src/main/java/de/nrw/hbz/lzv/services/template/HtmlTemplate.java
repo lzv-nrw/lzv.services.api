@@ -28,6 +28,8 @@ public class HtmlTemplate {
         + "<title>hbz lzv services</title>\n" + "</head>\n<body>\n");
     headSb.append("<div class=\"head\">");
     
+    headSb.append(getDefaultMenu());
+    
     headSb.append(getMenuEntry());
     
     headSb.append("</div></div><div class=\"main\"><hr/>");
@@ -65,5 +67,33 @@ public class HtmlTemplate {
          menuSb.append(menu.get(key));
     }
    return menuSb.toString(); 
+  }
+  
+  private static String getDefaultMenu() {
+    StringBuffer defMenu = new StringBuffer();
+    defMenu.append("<div class='dropdown'>");
+    defMenu.append("<div class='menu'>Datei");
+    defMenu.append("<div class='submenu'>"
+        + "<ul>");
+    defMenu.append("<li><a href='/lzv-jsp/upload'>PDF-Datei hochladen</a></li>");
+    defMenu.append("<li><a href='/lzv-jsp/save'>PDF-Datei herunterladen</a></div></li>");
+    defMenu.append("</ul></div>");
+    defMenu.append("</div>");
+    
+    defMenu.append("<div class='dropdown'>");
+    defMenu.append("<div class='menu'>Bearbeiten");
+    defMenu.append("</div>");
+    defMenu.append("</div>");
+
+    defMenu.append("<div class='dropdown'>");
+    defMenu.append("<div class='menu'>Analyse");
+    defMenu.append("<div class='submenu'>"
+        + "<ul>");
+    defMenu.append("<li><a href='/lzv-jsp/pdfbox/upload'>Anzeige der PDF-Metadaten</a></li>");
+    defMenu.append("<li><a href='/lzv-jsp/verapdf/upload'>PDF/A-Validierung</a></div></li>");
+    defMenu.append("</ul></div>");
+    defMenu.append("</div>");
+
+    return defMenu.toString();
   }
 }

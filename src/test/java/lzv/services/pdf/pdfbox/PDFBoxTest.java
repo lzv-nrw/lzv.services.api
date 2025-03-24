@@ -5,6 +5,7 @@ package lzv.services.pdf.pdfbox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.InputStream;
@@ -45,9 +46,7 @@ public class PDFBoxTest {
    logger.info("Ergebnis: " + test);
    File pdfa = new File("src/test/resources/pdfa_1b.pdf");
    test = boxService.getPdfVersion(pdfa);
-   // System.out.println("Huhu: " + test);
    logger.info("Ergebnis: " + test);
-   // assertNotNull(ServiceImpl.getVersion());
    assertNotNull(test);
   }
   
@@ -55,8 +54,9 @@ public class PDFBoxTest {
   public void editInfo() {
     ServiceImpl boxService = new ServiceImpl();
     File pdf = new File("src/test/resources/pdf.pdf");
-    String fileName = boxService.editPDFInfo(pdf, "title", "Dies ist ein PDF zum Testen");
+    String fileName = boxService.editPDFInfo(pdf, "title", "Dies ist ein PDF zum Testen").getAbsolutePath();
     logger.info(fileName);
+    assertTrue(fileName.endsWith(".pdf"));
     
   }
   

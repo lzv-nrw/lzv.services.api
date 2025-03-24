@@ -145,7 +145,7 @@ public class ServiceImpl {
    * @param value
    * @return absolute path of a temp file created with edited data
    */
-  public String editPDFInfo(File pdfFile, String key, String value) {
+  public File editPDFInfo(File pdfFile, String key, String value) {
     
     try {
       PDDocument pdDoc = new PDDocument();
@@ -154,11 +154,11 @@ public class ServiceImpl {
       PDDocumentInformation editPdfInfo = setPdfInfoValue(pdfInfo, key, value);
       pdDoc.setDocumentInformation(editPdfInfo);
       
-      File editPdf = File.createTempFile("pdf_", "pdf");
+      File editPdf = File.createTempFile("edit_", ".pdf");
       pdDoc.save(editPdf);
             
       pdDoc.close();
-      return editPdf.getAbsolutePath();
+      return editPdf;
       
     } catch (IOException e) {
       // TODO Auto-generated catch block

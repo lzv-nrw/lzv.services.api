@@ -38,7 +38,7 @@ public class VeraMenuTemplate extends MenuTemplate{
     StringBuffer menuPlug = new StringBuffer();
     menuPlug = new StringBuffer();
     menuPlug.append("<div class=\"dropdown\"><div class=\"menu\"><img class=\"menu\" src=\"/lzv-jsp/images/verapdf-favicon-32x32.png\" />"
-        + "veraPDF<div class=\"submenu\"><ul>");
+        + "<p>veraPDF</p><div class=\"submenu\"><ul>");
         for(int i=0; i< menuEntries.size(); i++) {
           menuPlug.append("<li>" + menuEntries.get(i) + "</li>");
         }
