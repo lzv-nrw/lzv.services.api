@@ -70,10 +70,38 @@ For testing or development purposes lzv.services.pdf brings a jetty server with 
 
 With cUrl or any other tool for web requests you can request the available endpoints.
 
-- use `curl -XGET -H "Accept: application/json" http://localhost/lzv-api/version > test.json` will write `[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
+Recent EndPoints are:
 
-- use 
-`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/validate` will give you the validation result for the pdfa_1b.pdf test file as html response
+- https://your.server/lzv-api/verapdf/version
+
+- https://your.server/lzv-api/verapdf/validate
+
+- https://your.server/lzv-api/verapdf/pversion
+
+
+usage of:
+
+`curl -XGET -H "Accept: application/json" http://localhost/lzv-api/verapdf/version > test.json` 
+
+will return  
+
+`[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
+
+usage of: 
+
+`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/validate` 
+
+will give you the validation result for the pdfa_1b.pdf test file as html response
  
+usage of: 
 
+`curl -XPOST -H "Accept: application/json" --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/pversion` 
+
+will give you version and available metadata frm the pdfa_1b.pdf test file as json response
+
+usage of: 
+
+`curl -XPOST -H "Accept: text/html" --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/pversion` 
+
+will give you version and available metadata from the pdfa_1b.pdf test file as html fragment response
 
