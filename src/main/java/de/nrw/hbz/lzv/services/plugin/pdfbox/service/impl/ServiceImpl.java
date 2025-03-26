@@ -8,25 +8,22 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.cos.COSStream;
-import org.apache.pdfbox.io.ScratchFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.encryption.PDEncryption;
 import org.apache.pdfbox.util.filetypedetector.FileType;
 import org.apache.pdfbox.util.filetypedetector.FileTypeDetector;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
+import de.nrw.hbz.lzv.services.model.pdf.model.Version;
 import de.nrw.hbz.lzv.services.util.TimePrefix;
 
 
@@ -68,18 +65,103 @@ public class ServiceImpl {
     return fType.toString();
   }
 
+  /** 
+   * Read version information and metadata available in PDF
+   * @param file the PDF
+   * @return PDF's metadata as Map 
+   */
+  public Map<String, Object> getPdfMD(File file, String origFileName) {
+    Map<String,Object> pdfMd = new HashMap<>();
+    Map<String,String> versionMap = new HashMap<>();
+
+    pdfMd.put("File", origFileName);
+
+    try {
+        PDDocument pdDoc = Loader.loadPDF(file);
+                
+        // get PDF Version
+        String prefLabel = Float.toString(pdDoc.getVersion());
+        logger.info(prefLabel);
+        logger.info(Version.getVersionFormat(prefLabel));
+        if(Version.labelExists(prefLabel)) {
+          versionMap.put("prefLabel", prefLabel);
+          versionMap.put("@id", Version.getVersionUrl(prefLabel));
+          pdfMd.put("Version", versionMap);
+        }
+        
+        // check for PDF/A readiness
+        if(!Version.getVersionIsPdfaApplicable(prefLabel)) {
+          pdfMd.put("PdfACompliancy", "none");
+        }
+        
+        // check for encryption
+        if(pdDoc.isEncrypted()) {
+          pdfMd.put("Encrypted", "true");
+        } else {
+          pdfMd.put("Encrypted", "false");          
+        }
+        
+        // get more MD from PDDocumentInformation
+        PDDocumentInformation docInf = pdDoc.getDocumentInformation();
+
+        LinkedHashMap<String,String> mdMap = getInfo(docInf);
+        Set<String> mdKeys = mdMap.keySet();
+        Iterator<String> mdIt = mdKeys.iterator();
+        
+        while(mdIt.hasNext()) {
+          String key = mdIt.next();
+          pdfMd.put(key, mdMap.get(key));
+          
+        }
+
+        // get more MD from PDDocument itself
+        LinkedHashMap<String,String> pdMap = getInfo(pdDoc);
+
+        Set<String> pdKeys = pdMap.keySet();
+        Iterator<String> pdIt = pdKeys.iterator();
+        
+        while(pdIt.hasNext()) {
+          String key = pdIt.next();
+          pdfMd.put(key, pdMap.get(key));
+          
+        }
+
+        try {
+          pdDoc.close();
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        
+        if(e.getClass().getName().equals("org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException")) {
+          pdfMd.put("Reason" , "PDF is ENCRYPTED");
+        } else {
+          pdfMd.put("Reason" , "See Error");          
+        }
+        pdfMd.put("Error", e.getMessage());
+        pdfMd.put("ExceptionType", e.getClass().getName());
+        
+      } 
+
+      return pdfMd;
+  }
+  
+  
+  @Deprecated
   public String getPdfVersion(File file) {
 
     String result = "<p class=\"error\">File is not a PDF</p>";
         // + "<p><a href=\"/lzv-api/verapdf/format\">Datei-Format zu ermitteln?</a></p>";
  
     String versionNumber = "unkown";
-    PDDocument pdDoc = new PDDocument();
     
     StringBuffer resultSb = new StringBuffer();
     
     try {
-      pdDoc = Loader.loadPDF(file);
+      PDDocument pdDoc = Loader.loadPDF(file);
       versionNumber = Float.toString(pdDoc.getVersion());
       resultSb.append("<ul>\n");
       resultSb.append("<li>PDF is of Version: " + versionNumber + "</li>\n");
@@ -124,12 +206,6 @@ public class ServiceImpl {
     } catch (IOException e) {
       e.printStackTrace();
     }    
-    try {
-      pdDoc.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-    }
     
     return result;
   }
@@ -171,16 +247,17 @@ public class ServiceImpl {
   
   
   /**
+   * Methods allows to set metadata within Pdf
    * @param docInf
    * @param key
    * @param value
    */
   private PDDocumentInformation setPdfInfoValue(PDDocumentInformation docInf, String key, String value) {
       // TODO: find a better solution for thisImplement  
-      if(key.equals("title")) {
+      if(key.equals("Title")) {
         docInf.setTitle(value);
       }
-      if(key.equals("author")) {
+      if(key.equals("Author")) {
         docInf.setAuthor(value);
       }
       

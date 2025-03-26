@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.configuration.util;
+package de.nrw.hbz.lzv.services.util.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;

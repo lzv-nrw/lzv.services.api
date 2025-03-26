@@ -20,7 +20,7 @@
  * -----------------------------------------------------------------------------
  *
  */
-package de.nrw.hbz.lzv.services.plugin.callaspilot.service.rest.impl;
+package de.nrw.hbz.lzv.services.plugin.callas.service.rest.impl;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -38,8 +38,8 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import de.nrw.hbz.lzv.services.file.util.FileUtil;
-import de.nrw.hbz.lzv.services.plugin.callaspilot.service.impl.PilotRunner;
+import de.nrw.hbz.lzv.services.plugin.callas.service.impl.PilotRunner;
+import de.nrw.hbz.lzv.services.util.file.FileUtil;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;

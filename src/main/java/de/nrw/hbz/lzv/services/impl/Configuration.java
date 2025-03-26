@@ -10,7 +10,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.nrw.hbz.lzv.services.configuration.util.PropertiesLoader;
+import de.nrw.hbz.lzv.services.util.configuration.PropertiesLoader;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package de.nrw.hbz.lzv.services.plugin.callaspilot.service.impl;
+package de.nrw.hbz.lzv.services.plugin.callas.service.impl;
 
 import java.io.BufferedReader;
 import java.io.File;

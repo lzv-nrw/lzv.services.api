@@ -3,7 +3,6 @@
  */
 package de.nrw.hbz.lzv.services.plugin.verapdf.service.rest.impl;
 
-import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -11,19 +10,20 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import de.nrw.hbz.lzv.services.file.util.FileUtil;
+import de.nrw.hbz.lzv.services.model.json.impl.PdfModelImpl;
 import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
+import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
 /**
  * Implementation of Restful Endpoints
@@ -114,14 +114,38 @@ public class JerseyServiceImpl {
     File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
     
     de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
-    String result = serviceImpl.getPdfVersion(file);
+    Map<String,Object> resultMap = serviceImpl.getPdfMD(file, fileName);
     
     StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n<p>Dateiname: " + fileName +"</p>\n" + result);
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n");
+    htmlResult.append(new PdfModelImpl(resultMap).toHtml());
     htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a>");
+
     
     htmlResult.append(HtmlTemplate.getHtmlFoot());
     return htmlResult.toString();
+
+  }
+
+  @POST
+  @Path("/pversion")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String pversionJson(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
+
+    String fileName = "unknown";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+        
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
+    
+    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = 
+        new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
+    
+    String result = serviceImpl.getPdfMD(file, fileName).toString();
+    return result;
 
   }
 
@@ -158,7 +182,6 @@ public class JerseyServiceImpl {
       @FormDataParam("file") FormDataContentDisposition contentDisposition,
       @QueryParam("field") String key, @QueryParam("value") String value) {
     
-    // TODO: implement missing code
     String fileName = "-";
     if(contentDisposition != null) {
       fileName = contentDisposition.getFileName();
@@ -180,6 +203,7 @@ public class JerseyServiceImpl {
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String getFileUrl() {
+    // TODO: implement missing code
     
     // logger.info(new File(fileName).getAbsolutePath());
   
