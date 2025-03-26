@@ -25,8 +25,8 @@ import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.results.ValidationResult;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 
-import de.nrw.hbz.lzv.services.file.util.FileUtil;
 import de.nrw.hbz.lzv.services.plugin.verapdf.provider.GFFoundryProvider;
+import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
 /**
  * 

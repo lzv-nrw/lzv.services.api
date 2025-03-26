@@ -20,7 +20,7 @@
  * -----------------------------------------------------------------------------
  *
  */
-package de.nrw.hbz.lzv.services.file.util;
+package de.nrw.hbz.lzv.services.util.file;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
