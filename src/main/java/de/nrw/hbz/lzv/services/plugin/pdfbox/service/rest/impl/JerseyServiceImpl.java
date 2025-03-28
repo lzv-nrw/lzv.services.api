@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import de.nrw.hbz.lzv.services.plugin.callas.service.impl.PilotRunner;
+import de.nrw.hbz.lzv.services.plugin.pdfapilot.service.impl.PilotRunner;
 import de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
 import jakarta.ws.rs.Consumes;

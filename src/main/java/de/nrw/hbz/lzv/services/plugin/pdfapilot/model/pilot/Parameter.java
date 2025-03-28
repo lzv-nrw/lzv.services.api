@@ -1,4 +1,4 @@
-package de.nrw.hbz.lzv.services.plugin.callas.model.pilot;
+package de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot;
 
 import java.util.Properties;
 
