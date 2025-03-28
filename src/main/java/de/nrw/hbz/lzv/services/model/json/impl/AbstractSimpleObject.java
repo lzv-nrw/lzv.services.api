@@ -6,14 +6,12 @@ package de.nrw.hbz.lzv.services.model.json.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
-
 import de.nrw.hbz.lzv.services.model.json.model.SimpleObject;
 
 /**
  * 
  */
-public class AbstractSimpleObject implements SimpleObject {
+public abstract class AbstractSimpleObject implements SimpleObject {
 
   Map<String,String> simpleObj = new HashMap<>();
   

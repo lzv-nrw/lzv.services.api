@@ -20,30 +20,137 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import de.nrw.hbz.lzv.services.impl.Analyzer;
+import de.nrw.hbz.lzv.services.impl.VersionInfo;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfModelImpl;
 import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
+
 /**
  * Implementation of Restful Endpoints
  */
-// @ApplicationPath("verapdf/")
-@Path("/verapdf")
+@Path("/")
 public class JerseyServiceImpl {
 
   // Initiate Logger for JerseyServiceImpl
   private static Logger logger = LogManager.getLogger(JerseyServiceImpl.class);
+  private String[] fileNames = new String[10];
 
   public JerseyServiceImpl() {
     logger.info("Jersey Service startet");
   }
 
+  @GET
+  @Path("version/verapdf")
+  @Produces({ MediaType.TEXT_HTML })
+  public String getVeraPdfVersionHTML() {
+
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append(HtmlTemplate.getHtmlHead());
+    //sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
+    sbVersion.append("<ul>");
+    sbVersion.append("<li>Version der verwendeten veraPDF-Libraries: "); 
+    sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString()  + "</li>");
+    //ServiceImpl.getVersion() + "</li>");
+    //sbVersion.append("<li>Verzeichnis-Pfad der Applikation: " + System.getProperty("user.dir") + "</li>");
+    //sbVersion.append("<li>Derzeitiger Pfad: " + new File("").getAbsolutePath() + "</li>");
+    sbVersion.append("</ul>");
+    sbVersion.append(HtmlTemplate.getHtmlFoot());
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
+  @GET
+  @Path("version/verapdf")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String getVeraPdfVersionJson() {
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append("[{\"plugin\" : \"PDFA-Validation with veraPDF\",");
+    sbVersion.append("\"serviceInfo\" : {");
+    sbVersion.append("\"veraPDF Version\" : " + "\""); 
+    sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString()  + "\"");
+    // ServiceImpl.getVersion() + "\"");
+    sbVersion.append("}}]");
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
+  @GET
+  @Path("version/pdfapilot")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String getPdfaPilotVersionJson() {
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append("[{\"plugin\" : \"PDFA-Validation with Callas pdfaPilot\",");
+    sbVersion.append("\"serviceInfo\" : {");
+    sbVersion.append("\"pdfaPilot Version\" : " + "\""); 
+    sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString()  + "\"");
+    sbVersion.append("}}]");
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
+  @GET
+  @Path("version/pdfapilot")
+  @Produces({ MediaType.TEXT_HTML })
+  public String getPdfaPilotVersionHTML() {
+
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append(HtmlTemplate.getHtmlHead());
+    //sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
+    sbVersion.append("<ul>");
+    sbVersion.append("<li>Version der verwendeten pdfaPilot-Libraries: "); 
+    sbVersion.append(VersionInfo.getInstance("pdfapilot").getVersionString()  + "</li>");
+    sbVersion.append("</ul>");
+    sbVersion.append(HtmlTemplate.getHtmlFoot());
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
+
+  @GET
+  @Path("version/pdfbox")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String getPdfBoxVersionJson() {
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append("[{\"plugin\" : \"PDFA-Validation with Apache PDFbox\",");
+    sbVersion.append("\"serviceInfo\" : {");
+    sbVersion.append("\"pdfaPilot Version\" : " + "\""); 
+    sbVersion.append(VersionInfo.getInstance("pdfbox").getVersionString()  + "\"");
+    sbVersion.append("}}]");
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
+  @GET
+  @Path("version/pdfbox")
+  @Produces({ MediaType.TEXT_HTML })
+  public String getPdfBoxVersionHTML() {
+
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append(HtmlTemplate.getHtmlHead());
+    //sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
+    sbVersion.append("<ul>");
+    sbVersion.append("<li>Version der verwendeten Apache PDFbox-Libraries: "); 
+    sbVersion.append(VersionInfo.getInstance("pdfbox").getVersionString()  + "</li>");
+    sbVersion.append("</ul>");
+    sbVersion.append(HtmlTemplate.getHtmlFoot());
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
   @POST
-  @Path("/validate")
+  @Path("validate/verapdf")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-  public String validatePdfA(@FormDataParam("file") InputStream fileInputStream,
+  public String validateVeraPdfHtml(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition) {
 
     String fileName = "-";
@@ -64,46 +171,12 @@ public class JerseyServiceImpl {
 
   }
 
-  @GET
-  @Path("/version")
-  @Produces({ MediaType.TEXT_HTML })
-  public String getVersionHTML() {
-
-    StringBuffer sbVersion = new StringBuffer();
-    sbVersion.append(HtmlTemplate.getHtmlHead());
-    //sbVersion.append("<h1>PDFA-Validierung mit veraPDF</h1>");
-    sbVersion.append("<ul>");
-    sbVersion.append("<li>Version der verwendeten veraPDF-Libraries: " + 
-    ServiceImpl.getVersion() + "</li>");
-    //sbVersion.append("<li>Verzeichnis-Pfad der Applikation: " + System.getProperty("user.dir") + "</li>");
-    //sbVersion.append("<li>Derzeitiger Pfad: " + new File("").getAbsolutePath() + "</li>");
-    sbVersion.append("</ul>");
-    sbVersion.append(HtmlTemplate.getHtmlFoot());
-
-    String version = sbVersion.toString();
-    return version;
-  }
-
-  @GET
-  @Path("/version")
-  @Produces({ MediaType.APPLICATION_JSON })
-  public String getVersionJson() {
-    StringBuffer sbVersion = new StringBuffer();
-    sbVersion.append("[{\"plugin\" : \"PDFA-Validation with veraPDF\",");
-    sbVersion.append("\"serviceInfo\" : {");
-    sbVersion.append("\"veraPDF Version\" : " + "\"" + 
-    ServiceImpl.getVersion() + "\"");
-    sbVersion.append("}}]");
-
-    String version = sbVersion.toString();
-    return version;
-  }
 
   @POST
-  @Path("/pversion")
+  @Path("validate/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-  public String pversion(@FormDataParam("file") InputStream fileInputStream,
+  public String validatePdfBoxHtml(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition) {
 
     String fileName = "unknown";
@@ -128,10 +201,10 @@ public class JerseyServiceImpl {
   }
 
   @POST
-  @Path("/pversion")
+  @Path("validate/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.APPLICATION_JSON })
-  public String pversionJson(@FormDataParam("file") InputStream fileInputStream,
+  public String validatePdfBoxJson(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition) {
 
     String fileName = "unknown";
@@ -144,13 +217,67 @@ public class JerseyServiceImpl {
     de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = 
         new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
     
-    String result = serviceImpl.getPdfMD(file, fileName).toString();
+    Map<String,Object> resultMap = serviceImpl.getPdfMD(file, fileName);
+    String result = new PdfModelImpl(resultMap).toString();
     return result;
 
   }
 
   @POST
-  @Path("/format")
+  @Path("validate/pdfapilot")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public String validatePdfaPilotHtml(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
+
+    String fileName = "unknown";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+        
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
+    
+    Analyzer pdfaPilotAnalyzer = Analyzer.getInstance("pdfapilot");
+    Map<String,Object> resultMap = pdfaPilotAnalyzer.analyze(file, fileName);
+    
+    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
+    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n");
+    htmlResult.append(new PdfModelImpl(resultMap).toHtml());
+    htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
+    // htmlResult.append(fileName);
+
+    
+    htmlResult.append(HtmlTemplate.getHtmlFoot());
+    return htmlResult.toString();
+
+  }
+
+  @POST
+  @Path("validate/pdfapilot")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String validatePdfaPilotJson(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
+
+    String fileName = "unknown";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+        
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
+    
+    Analyzer pdfaPilotAnalyzer = Analyzer.getInstance("pdfapilot");
+    Map<String,Object> resultMap = pdfaPilotAnalyzer.analyze(file, fileName);
+    
+    StringBuffer pilotSb = new StringBuffer();
+    // pilotSb.append("{'pdfaPilot validation result :");
+    pilotSb.append(new PdfModelImpl(resultMap).toString());
+    return pilotSb.toString();
+
+  }
+
+  @POST
+  @Path("format")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String format(@FormDataParam("file") InputStream fileInputStream,
@@ -175,10 +302,11 @@ public class JerseyServiceImpl {
   }
   
   @POST
-  @Path("/editMD")
+  @Path("editMD/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-  public File editMD(@FormDataParam("file") InputStream fileInputStream,
+
+  public File editMDPdfBox(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition,
       @QueryParam("field") String key, @QueryParam("value") String value) {
     
@@ -199,7 +327,7 @@ public class JerseyServiceImpl {
   }  
 
   @POST
-  @Path("/getFileUrl")
+  @Path("getFileUrl")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String getFileUrl() {

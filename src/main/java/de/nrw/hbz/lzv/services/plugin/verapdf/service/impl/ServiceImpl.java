@@ -53,12 +53,6 @@ public class ServiceImpl {
     pdfStream = FileUtil.loadFile(file);
   }
 
-  public static String getVersion() {
-    ReleaseDetails rDetails = ReleaseDetails.getInstance();
-    return rDetails.getVersion();
-
-  }
-
   public static void listFoundries() {
     Set<URI> uri = Foundries.getProviderIds();
     Iterator<URI> uriIt = uri.iterator();

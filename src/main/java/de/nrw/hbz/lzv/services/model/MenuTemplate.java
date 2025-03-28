@@ -8,7 +8,7 @@ import java.util.Hashtable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.nrw.hbz.lzv.services.plugin.callas.template.CallasMenuTemplate;
+import de.nrw.hbz.lzv.services.plugin.pdfapilot.template.CallasMenuTemplate;
 import de.nrw.hbz.lzv.services.plugin.pdfbox.template.PdfboxMenuTemplate;
 import de.nrw.hbz.lzv.services.plugin.verapdf.template.VeraMenuTemplate;
 

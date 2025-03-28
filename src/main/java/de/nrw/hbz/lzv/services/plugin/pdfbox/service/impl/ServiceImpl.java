@@ -21,7 +21,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.util.filetypedetector.FileType;
 import org.apache.pdfbox.util.filetypedetector.FileTypeDetector;
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 
 import de.nrw.hbz.lzv.services.model.pdf.model.Version;
 import de.nrw.hbz.lzv.services.util.TimePrefix;

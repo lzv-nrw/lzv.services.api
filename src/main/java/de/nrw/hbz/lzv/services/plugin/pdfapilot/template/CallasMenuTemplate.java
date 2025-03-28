@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.plugin.callas.template;
+package de.nrw.hbz.lzv.services.plugin.pdfapilot.template;
 
 import java.util.ArrayList;
 
