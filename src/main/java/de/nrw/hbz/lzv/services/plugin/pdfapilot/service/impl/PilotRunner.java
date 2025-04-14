@@ -9,6 +9,8 @@ import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.nrw.hbz.lzv.services.model.pdfa.result.PdfaPilotResult;
+
 /**
  * Class PilotRunner
  * 
@@ -83,12 +85,17 @@ public class PilotRunner {
 
   public void executePdfATool(String paramString){
     String programPath = new String("/opt/pdfapilot/pdfaPilot"); 
-    String executeString = programPath + paramString;
+    String executeString = programPath + " " + paramString;
         
     log.info("The complete execute String: " + executeString);
+
+    StringBuffer lineBuffer = new StringBuffer("run for test only");
+    StringBuffer errLineBuffer = new StringBuffer("run for test run");
+    int exitState = -1;
+      
     try{
       Process proc = java.lang.Runtime.getRuntime().exec(executeString);
-      int exitState = proc.waitFor();
+      exitState = proc.waitFor();
       InputStream stout = proc.getInputStream();
       InputStream err = proc.getErrorStream();
 
@@ -96,7 +103,7 @@ public class PilotRunner {
       BufferedReader br = new BufferedReader(isr);
       String line = null;
       
-      StringBuffer lineBuffer = new StringBuffer();
+      lineBuffer = new StringBuffer();
       while ((line = br.readLine()) != null){
           lineBuffer.append(line + "\n");
       }
@@ -104,12 +111,11 @@ public class PilotRunner {
       InputStreamReader eIR = new InputStreamReader(stout);
       BufferedReader eBR = new BufferedReader(eIR);
       String errLine = null;
-      StringBuffer errLineBuffer = new StringBuffer();
+      errLineBuffer = new StringBuffer();
       while ((errLine = eBR.readLine()) != null){
         errLineBuffer.append(errLine + "\n");
-    }
-      
-      
+    }  
+    
       log.info("STOUT: " + lineBuffer.toString());
       log.info("Exit State: " + exitState);
       stoutStr = lineBuffer.toString();
@@ -135,4 +141,5 @@ public class PilotRunner {
 	public String getExitStateStr(){
 		return exitStateStr;
 	}
+		
 }

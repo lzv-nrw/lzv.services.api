@@ -25,7 +25,11 @@ package de.nrw.hbz.lzv.services.util.file;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import jakarta.ws.rs.core.StreamingOutput;
+
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -212,6 +216,8 @@ public class FileUtil {
       e.printStackTrace();
     }
   }
+
+  
   
   /**
    * @param basePath
@@ -242,6 +248,46 @@ public class FileUtil {
       
     //}
     
+  }
+  
+  /**
+   * Generate StreamingOutput as required by Jersey to provide file download 
+   * @param inputStream
+   * @return StreamingOutput instance
+   */
+  public StreamingOutput getStreamingOutput(InputStream inputStream) {
+
+    BufferedInputStream bis = new BufferedInputStream(inputStream);   
+    ByteArrayOutputStream byteOutStream = new ByteArrayOutputStream();
+    
+    try {
+      int i = -1;
+      while((i = bis.read()) != -1) {
+        byteOutStream.write(i);
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      log.error(e.getMessage());
+    }
+    
+    // initialize StreamingOutput via anonymous method
+    StreamingOutput outStream = new StreamingOutput() {
+      @Override
+      public void write(OutputStream output) {
+        
+        try {
+          output.write(byteOutStream.toByteArray());
+          output.flush();
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }    
+  
+      }
+    };
+    
+    return outStream;
   }
     
   /**

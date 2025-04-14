@@ -27,7 +27,7 @@
     </description>
     <display-name>lzv Services by hbz | API</display-name>
 
-    <request-character-encoding>UTF-8</request-character-encoding>
+    <!-- <request-character-encoding>UTF-8</request-character-encoding> -->
 
   <display-name>de.nrw.hbz.lzv.services.plugin.verapdf.service.rest.impl.JerseyServerImpl</display-name>
   <servlet>

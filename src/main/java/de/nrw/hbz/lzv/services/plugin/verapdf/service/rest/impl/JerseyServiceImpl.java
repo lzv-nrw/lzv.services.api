@@ -9,10 +9,21 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.ResponseBuilder;
+import jakarta.ws.rs.core.StreamingOutput;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.io.BufferedWriter;
+
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +32,11 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import de.nrw.hbz.lzv.services.impl.Analyzer;
+import de.nrw.hbz.lzv.services.impl.FileController;
+import de.nrw.hbz.lzv.services.impl.PdfACreator;
 import de.nrw.hbz.lzv.services.impl.VersionInfo;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfModelImpl;
+import de.nrw.hbz.lzv.services.model.pdfa.result.PdfaPilotResult;
 import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
@@ -36,7 +50,7 @@ public class JerseyServiceImpl {
 
   // Initiate Logger for JerseyServiceImpl
   private static Logger logger = LogManager.getLogger(JerseyServiceImpl.class);
-  private String[] fileNames = new String[10];
+  private FileController fileController = new FileController();
 
   public JerseyServiceImpl() {
     logger.info("Jersey Service startet");
@@ -277,7 +291,7 @@ public class JerseyServiceImpl {
   }
 
   @POST
-  @Path("format")
+  @Path("format/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
   public String format(@FormDataParam("file") InputStream fileInputStream,
@@ -302,10 +316,9 @@ public class JerseyServiceImpl {
   }
   
   @POST
-  @Path("editMD/pdfbox")
+  @Path("editmd/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-
   public File editMDPdfBox(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition,
       @QueryParam("field") String key, @QueryParam("value") String value) {
@@ -326,6 +339,105 @@ public class JerseyServiceImpl {
   return resultFile;
   }  
 
+  @POST
+  @Path("convert/pdfapilot")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public String createPdfA(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition,
+      @QueryParam("flavour") String flavour) {
+
+    String fileName = "unknown";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+        
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
+    
+    PdfACreator pdfaPilotCreator = PdfACreator.getInstance("pdfapilot");
+    PdfaPilotResult result = pdfaPilotCreator.createPdfa(file, fileName, flavour);
+
+    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
+   
+    /*
+    htmlResult.append("<h3>Ergebnis der PDF/A-Erzeugung</h3>\n"
+        + "<p>Operations:</p>\n"
+        + "<ul>\n");
+    
+    for(int i=0; i < result.getFixList().size(); i++ ) {
+      htmlResult.append("<li>" + result.getFixList().get(i) + "</li>");
+    }
+    
+    htmlResult.append("</ul>\n");
+
+    htmlResult.append( "<p>Summary:</p>\n"
+        + "<ul>\n");
+    
+    for(int i=0; i < result.getSummaryList().size(); i++ ) {
+      htmlResult.append("<li>" + result.getSummaryList().get(i) + "</li>");
+    }
+    
+    htmlResult.append("</ul>\n");
+    
+    */
+
+    htmlResult.append(result.getStout().replace("\n", "<br/>"));
+    if(result.getFileOutputLocation() != null) {
+      htmlResult.append("<p><a href=\"/lzv-api/download?filename=" + result.getFileOutputLocation() + "\">PDF/A Datei herunterladen</a></p>"
+          + "<p>" + result.getFileOutputLocation() + "</p>");
+    }
+    
+    
+    
+    htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/createpdfa\">Weiteres PDF umwandeln</a></p>");
+    
+    htmlResult.append(HtmlTemplate.getHtmlFoot());
+    
+    return htmlResult.toString();
+  }
+  
+  @GET
+  @Path("download")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces("application/pdf")
+  public Response downloadPdf(@QueryParam("filename") String fileName) {
+    
+    
+    InputStream iS = FileUtil.loadFile(new File(fileName));
+     
+    FileUtil fileUtil = new FileUtil();
+    StreamingOutput fileStream = fileUtil.getStreamingOutput(iS);
+           
+    logger.info("StreamingOutput: " + iS.toString());
+    
+    ResponseBuilder response = Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM);
+    response.header("Content-Disposition","attachment; filename=test.pdf");
+    
+    return response.build();
+  }
+  
+  
+  
+  @POST
+  @Path("loadfile")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.TEXT_HTML })
+  public void uploadFile(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition,
+      @QueryParam("field") String key, @QueryParam("value") String value) {
+    // TODO: implement missing code
+    // logger.info(new File(fileName).getAbsolutePath());
+
+    String fileName = "-";
+    if(contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }    
+
+    File loadedFile = FileUtil.saveTempFile(fileInputStream, fileName);
+    fileController.setLoadedFile(loadedFile);
+  }  
+  
+  
   @POST
   @Path("getFileUrl")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })

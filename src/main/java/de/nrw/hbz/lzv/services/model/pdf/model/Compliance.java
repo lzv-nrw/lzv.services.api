@@ -76,7 +76,7 @@ public class Compliance {
      */
     public static boolean labelExists(String label) {
       boolean isLabel = false;
-      if(complianceLabel.containsKey(label)){
+      if(complianceLabel.containsValue(label)){
         isLabel = true;
       }
       return isLabel;
