@@ -12,9 +12,13 @@ public class PdfaPilotResult {
 
   private ArrayList<String> fixList = new ArrayList<>();
   private ArrayList<String> summaryList = new ArrayList<>();
+  private ArrayList<String> errorList = new ArrayList<>();
+  
   private String fileOutputLocation = null;
   private String loadedFileName = null;
   private String stout = null;
+  private String errOut = null;
+  private String executeString = null;
   
   
   
@@ -34,6 +38,13 @@ public class PdfaPilotResult {
   }
 
   /**
+   * @param fixMessage the fixMessage to add
+   */
+  public void addErrorMessage(String errorMessage) {
+    this.errorList.add(errorMessage);
+  }
+
+  /**
    * @return the fixList
    */
   public ArrayList<String> getFixList() {
@@ -47,11 +58,19 @@ public class PdfaPilotResult {
   }
 
   /**
+   * @return the errorList
+   */
+  public ArrayList<String> getErrorList() {
+    return errorList;
+  }
+
+  /**
    * @return the summaryList
    */
   public ArrayList<String> getSummaryList() {
     return summaryList;
   }
+
   /**
    * @return the fileOutputLocation
    */
@@ -63,6 +82,34 @@ public class PdfaPilotResult {
    */
   public String getStout() {
     return stout;
+  }
+
+  /**
+   * @return the errOut
+   */
+  public String getErrOut() {
+    return errOut;
+  }
+
+  /**
+   * @return the executeString
+   */
+  public String getExecuteString() {
+    return executeString;
+  }
+
+  /**
+   * @param executeString the executeString to set
+   */
+  public void setExecuteString(String executeString) {
+    this.executeString = executeString;
+  }
+
+  /**
+   * @param errOut the errOut to set
+   */
+  public void setErrOut(String errOut) {
+    this.errOut = errOut;
   }
 
   /**
@@ -84,6 +131,14 @@ public class PdfaPilotResult {
   public void setSummaryList(ArrayList<String> summaryList) {
     this.summaryList = summaryList;
   }
+
+  /**
+   * @param summaryList the summaryList to set
+   */
+  public void setErrorList(ArrayList<String> errorList) {
+    this.errorList = errorList;
+  }
+
   /**
    * @param fileOutputLocation the fileOutputLocation to set
    */

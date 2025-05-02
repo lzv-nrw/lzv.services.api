@@ -20,8 +20,8 @@ public class FileController {
         
   }
   
-  public String getLoadedFile() {
-    return fileHandler.get("loaded").getAbsolutePath();
+  public String getLoadedFile(String fileName) {
+    return fileHandler.get(fileName).getAbsolutePath();
   }
 
   public void deleteFile(String fType) {

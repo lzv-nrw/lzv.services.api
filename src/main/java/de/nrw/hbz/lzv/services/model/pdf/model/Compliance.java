@@ -27,14 +27,7 @@ public class Compliance {
     final static String _4E = "4e";
     final static String _4F = "4f";
     
-    
-    
-    
-    public Compliance() {
-      setComplianceLabel();
-      setComplianceFormat();
-    }
-    
+       
     private static LinkedHashMap<String,String> setComplianceLabel() {
       LinkedHashMap<String,String> complianceLabel = new LinkedHashMap<>(); 
       complianceLabel.put("1A", _1A);
