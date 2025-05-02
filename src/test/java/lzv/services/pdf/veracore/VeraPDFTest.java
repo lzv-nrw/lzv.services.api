@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
+import de.nrw.hbz.lzv.services.impl.VersionInfo;
 import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 
 
@@ -38,8 +39,8 @@ public class VeraPDFTest {
   
   @Test
   public void getVeraPDFVersion() {
-   System.out.println(ServiceImpl.getVersion());
-   assertNotNull(ServiceImpl.getVersion());
+   System.out.println(VersionInfo.getInstance("verapdf").getVersionString());
+   assertNotNull(VersionInfo.getInstance("verapdf").getVersionString());
   }
   
   @Test

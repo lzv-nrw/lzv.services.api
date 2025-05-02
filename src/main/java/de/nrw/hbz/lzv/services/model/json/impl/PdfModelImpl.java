@@ -28,7 +28,7 @@ public class PdfModelImpl {
    * @param pdfMd
    */
   public PdfModelImpl(Map<String,Object> pdfMd) {
-    pdfModel.put("PDFbox Validation", pdfMd);    
+    pdfModel.put("Validation Result", pdfMd);    
   }
   
   /**
@@ -86,7 +86,7 @@ public class PdfModelImpl {
    */
   @Override
   public String toString() {
-    return pdfModel.toString(1);
+    return pdfModel.toString(3);
   }
   
   /**
@@ -97,7 +97,7 @@ public class PdfModelImpl {
     String listEnd = "</ul>\n";
     StringBuffer htmlBuffer = new StringBuffer();
     
-    JSONObject pdfMd = pdfModel.getJSONObject("PDFbox Validation");
+    JSONObject pdfMd = pdfModel.getJSONObject("Validation Result");
     
     if(pdfMd.has("Error")) {
       htmlBuffer.append("<p>File: " + pdfMd.get("File") +  "</p>\n<ul>");
@@ -125,8 +125,11 @@ public class PdfModelImpl {
     
     htmlBuffer.append(listStart);
     htmlBuffer.append("<li>PDF is of Version: <a href='" + pdfVersion.get("@id") + "'>" + pdfVersion.get("prefLabel") +  "</a></li>\n");
-    htmlBuffer.append(encryptionResult.get(pdfMd.get("Encrypted")));
-    pdfMd.remove("Encrypted");
+
+    if(pdfMd.has("Encrypted")) {
+      htmlBuffer.append(encryptionResult.get(pdfMd.get("Encrypted")));
+      pdfMd.remove("Encrypted");      
+    }
     
     if(pdfMd.has("PdfACompliancy")) {
       htmlBuffer.append(pdfaCompliancyResult.get(pdfMd.get("PdfACompliancy")));
@@ -156,10 +159,12 @@ public class PdfModelImpl {
     
     while(pdfInfoIt.hasNext()) {
       String key = pdfInfoIt.next();
-      
-      // In first step iterate over literals only
-      logger.debug(key);
-      htmlBuffer.append("<li>" + key + ": " + pdfMd.get(key) + "</li>\n");
+     
+      if(!pdfMd.isNull(key)) {
+        // In first step iterate over literals only
+        logger.debug(key);
+        htmlBuffer.append("<li>" + key + ": " + pdfMd.get(key) + "</li>\n");        
+      }
       
     }
     

@@ -30,7 +30,7 @@ public class HtmlTemplate {
     
     headSb.append(getDefaultMenu());
     
-    headSb.append(getMenuEntry());
+    //headSb.append(getMenuEntry());
     
     headSb.append("</div></div><div class=\"main\"><hr/>");
 
@@ -71,29 +71,52 @@ public class HtmlTemplate {
   
   private static String getDefaultMenu() {
     StringBuffer defMenu = new StringBuffer();
+    
+    // Datei
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Datei");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     defMenu.append("<li><a href='/lzv-jsp/upload'>PDF-Datei hochladen</a></li>");
-    defMenu.append("<li><a href='/lzv-jsp/save'>PDF-Datei herunterladen</a></div></li>");
-    defMenu.append("</ul></div>");
+    defMenu.append("<li><a href='/lzv-jsp/save'>PDF-Datei herunterladen</a></li>");
+    defMenu.append("</ul></div></div>");
     defMenu.append("</div>");
     
+    
+    // Bearbeiten
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Bearbeiten");
-    defMenu.append("</div>");
+    defMenu.append("<div class='submenu'>"
+        + "<ul>");
+    defMenu.append("<li><a href='/lzv-jsp/editMd/form'>PDF-Metadaten ändern</a></li>");
+    defMenu.append("<li><a href='/lzv-jsp/pdfapilot/createpdfa'>PDF/A erzeugen</a></li>");
+    defMenu.append("</ul></div></div>");
     defMenu.append("</div>");
 
+    // Analyse
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Analyse");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
-    defMenu.append("<li><a href='/lzv-jsp/pdfbox/upload'>Anzeige der PDF-Metadaten</a></li>");
-    defMenu.append("<li><a href='/lzv-jsp/verapdf/upload'>PDF/A-Validierung</a></div></li>");
-    defMenu.append("</ul></div>");
+    defMenu.append("<li><a href='/lzv-jsp/pdfbox/upload'>PDF-Validierung (PDFbox)</a></li>");
+    defMenu.append("<li><a href='/lzv-jsp/verapdf/upload'>PDF/A-Validierung (veraPDF)</a></li>");
+    defMenu.append("<li><a href='/lzv-jsp/pdfapilot/upload'>PDF- und PDF/A-Validierung (pdfaPilot)</a></li>");
+    defMenu.append("</ul></div></div>");
     defMenu.append("</div>");
 
+    // Werkzeuge
+    defMenu.append("<div class='dropdown'>");
+    defMenu.append("<div class='menu'>Werkzeuge");
+    defMenu.append("<div class='submenu'>"
+        + "<ul>");
+    defMenu.append("<li><a href='/lzv-api/version/pdfbox'>PDFbox</a></li>");
+    defMenu.append("<li><a href='/lzv-api/version/verapdf'>VeraPDF</a></li>");
+    defMenu.append("<li><a href='/lzv-api/version/pdfapilot'>pdfaPilot</a></li>");
+    defMenu.append("</ul></div></div>");
+    defMenu.append("</div>");
+    
+    
+    
     return defMenu.toString();
   }
 }

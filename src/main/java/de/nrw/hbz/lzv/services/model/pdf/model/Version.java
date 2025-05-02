@@ -39,7 +39,6 @@ public class Version {
     
     private static LinkedHashMap<String,String> setVersionLabel() {
       
-      logger.info("hier");
       LinkedHashMap<String,String> versionLabel = new LinkedHashMap<>();
       versionLabel.put("1.0", _1_0);
       versionLabel.put("1.1", _1_1);
@@ -55,6 +54,7 @@ public class Version {
     }
 
     private static LinkedHashMap<String,String> setVersionFormat() {
+      
       LinkedHashMap<String,String> versionFormat = new LinkedHashMap<>();
       versionFormat.put("1.0", "fmt/14");
       versionFormat.put("1.1", "fmt/15");
@@ -63,7 +63,7 @@ public class Version {
       versionFormat.put("1.4", "fmt/18");
       versionFormat.put("1.5", "fmt/19");
       versionFormat.put("1.6", "fmt/20");
-      versionFormat.put("1.7", "fmt/176");
+      versionFormat.put("1.7", "fmt/276");
       versionFormat.put("2.0", "fmt/1129");
       return versionFormat;
       

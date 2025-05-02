@@ -1,12 +1,15 @@
-package de.nrw.hbz.lzv.services.plugin.callas.service.impl;
+package de.nrw.hbz.lzv.services.plugin.pdfapilot.service.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import de.nrw.hbz.lzv.services.model.pdfa.result.PdfaPilotResult;
 
 /**
  * Class PilotRunner
@@ -25,6 +28,7 @@ public class PilotRunner {
 	
 	private String exitStateStr= null; 	
 	private String stoutStr = null;
+  private String errStr = null;
 	
 	/**
 	 * <p><em>Title: </em></p>
@@ -34,11 +38,12 @@ public class PilotRunner {
 	 * @param paramString
 	 * @param fileName 
 	 */
-	public void executePdfATool(String paramString, String fileName){
+	@Deprecated
+  public void executePdfATool(String paramString, String fileName){
 		// call to execute PDFA-Tool
 		
 		// Complete execute String 
-		String programPath = new String("/opt/pdfapilot/callas_pdfaPilot_CLI_4_x64/pdfaPilot"); 
+		String programPath = new String("/opt/pdfapilot/pdfaPilot"); 
 		String defaultParams = new String("--noprogress --nohits --substitute  " 
 				 + "--linkpath=https://pdfa.hbz-nrw.de/pdfa/reporttemplate "
 				 + "--fontfolder=/opt/pdfapilot/fontfolder --cachefolder=temp"
@@ -49,7 +54,7 @@ public class PilotRunner {
 				+ " --outputfile=" + Configuration.getResultDirPath() + fileName 
 				+ " " + Configuration.getTempDirPath() + fileName); 
 
-		log.debug("The execute String: " + executeString);
+		log.info("The complete execute String: " + executeString);
 		try{
 			//Process proc = java.lang.Runtime.getRuntime().exec("echo " + executeString);
 			Process proc = java.lang.Runtime.getRuntime().exec(executeString);
@@ -78,6 +83,57 @@ public class PilotRunner {
 		// ich um festzustellen, dass das Tool seine Arbeit beendet hat? 		
 	}
 
+  public void executePdfATool(String paramString){
+    String programPath = new String("/opt/pdfapilot/pdfaPilot"); 
+    String executeString = programPath + " " + paramString;
+        
+    log.info("The complete execute String: " + executeString);
+
+    StringBuffer lineBuffer = new StringBuffer("run for test only");
+    StringBuffer errLineBuffer = new StringBuffer("run for test run");
+    int exitState = -1;
+      
+    try{
+      Process proc = java.lang.Runtime.getRuntime().exec(executeString);
+      exitState = proc.waitFor();
+      InputStream stout = proc.getInputStream();
+      InputStream err = proc.getErrorStream();
+
+      InputStreamReader isr = new InputStreamReader(stout);
+      BufferedReader br = new BufferedReader(isr);
+      String line = null;
+      
+      lineBuffer = new StringBuffer();
+      while ((line = br.readLine()) != null){
+          lineBuffer.append(line + "\n");
+      }
+      
+      InputStreamReader eIR = new InputStreamReader(stout);
+      BufferedReader eBR = new BufferedReader(eIR);
+      String errLine = null;
+      errLineBuffer = new StringBuffer();
+      while ((errLine = eBR.readLine()) != null){
+        errLineBuffer.append(errLine + "\n");
+    }  
+    
+      log.info("STOUT: " + lineBuffer.toString());
+      log.info("Exit State: " + exitState);
+      stoutStr = lineBuffer.toString();
+      errStr = errLineBuffer.toString();
+      exitStateStr = Integer.toString(exitState);
+      
+      
+    }catch(Exception Exc){
+      log.error(Exc);
+    }
+   
+  }
+
+	
+  public String getErrStr(){
+    return errStr;
+  }
+
 	public String getStoutStr(){
 		return stoutStr;
 	}
@@ -85,4 +141,5 @@ public class PilotRunner {
 	public String getExitStateStr(){
 		return exitStateStr;
 	}
+		
 }

@@ -37,7 +37,7 @@ public class RestServicesTest {
   @Test
   public void versionTest() {
     JerseyServiceImpl jSI = new JerseyServiceImpl();
-    String result = jSI.getVersionJson();
+    String result = jSI.getVeraPdfVersionJson();
     assertNotNull(result);
     
   }
@@ -51,7 +51,7 @@ public class RestServicesTest {
       File testFile = new File("src/test/resources/pdfa_1b.pdf");
       
       contDisp = new FormDataContentDisposition("form-data;name=pdfa_1b.pdf;filename=pdfa_1b.pdf");
-      String result = jSI.validatePdfA(FileUtil.loadFile(testFile), contDisp);
+      String result = jSI.validateVeraPdfHtml(FileUtil.loadFile(testFile), contDisp);
       System.out.println(result);
     } catch (ParseException e) {
       // TODO Auto-generated catch block
@@ -68,7 +68,7 @@ public class RestServicesTest {
     File testFile = new File("src/test/resources/pdfa_1b.pdf");
     try {
       contDisp = new FormDataContentDisposition("form-data;name=pdfa_1b.pdf;filename=pdfa_1b.pdf");
-      File editedFile =  jSI.editMD(FileUtil.loadFile(testFile), contDisp, "Author", "aquast");
+      File editedFile =  jSI.editMDPdfBox(FileUtil.loadFile(testFile), contDisp, "Author", "aquast");
       
       logger.info(editedFile.getAbsolutePath());
     } catch (ParseException e) {

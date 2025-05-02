@@ -78,6 +78,7 @@ Recent EndPoints are:
 
 - https://your.server/lzv-api/verapdf/pversion
 
+---
 
 usage of:
 
@@ -87,17 +88,23 @@ will return
 
 `[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
 
+---
+
 usage of: 
 
 `curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/validate` 
 
 will give you the validation result for the pdfa_1b.pdf test file as html response
  
+---
+
 usage of: 
 
 `curl -XPOST -H "Accept: application/json" --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/pversion` 
 
 will give you version and available metadata frm the pdfa_1b.pdf test file as json response
+
+---
 
 usage of: 
 
