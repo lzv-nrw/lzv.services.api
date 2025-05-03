@@ -3,8 +3,6 @@
  */
 package de.nrw.hbz.lzv.services.model.json.impl;
 
-import java.util.Calendar;
-
 import de.nrw.hbz.lzv.services.util.TimePrefix;
 
 /**
@@ -13,7 +11,6 @@ import de.nrw.hbz.lzv.services.util.TimePrefix;
 public class PdfCreationDate {
   
   private String creationDate = null;
-  private Calendar calendar = Calendar.getInstance();
   
   /**
    * @return the creationDate
