@@ -11,6 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.json.JSONObject;
+
+import de.nrw.hbz.lzv.services.model.json.model.PdfACompliance;
+import de.nrw.hbz.lzv.services.model.json.model.PdfDate;
+import de.nrw.hbz.lzv.services.model.json.model.PdfVersion;
 import de.nrw.hbz.lzv.services.model.pdf.model.Version;
 
 /**

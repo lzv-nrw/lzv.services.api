@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.model.json.impl;
+package de.nrw.hbz.lzv.services.model.json.model;
 
 /**
  * 

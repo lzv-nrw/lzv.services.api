@@ -1,20 +1,15 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.model.json.impl;
+package de.nrw.hbz.lzv.services.model.json.model;
 
 /**
  * 
  */
-public class PdfTitle {
+public class PdfPages {
   
   private String title = null;
-  private static String name = "title";
-  
-  
-  public static String getName() {
-    return name;
-  }
+
   
   public String getTitle() {
     return title;

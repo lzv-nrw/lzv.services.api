@@ -26,10 +26,10 @@ import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.results.ValidationResult;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 
-import de.nrw.hbz.lzv.services.model.json.impl.PdfAuthor;
-import de.nrw.hbz.lzv.services.model.json.impl.PdfCreator;
+import de.nrw.hbz.lzv.services.model.json.model.PdfAuthor;
+import de.nrw.hbz.lzv.services.model.json.model.PdfCreator;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfModelImpl;
-import de.nrw.hbz.lzv.services.model.json.impl.PdfTitle;
+import de.nrw.hbz.lzv.services.model.json.model.PdfTitle;
 
 /**
  * 

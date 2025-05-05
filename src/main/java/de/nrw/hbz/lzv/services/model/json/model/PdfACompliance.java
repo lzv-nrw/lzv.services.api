@@ -1,9 +1,9 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.model.json.impl;
+package de.nrw.hbz.lzv.services.model.json.model;
 
-import de.nrw.hbz.lzv.services.model.json.model.SimpleObject;
+import de.nrw.hbz.lzv.services.model.json.impl.AbstractSimpleObject;
 
 /**
  * Implementation of PdfACompliance-Model
