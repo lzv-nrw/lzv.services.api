@@ -3,54 +3,59 @@
  */
 package de.nrw.hbz.lzv.services.model.json.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import de.nrw.hbz.lzv.services.model.json.model.JsonSimpleObject;
+
 /**
- * <p>Interface defines some basic methods required for a minimal to.science object 
- * representing data structure of
- * </p>
- * <p>
- * <pre>
- * "model" : {
- *           "prefLabel" : "label",
- *           "@id" : "objectUri",
- *           "type" : "isOfType"
- *           } 
- * </pre>
- * </p>
  * 
- * @author aquast
- *
  */
-public interface SimpleObject {
+public abstract class SimpleObject implements JsonSimpleObject {
+
+  Map<String,String> simpleObj = new HashMap<>();
   
-  /**
-   * @return Id as String representing the complete Id-URL of the respective resource
-   */
-  public String getId();
+  private String name = null; 
+  private String id = null; 
+  private String prefLabel = null; 
+
+  
+  public String getId() {
+    return id;
+  }
+
+  public String getPrefLabel() {
+    return prefLabel;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+    
+  }
+
+  public void setPrefLabel(String prefLabel) {
+    this.prefLabel = prefLabel;
+    
+  }
+
+  public String getType() {
+    return null;
+  }
+
+  public void setType(String Type) {
+
+  }
+  
+  public String getName() {
+    return name;
+  }
   
   
-  /**
-   * @return the preferred name, title or label of the respective resource
-   */
-  public String getPrefLabel();
-  
-  /**
-   * @return a type in the context of the respective resource
-   */
-  public String getType();
-  
-  /**
-   * @param id an Id as complete Id-URI representing a respective resource
-   */
-  public void setId(String id);
-  
-  /**
-   * @param prefLabel a prefered name, title or label for the respective resource 
-   */
-  public void setPrefLabel(String prefLabel);
-  
-  /**
-   * @param Type a type for the respective resource
-   */
-  public void setType(String Type);
-  
+  public Map<String,String> getMap() {
+    simpleObj.put("prefLabel", prefLabel);
+    simpleObj.put("@id", id);
+    return simpleObj;
+  }
+
+
 }

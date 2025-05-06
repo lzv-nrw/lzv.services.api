@@ -20,7 +20,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
   public final static String PLUGIN_NAME = "pdfapilot";
 
   @Override
-  public Map<String,Object> analyze(File file, String fileName) {
+  public void analyze(File file, String fileName) {
     
     Map<String,Object> pdfMd = new HashMap<>();
     Map<String,String> versionMap = new HashMap<>();
@@ -62,7 +62,19 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     pdfMd.put("File", fileName);
     pdfMd.put("PDF/A compliance", complianceMap);
 
-    return pdfMd;
+    // return pdfMd.toString();
+  }
+
+  @Override
+  public String getHtml() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public String getJson() {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 

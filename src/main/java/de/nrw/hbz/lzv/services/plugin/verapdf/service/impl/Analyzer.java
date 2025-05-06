@@ -4,19 +4,18 @@
 package de.nrw.hbz.lzv.services.plugin.verapdf.service.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.verapdf.core.EncryptedPdfException;
 import org.verapdf.core.ModelParsingException;
 import org.verapdf.core.ValidationException;
-import org.verapdf.metadata.fixer.entity.InfoDictionary;
-import org.verapdf.metadata.fixer.entity.Metadata;
 import org.verapdf.metadata.fixer.entity.PDFDocument;
 import org.verapdf.pdfa.Foundries;
 import org.verapdf.pdfa.PDFAParser;
@@ -26,60 +25,63 @@ import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.results.ValidationResult;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 
-import de.nrw.hbz.lzv.services.model.json.model.PdfAuthor;
-import de.nrw.hbz.lzv.services.model.json.model.PdfCreator;
-import de.nrw.hbz.lzv.services.model.json.impl.PdfModelImpl;
-import de.nrw.hbz.lzv.services.model.json.model.PdfTitle;
+import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
+import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
+import de.nrw.hbz.lzv.services.plugin.verapdf.provider.GFFoundryProvider;
 
 /**
  * 
  */
 public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
-  private PDFAValidator validator = null;
-  private static PDFAParser pdfParser = null;
-  private InputStream pdfStream = null;
-  private File pdfFile = null;
-  
   final static Logger log = LogManager.getLogger(Analyzer.class);
 
-
-  @Override
-  public Map<String,Object> analyze(File file, String fileName) {
-    // TODO Auto-generated method stub
-    
-    return null;
+  private PDFAValidator validator = null;
+  private static PDFAParser pdfParser = null;
+  private PdfInfo pdfInfo = null;
+  private PdfACompliance pdfACompl = null;
+  private InputStream pdfStream = null;
+  private StringBuffer resultBuffer = new StringBuffer();
+   
+  public Analyzer() {
+    GFFoundryProvider.setFoundry();  
   }
   
   
-  /**
-   * @param fileInputStream
-   * @return
-   */
-  public String validatePDF(InputStream fileInputStream) {
-    
-    // set no compliancy as default
-    String result = "<p class=\"error\">PDF is NOT compliant to any PDF/A flavour</p>";
-    Set<String> pdfaFlavours = PDFAFlavour.getFlavourIds();
-    Iterator<String> pfIt = pdfaFlavours.iterator();
-
+  @Override
+  public void analyze(File file, String fileName) {
     VeraPDFFoundry vpf = Foundries.defaultInstance();
+
     try {
+      FileInputStream fileInputStream = new FileInputStream(file);
       pdfParser = vpf.createParser(fileInputStream);
       PDFDocument pdfDocument  = pdfParser.getPDFDocument();
-      
-     
-     
-      PdfModelImpl pdfModel = new PdfModelImpl(null);
-    } catch (ModelParsingException | EncryptedPdfException e) {
+
+      // get PDF information in generic form
+      pdfInfo = getPdfInfo(pdfDocument);
+
+      // validate for PDF/A
+      log.info("Check for these PDF/A flavours : ");
+      validateAllFlavours(fileInputStream);
+
+    } catch (FileNotFoundException | ModelParsingException | EncryptedPdfException e) {
       StringBuffer eResult = new StringBuffer();
       eResult.append("<p class=\"error\">Something went wrong</p>");
       eResult.append("<p>" + e.getMessage() + "</p><p>");
-      return result = eResult.toString();
+      // return result = eResult.toString();
     }
+    
 
-    log.info("Check for these PDF/A flavours : ");
+   
+  }
+  
+  private ValidationResult validateAllFlavours(InputStream fileInputStream) {
+    Set<String> pdfaFlavours = PDFAFlavour.getFlavourIds();
+    Iterator<String> pfIt = pdfaFlavours.iterator();
 
+    pdfACompl = new PdfACompliance();
+    pdfACompl.setIsPdfACompliant(false);
+    
     while (pfIt.hasNext()) {
       String flavour = pfIt.next();
       if (!flavour.equals("0") && !flavour.startsWith("w")) {
@@ -88,17 +90,19 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
         ValidationResult vResult = validate(fileInputStream);
         
         if (vResult.isCompliant()) {
-          
-          
-          result = "<p class=\"success\">PDF is compliant to PDF/A, Version " + pdfParser.getFlavour().getId() + "</p>";
+          pdfACompl.setIsPdfACompliant(true);
+          pdfACompl.setCompliance(pdfParser.getFlavour().getId());
         }
-
       }
     }
-
-    return result;
+    return null;
   }
+    
 
+  /**
+   * @param fileInputStream
+   * @return
+   */
   private ValidationResult validate(InputStream fileInputStream) {
     ValidationResult vResult = null;
     try {
@@ -113,18 +117,41 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   }
 
   /**
+   * get the information stored in the PDF information part  
    * @return
    */
-  private Map<String,Object> getPdfInfo(PDFDocument pdfDocument){
-    Map<String,Object> pdfInfo = new LinkedHashMap<>(); 
-    
-    InfoDictionary infoDict = pdfDocument.getInfoDictionary();
-    
-    pdfInfo.put(PdfTitle.getName(), infoDict.getTitle());
-    pdfInfo.put(PdfAuthor.getName(), infoDict.getAuthor());
-    pdfInfo.put(PdfCreator.getName(), infoDict.getCreator());
+  private PdfInfo getPdfInfo(PDFDocument pdfDocument){
+    PdfInfoProvider infoProvider = new PdfInfoProvider(pdfDocument.getInfoDictionary()); 
+    return infoProvider.getPdfInfo();
+  }
+  
+  /**
+   * set the flavour aka PDF/A level you wish to analyze PDF against 
+   * @param flavour
+   */
+  public void setFlavour(String flavour) {
+    validator = ValidatorFactory.createValidator(PDFAFlavour.fromString(flavour), true);
+  }
 
-    return pdfInfo;
-  };
+
+  @Override
+  public String getHtml() {
+    
+    resultBuffer.append(pdfInfo.toHtml());
+    resultBuffer.append(pdfACompl.toHtml());
+    return resultBuffer.toString();
+  }
+
+
+  @Override
+  public String getJson() {
+    JSONObject resultJson = new JSONObject();
+
+    resultJson.put("pdfInfo", pdfInfo);
+    resultJson.put("pdfACompliance", pdfACompl);
+    return resultJson.toString(3);
+  }
+
+  
 
 }

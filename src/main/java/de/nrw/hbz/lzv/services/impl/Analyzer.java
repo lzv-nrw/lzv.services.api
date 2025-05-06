@@ -29,6 +29,10 @@ public abstract class Analyzer {
 
   }
   
-  public abstract Map<String,Object> analyze(File file, String fileName);
-  
+  public abstract void analyze(File file, String fileName);
+
+  public abstract String getHtml();
+
+  public abstract String getJson();
+
 }

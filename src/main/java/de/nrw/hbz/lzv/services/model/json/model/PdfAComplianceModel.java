@@ -3,14 +3,12 @@
  */
 package de.nrw.hbz.lzv.services.model.json.model;
 
-import de.nrw.hbz.lzv.services.model.json.impl.AbstractSimpleObject;
-
 /**
- * Implementation of PdfACompliance-Model
- * uses default SimpleObject structure
+ * Implementation of PdfAComplianceModel-Model
+ * uses default JsonSimpleObject structure
  * derived from lobid and to.science
  */
-public class PdfACompliance extends AbstractSimpleObject implements SimpleObject {
+public class PdfAComplianceModel extends SimpleObject implements JsonSimpleObject {
 
   private String name = "compliance";
   private String id = null; 
