@@ -19,16 +19,25 @@ public class PdfInfoProvider {
   
   public PdfInfoProvider(PDDocumentInformation docInf) {
     this.pdDocInfo = docInf;
+    setPdfInfo();
   }
 
   public void setPdfInfo() {
     
+    pdfInfo = new PdfInfo();
     pdfInfo.setPdfTitle(pdDocInfo.getTitle());
     pdfInfo.setPdfAuthor(pdDocInfo.getAuthor());
     pdfInfo.setPdfCreator(pdDocInfo.getCreator());
     pdfInfo.setPdfProducer(pdDocInfo.getProducer());
-    pdfInfo.setPdfCreationDate(TimePrefix.setFormat(pdDocInfo.getCreationDate()));
+    if(pdDocInfo.getCreationDate() != null) {
+      pdfInfo.setPdfCreationDate(TimePrefix.setFormat(pdDocInfo.getCreationDate()));      
+    }
+    if(pdDocInfo.getModificationDate() != null) {
     pdfInfo.setPdfModificationDate(TimePrefix.setFormat(pdDocInfo.getModificationDate()));
+    } else {
+      pdfInfo.setPdfModificationDate(TimePrefix.getTimePrefix());
+    }
+    
     pdfInfo.setPdfKeywords(pdDocInfo.getKeywords());
     pdfInfo.setPdfSubject(pdDocInfo.getSubject());
   }

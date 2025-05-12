@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
+import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
 import de.nrw.hbz.lzv.services.model.pdf.model.Compliance;
 import de.nrw.hbz.lzv.services.model.pdf.model.Version;
 
@@ -31,8 +33,17 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     pRunner.executePdfATool(" --quickpdfinfo " + file.getAbsolutePath() );
     
     String stout = pRunner.getStoutStr();
+    
+    pdfInfo = getPdfInfo(stout);
+    
+    pdfACompl = new PdfACompliance();
+    
+    
+    
     Stream<String> resultLines  = stout.lines();
     Iterator<String> rlIt = resultLines.iterator();
+    
+    
     
     while(rlIt.hasNext()) {
       String line = rlIt.next();
@@ -64,6 +75,16 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
     // return pdfMd.toString();
   }
+  
+  /**
+   * get the information stored in the PDF information part  
+   * @return
+   */
+  private PdfInfo getPdfInfo(String stout){
+    PdfInfoProvider infoProvider = new PdfInfoProvider(stout); 
+    return infoProvider.getPdfInfo();
+  }
+
 
   @Override
   public String getHtml() {

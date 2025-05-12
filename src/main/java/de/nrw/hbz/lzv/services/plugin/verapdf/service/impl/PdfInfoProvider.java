@@ -18,10 +18,11 @@ public class PdfInfoProvider {
   
   public PdfInfoProvider(InfoDictionary infoDict) {
     this.infoDict = infoDict;
+    setPdfInfo();
   }
 
   public void setPdfInfo() {
-    
+    pdfInfo = new PdfInfo();
     pdfInfo.setPdfTitle(infoDict.getTitle());
     pdfInfo.setPdfAuthor(infoDict.getAuthor());
     pdfInfo.setPdfCreator(infoDict.getCreator());

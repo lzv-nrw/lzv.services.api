@@ -28,6 +28,10 @@ public interface PdfDocumentInformation {
 
   public void setPdfSubject(String subject);
   
+  void setInfoElement(String key, String value);
+
   public String toHtml();
+
+  public String toJson();
 	
 }

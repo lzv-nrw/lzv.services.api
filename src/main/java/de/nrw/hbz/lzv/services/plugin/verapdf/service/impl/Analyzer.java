@@ -28,6 +28,7 @@ import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
 import de.nrw.hbz.lzv.services.plugin.verapdf.provider.GFFoundryProvider;
+import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
  * 
@@ -38,9 +39,6 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
   private PDFAValidator validator = null;
   private static PDFAParser pdfParser = null;
-  private PdfInfo pdfInfo = null;
-  private PdfACompliance pdfACompl = null;
-  private InputStream pdfStream = null;
   private StringBuffer resultBuffer = new StringBuffer();
    
   public Analyzer() {
@@ -52,6 +50,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   public void analyze(File file, String fileName) {
     VeraPDFFoundry vpf = Foundries.defaultInstance();
 
+    this.fileName = fileName;
     try {
       FileInputStream fileInputStream = new FileInputStream(file);
       pdfParser = vpf.createParser(fileInputStream);
@@ -75,7 +74,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
    
   }
   
-  private ValidationResult validateAllFlavours(InputStream fileInputStream) {
+  private void validateAllFlavours(InputStream fileInputStream) {
     Set<String> pdfaFlavours = PDFAFlavour.getFlavourIds();
     Iterator<String> pfIt = pdfaFlavours.iterator();
 
@@ -95,7 +94,6 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
         }
       }
     }
-    return null;
   }
     
 
@@ -106,7 +104,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   private ValidationResult validate(InputStream fileInputStream) {
     ValidationResult vResult = null;
     try {
-      pdfStream = fileInputStream;
+      //pdfStream = fileInputStream;
       vResult = validator.validate(pdfParser);
 
     } catch (ValidationException e) {
@@ -137,8 +135,16 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   @Override
   public String getHtml() {
     
+    resultBuffer.append(HtmlTemplate.getHtmlHead());
+
+    resultBuffer.append("<h1>Ergebnis der Prüfung</h1>\n");
+    resultBuffer.append("<p>" + fileName + "</p>");
     resultBuffer.append(pdfInfo.toHtml());
     resultBuffer.append(pdfACompl.toHtml());
+
+    resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
+    resultBuffer.append(HtmlTemplate.getHtmlFoot());
+
     return resultBuffer.toString();
   }
 
@@ -146,7 +152,8 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   @Override
   public String getJson() {
     JSONObject resultJson = new JSONObject();
-
+    
+    resultJson.put("file", fileName);
     resultJson.put("pdfInfo", pdfInfo);
     resultJson.put("pdfACompliance", pdfACompl);
     return resultJson.toString(3);

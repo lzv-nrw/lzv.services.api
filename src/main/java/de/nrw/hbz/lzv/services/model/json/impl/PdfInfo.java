@@ -76,10 +76,18 @@ public class PdfInfo implements PdfDocumentInformation {
     pdfInfo.put(PdfInfoModel.SUBJECT, subject);
   }
   
+  @Override
+  public void setInfoElement(String key, String value) { 
+    if(PdfInfoModel.getKeys().contains(key)) {
+      pdfInfo.put(key, value);
+    }
+  }
+  
   
   /**
    * @return PdfModel as html fragment
    */
+  @Override
   public String toHtml() {
     String listStart = "<p>PDF Information</p><ul>\n";
     String listEnd = "</ul>\n";
@@ -103,6 +111,7 @@ public class PdfInfo implements PdfDocumentInformation {
     return htmlBuffer.toString();
   }
   
+  @Override
   public String toJson() {
     return pdfInfo.toString(3);
   }

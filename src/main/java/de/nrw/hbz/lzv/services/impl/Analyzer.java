@@ -7,12 +7,21 @@ import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
 
+import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
+import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
+
 /**
  * 
  */
 public abstract class Analyzer {
   private static Hashtable<String, Analyzer> subClasses = new Hashtable<>(); 
-  
+
+  public PdfInfo pdfInfo = null;
+  public PdfACompliance pdfACompl = null;
+
+  public StringBuffer resultBuffer = new StringBuffer();
+  public String fileName = null;
+
   public static Analyzer getInstance(String name) {
     init();
     //String path = "de.nrw.hbz.lzv.services.plugin." + name + ".service.impl.VersionInfo";
