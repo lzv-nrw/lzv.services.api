@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.nrw.hbz.lzv.services.plugin.verapdf.service.rest.impl;
+package de.nrw.hbz.lzv.services.rest.impl;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
@@ -174,16 +174,34 @@ public class JerseyServiceImpl {
       fileName = contentDisposition.getFileName();
     }
 
-    String result = "<p class=\"error\">Datei konnte nicht verarbeitet werden</p>";
-    ServiceImpl sImpl = new ServiceImpl();
-    result = sImpl.validatePDF(fileInputStream);
+    File file = FileUtil.saveTempFile(fileInputStream, "verapdf.pdf");
 
-    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n<p>Dateiname: " + fileName + "</p>\n" + result);
-    htmlResult.append("<p><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Datei prüfen</a>");
-    htmlResult.append(HtmlTemplate.getHtmlFoot());
+    Analyzer veraPdfAnalyzer = Analyzer.getInstance("verapdf");
+    veraPdfAnalyzer.analyze(file, fileName);
 
-    return htmlResult.toString();
+    file.delete();
+    return veraPdfAnalyzer.getHtml();
+  }
+
+  @POST
+  @Path("validate/verapdf")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String validateVeraPdfJson(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
+
+    String fileName = "-";
+    if (contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+
+    File file = FileUtil.saveTempFile(fileInputStream, "verapdf.pdf");
+
+    Analyzer veraPdfAnalyzer = Analyzer.getInstance("verapdf");
+    veraPdfAnalyzer.analyze(file, fileName);
+
+    file.delete();
+    return veraPdfAnalyzer.getJson();
 
   }
 
@@ -201,16 +219,11 @@ public class JerseyServiceImpl {
 
     File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
 
-    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
-    Map<String, Object> resultMap = serviceImpl.getPdfMD(file, fileName);
-
-    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n");
-    htmlResult.append(new PdfModelImpl(resultMap).toHtml());
-    htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a>");
-
-    htmlResult.append(HtmlTemplate.getHtmlFoot());
-    return htmlResult.toString();
+    Analyzer pdfBoxAnalyzer = Analyzer.getInstance("pdfbox");
+    pdfBoxAnalyzer.analyze(file, fileName);
+    
+    file.delete();
+    return pdfBoxAnalyzer.getHtml();
 
   }
 
@@ -225,14 +238,13 @@ public class JerseyServiceImpl {
     if (contentDisposition != null) {
       fileName = contentDisposition.getFileName();
     }
-
     File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
 
-    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
+    Analyzer pdfBoxAnalyzer = Analyzer.getInstance("pdfbox");
+    pdfBoxAnalyzer.analyze(file, fileName);
 
-    Map<String, Object> resultMap = serviceImpl.getPdfMD(file, fileName);
-    String result = new PdfModelImpl(resultMap).toString();
-    return result;
+    file.delete();
+    return pdfBoxAnalyzer.getJson();
 
   }
 
@@ -251,11 +263,11 @@ public class JerseyServiceImpl {
     File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
 
     Analyzer pdfaPilotAnalyzer = Analyzer.getInstance("pdfapilot");
-    Map<String, Object> resultMap = pdfaPilotAnalyzer.analyze(file, fileName);
+    pdfaPilotAnalyzer.analyze(file, fileName);
 
     StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
     htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n");
-    htmlResult.append(new PdfModelImpl(resultMap).toHtml());
+    htmlResult.append(pdfaPilotAnalyzer.getHtml());
     htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
     // htmlResult.append(fileName);
 
@@ -264,6 +276,12 @@ public class JerseyServiceImpl {
 
   }
 
+  /**
+   * provide RestFul endpoint for PDF validation with pdfaPilot 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as json
+   */
   @POST
   @Path("validate/pdfapilot")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -279,11 +297,11 @@ public class JerseyServiceImpl {
     File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
 
     Analyzer pdfaPilotAnalyzer = Analyzer.getInstance("pdfapilot");
-    Map<String, Object> resultMap = pdfaPilotAnalyzer.analyze(file, fileName);
+    pdfaPilotAnalyzer.analyze(file, fileName);
 
     StringBuffer pilotSb = new StringBuffer();
     // pilotSb.append("{'pdfaPilot validation result :");
-    pilotSb.append(new PdfModelImpl(resultMap).toString());
+    pilotSb.append(pdfaPilotAnalyzer.getJson());
     return pilotSb.toString();
 
   }

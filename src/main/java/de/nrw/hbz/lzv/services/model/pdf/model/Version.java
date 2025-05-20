@@ -53,6 +53,10 @@ public class Version {
       return versionLabel; 
     }
 
+    /**
+     * Map provides Pronom format identifier for each PDF Version
+     * @return pronom identifier Map
+     */
     private static LinkedHashMap<String,String> setVersionFormat() {
       
       LinkedHashMap<String,String> versionFormat = new LinkedHashMap<>();

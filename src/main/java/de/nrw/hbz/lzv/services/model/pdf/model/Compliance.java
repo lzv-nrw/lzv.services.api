@@ -47,17 +47,17 @@ public class Compliance {
     private static LinkedHashMap<String,String> setComplianceFormat() {
 
       LinkedHashMap<String,String> complianceFormat = new LinkedHashMap<>(); 
-      complianceFormat.put("1A", "fmt/95");
-      complianceFormat.put("1B", "fmt/354");
-      complianceFormat.put("2A", "fmt/476");
-      complianceFormat.put("2U", "fmt/478");
-      complianceFormat.put("2B", "fmt/477");
-      complianceFormat.put("3A", "fmt/479");
-      complianceFormat.put("3U", "fmt/481");
-      complianceFormat.put("3B", "fmt/480");
-      complianceFormat.put("4",  "fmt/1910");
-      complianceFormat.put("4E", "fmt/1911");
-      complianceFormat.put("4F", "fmt/1912");
+      complianceFormat.put( _1A, "fmt/95");
+      complianceFormat.put( _1B, "fmt/354");
+      complianceFormat.put( _2A, "fmt/476");
+      complianceFormat.put( _2U, "fmt/478");
+      complianceFormat.put( _2B, "fmt/477");
+      complianceFormat.put( _3A, "fmt/479");
+      complianceFormat.put( _3U, "fmt/481");
+      complianceFormat.put( _3B, "fmt/480");
+      complianceFormat.put( _4,  "fmt/1910");
+      complianceFormat.put( _4E, "fmt/1911");
+      complianceFormat.put( _4F, "fmt/1912");
       return complianceFormat;
     }
     

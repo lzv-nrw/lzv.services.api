@@ -11,6 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.json.JSONObject;
+
+import de.nrw.hbz.lzv.services.model.json.model.PdfAComplianceModel;
+import de.nrw.hbz.lzv.services.model.json.model.PdfDate;
+import de.nrw.hbz.lzv.services.model.json.model.PdfVersion;
 import de.nrw.hbz.lzv.services.model.pdf.model.Version;
 
 /**
@@ -21,7 +25,7 @@ public class PdfModelImpl {
   private static Logger logger = LogManager.getLogger(PdfModelImpl.class);
   private JSONObject pdfModel = new JSONObject();
   private PdfVersion pdfVersion = new PdfVersion();
-  private PdfACompliance pdfCompliance = new PdfACompliance();
+  private PdfAComplianceModel pdfCompliance = new PdfAComplianceModel();
   
   /**
    * Constructor takes Map of PDFbox detected values into PdfModel

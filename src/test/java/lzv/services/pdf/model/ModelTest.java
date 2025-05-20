@@ -22,7 +22,7 @@ public class ModelTest {
   
   public void getCompliance() {
     System.out.println("Ergebnis: " + Compliance.labelExists("1A"));
-    System.out.println(Compliance.getComplianceUrl("1A"));
+    System.out.println(Compliance.getComplianceUrl("1a"));
     
   }
   

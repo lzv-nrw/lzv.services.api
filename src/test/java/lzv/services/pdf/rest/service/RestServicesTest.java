@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.junit.Test;
 
-import de.nrw.hbz.lzv.services.plugin.verapdf.service.rest.impl.JerseyServiceImpl;
+import de.nrw.hbz.lzv.services.rest.impl.JerseyServiceImpl;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
 /**
@@ -30,7 +30,8 @@ public class RestServicesTest {
     
     logger.info("Hier bin ich");
     RestServicesTest rst = new RestServicesTest();
-    rst.validate();
+    rst.validateVeraPdf();
+    rst.validatePdfBox();
     rst.editPdf();
   }
 
@@ -43,7 +44,7 @@ public class RestServicesTest {
   }
   
   @Test
-  public void validate() {
+  public void validateVeraPdf() {
     // TODO: learn how to set FormDataContentDisposition correctly
     JerseyServiceImpl jSI = new JerseyServiceImpl();
     FormDataContentDisposition contDisp;
@@ -59,6 +60,23 @@ public class RestServicesTest {
     }
   }
   
+  @Test
+  public void validatePdfBox() {
+    // TODO: learn how to set FormDataContentDisposition correctly
+    JerseyServiceImpl jSI = new JerseyServiceImpl();
+    FormDataContentDisposition contDisp;
+    try {
+      File testFile = new File("src/test/resources/pdfa_1b.pdf");
+      
+      contDisp = new FormDataContentDisposition("form-data;name=pdfa_1b.pdf;filename=pdfa_1b.pdf");
+      String result = jSI.validatePdfBoxHtml(FileUtil.loadFile(testFile), contDisp);
+      System.out.println(result);
+    } catch (ParseException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
   @Test
   public void editPdf() {
     // TODO: learn how to set FormDataContentDisposition correctly
