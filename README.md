@@ -30,7 +30,7 @@ For compilation and packaging:
 
 - OpenJDK 1.11
 
-- Maven 3.x (e.g.MVN 3.9.9) for integration and deployment
+- Maven 3.x (e.g. MVN 3.9.9) for integration and deployment
 
 - git 2.x
 
@@ -62,53 +62,63 @@ If all tests successfully passed you will find file `lzv-api.war` in newly creat
 For testing or development purposes lzv.services.pdf brings a jetty server with it. 
 
 - After cloning software with git and changed into newly created directory `lzv.services.api` you can either run `mvn jetty:run`from console or
+
 - import lzv.services.pdf as new maven project into Eclipse and run jetty by configure "Run Configuration" with goal jetty:run
+
 - jetty starts a Web server running under `http://localhost:8080`
+
 - you can reach the available services by within our browser via `http://localhost:8080/lzv-api/about` which gives you a list of available services. 
   
 ## Use API calls ##
 
 With cUrl or any other tool for web requests you can request the available endpoints.
 
-Recent EndPoints are:
+Available EndPoints are:
 
-- https://your.server/lzv-api/verapdf/version
+- `https://your.server/lzv-api/version/[pdfbox|verapdf|pdfapilot]` GET
 
-- https://your.server/lzv-api/verapdf/validate
+- `https://your.server/lzv-api/validate/[pdfbox|verapdf|pdfapilot]` POST
 
-- https://your.server/lzv-api/verapdf/pversion
+- `https://your.server/lzv-api/createpdfa/pdfapilot` POST
 
----
+where `[plugin]` is mandatory
 
+
+### simple GET example ### 
+ 
 usage of:
 
-`curl -XGET -H "Accept: application/json" http://localhost/lzv-api/verapdf/version > test.json` 
+`curl -XGET -H "Accept: application/json" http://localhost/lzv-api/version/veradpdf > test.json` 
 
 will return  
 
 `[{"plugin" : "PDFA-Validation with veraPDF","serviceInfo" : {"veraPDF Version" : "1.26.5"}}]` into new file test.json
 
----
+
+### use validate endpoints ###
 
 usage of: 
 
-`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/validate` 
+`curl -XPOST -H "Accept: application/json" --form file='@src/test/resources/pdfa_1b.pdf' http://localhost:8080/lzv-api/validate/verapdf` 
+
+will give you version and available metadata from the pdfa_1b.pdf test file as json response
+
+
+usage of: 
+
+`curl -XPOST --form file='@src/test/resources/pdfa_1b.pdf' http://localhost:8080/lzv-api/validate/verapdf` 
 
 will give you the validation result for the pdfa_1b.pdf test file as html response
- 
----
 
-usage of: 
 
-`curl -XPOST -H "Accept: application/json" --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/pversion` 
+Apache pdfBox and Callas pdfaPilot can be used in the same manner by replacing plugin identifier `verapdf` with `pdfbox` or `pdfapilot`
+  
 
-will give you version and available metadata frm the pdfa_1b.pdf test file as json response
+### create PDF/A via endpoint ###
 
----
+PDF/A creation is limited currently to the pdfaPilot plugin, as this is the only plugin providing different scenarios for PDF/A creation.  
 
-usage of: 
+`curl -XPOST -H "Accept: text/html" -F file='@src/test/resources/pdf.pdf' -F flavour=1b  http://localhost:8080/lzv-api/convert/pdfapilot`
 
-`curl -XPOST -H "Accept: text/html" --form file='@src/test/resources/pdfa_1b.pdf'  http://localhost:8080/lzv-api/verapdf/pversion` 
-
-will give you version and available metadata from the pdfa_1b.pdf test file as html fragment response
+The `flavour` parameter is mandatory for this endpoint
 

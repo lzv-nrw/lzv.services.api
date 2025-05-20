@@ -276,6 +276,12 @@ public class JerseyServiceImpl {
 
   }
 
+  /**
+   * provide RestFul endpoint for PDF validation with pdfaPilot 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as json
+   */
   @POST
   @Path("validate/pdfapilot")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })

@@ -9,10 +9,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.json.JSONObject;
+
 import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
 import de.nrw.hbz.lzv.services.model.pdf.model.Compliance;
 import de.nrw.hbz.lzv.services.model.pdf.model.Version;
+import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
  * 
@@ -63,14 +66,14 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     }
     
     prefLabel = (String) pdfMd.get("PDFA");
-    String stripPrefLabel = prefLabel.substring(6,8).toUpperCase();
+    String stripPrefLabel = prefLabel.substring(6,8);
     
     if(Compliance.labelExists(stripPrefLabel)){
       complianceMap.put("prefLabel", stripPrefLabel);
       complianceMap.put("@id", Compliance.getComplianceUrl(stripPrefLabel));
     }
     
-    pdfMd.put("File", fileName);
+    pdfMd.put("file", fileName);
     pdfMd.put("PDF/A compliance", complianceMap);
 
     // return pdfMd.toString();
@@ -88,14 +91,27 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
   @Override
   public String getHtml() {
-    // TODO Auto-generated method stub
-    return null;
+    resultBuffer.append(HtmlTemplate.getHtmlHead());
+
+    resultBuffer.append("<h1>Ergebnis der Prüfung</h1>\n");
+    resultBuffer.append("<p>" + fileName + "</p>");
+    resultBuffer.append(pdfInfo.toHtml());
+    resultBuffer.append(pdfACompl.toHtml());
+
+    resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
+    resultBuffer.append(HtmlTemplate.getHtmlFoot());
+
+    return resultBuffer.toString();
   }
 
   @Override
   public String getJson() {
-    // TODO Auto-generated method stub
-    return null;
+    JSONObject resultJson = new JSONObject();
+    
+    resultJson.put("file", fileName);
+    resultJson.append("pdfInfo", pdfInfo.getJSONObject());
+    resultJson.append("pdfACompliance", pdfACompl.getJSONObject());
+    return resultJson.toString(3);
   }
 
 

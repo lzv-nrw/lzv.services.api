@@ -24,6 +24,9 @@ public class PdfACompliance {
     pdfACompl.put("pdfACompliance", Boolean.toString(compliance));
   }
   
+  /**
+   * @param level prefLabel of PDF/A level aka flavour
+   */
   public void setCompliance(String level) {
     PdfAComplianceModel complianceModel = new PdfAComplianceModel();
     complianceModel.setId(Compliance.getComplianceFormat(level));
@@ -42,8 +45,11 @@ public class PdfACompliance {
     htmlBuffer.append(listStart);
 
     if(pdfACompl.get("pdfACompliance").toString().equals("true")) {
-
-      htmlBuffer.append("<li class=\"success\">PDF is compliant to PDF/A, Version " + pdfACompl.get("complianceLevel").toString() + "</li>");
+      
+      String levelLabel = (String) pdfACompl.getJSONObject("complianceLevel").get("prefLabel");
+      String formatUrl = Compliance.getComplianceUrl(levelLabel);
+      htmlBuffer.append("<li class=\"success\">PDF is compliant to PDF/A, Version " + 
+      "<a target='_blank' href='" + formatUrl + "' >" + levelLabel + "</li>");
     } else {
 
       htmlBuffer.append("<li class=\"error\">PDF is NOT compliant to any PDF/A level</li>");      
@@ -55,6 +61,10 @@ public class PdfACompliance {
   
   public String toJson() {
     return pdfACompl.toString(3);
+  }
+  
+  public JSONObject getJSONObject() {
+    return pdfACompl;
   }
 
 

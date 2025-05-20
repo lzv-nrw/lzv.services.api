@@ -60,7 +60,6 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
       pdfInfo = getPdfInfo(pdfDocument);
 
       // validate for PDF/A
-      log.info("Check for these PDF/A flavours : ");
       validateAllFlavours(fileInputStream);
 
     } catch (FileNotFoundException | ModelParsingException | EncryptedPdfException e) {
@@ -80,7 +79,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     pdfACompl = new PdfACompliance();
     pdfACompl.setIsPdfACompliant(false);
-    
+        
     while (pfIt.hasNext()) {
       String flavour = pfIt.next();
       if (!flavour.equals("0") && !flavour.startsWith("w")) {
@@ -91,7 +90,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
         if (vResult.isCompliant()) {
           pdfACompl.setIsPdfACompliant(true);
           pdfACompl.setCompliance(pdfParser.getFlavour().getId());
-        }
+        } 
       }
     }
   }
@@ -142,7 +141,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     resultBuffer.append(pdfInfo.toHtml());
     resultBuffer.append(pdfACompl.toHtml());
 
-    resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
+    resultBuffer.append("<p><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Validierung</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();
@@ -154,8 +153,8 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     JSONObject resultJson = new JSONObject();
     
     resultJson.put("file", fileName);
-    resultJson.put("pdfInfo", pdfInfo);
-    resultJson.put("pdfACompliance", pdfACompl);
+    resultJson.append("pdfInfo", pdfInfo.getJSONObject());
+    resultJson.append("pdfACompliance", pdfACompl.getJSONObject());
     return resultJson.toString(3);
   }
 

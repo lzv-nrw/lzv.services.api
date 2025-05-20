@@ -24,12 +24,6 @@ public class PdfInfo implements PdfDocumentInformation {
   LinkedHashMap<String, Object> pdfInfoMap = new LinkedHashMap<>();
 
   @Override
-  public JSONObject getPdfInfo() {
-    return pdfInfo;
-  }
-
-
-  @Override
   public void setPdfAuthor(String author) {
     pdfInfo.put(PdfInfoModel.AUTHOR, author);
   }
@@ -115,6 +109,12 @@ public class PdfInfo implements PdfDocumentInformation {
   public String toJson() {
     return pdfInfo.toString(3);
   }
-
+  
+  @Override
+  public JSONObject getJSONObject() {
+    return pdfInfo;
+  }
+  
+ 
   
 }

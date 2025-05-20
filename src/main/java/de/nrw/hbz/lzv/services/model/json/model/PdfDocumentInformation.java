@@ -5,11 +5,6 @@ import org.json.JSONObject;
 
 public interface PdfDocumentInformation {
 
-	/**
-	 * @return pdfInfo 
-	 */
-	public JSONObject getPdfInfo();
-		
   public void setPdfTitle(String title);
 
   public void setPdfAuthor(String author);
@@ -33,5 +28,7 @@ public interface PdfDocumentInformation {
   public String toHtml();
 
   public String toJson();
+  
+  public JSONObject getJSONObject();
 	
 }
