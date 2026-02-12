@@ -37,6 +37,7 @@ public class PdfaPilotResult {
     this.summaryList.add(summaryMessage);
   }
 
+  
   /**
    * @param fixMessage the fixMessage to add
    */

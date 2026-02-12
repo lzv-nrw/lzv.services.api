@@ -34,9 +34,9 @@ public class PdfInfoModel {
     infoLabel.put(TITLE, "Title");
     infoLabel.put(AUTHOR, "Author");
     infoLabel.put(CREATOR, "Creator");
-    infoLabel.put(PRODUCER, "Production Tool");
-    infoLabel.put(PAGES , "Pages");
-    infoLabel.put(PAGESIZE , "PageSize");
+    infoLabel.put(PRODUCER,"Production Tool");
+    infoLabel.put(PAGES, "Pages");
+    infoLabel.put(PAGESIZE, "Pagesize");
     infoLabel.put(CREATION_DATE, "Creation Date");
     infoLabel.put(MODIFICATION_DATE, "Modification Date");
     infoLabel.put(KEYWORDS, "Keywords");
@@ -47,7 +47,7 @@ public class PdfInfoModel {
   public static LinkedHashMap<String, String> getInfoLabel() {
     return infoLabel;
   }
-  
+
   private static Set<String> setKeys() {
     
     infoKeys = new HashSet<>();

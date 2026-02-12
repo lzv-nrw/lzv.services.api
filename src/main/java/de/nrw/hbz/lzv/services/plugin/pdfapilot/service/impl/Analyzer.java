@@ -23,10 +23,15 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
   public final static String PLUGIN_NAME = "pdfapilot";
+  
+  private String stout = null;
+  private StringBuffer debugSb = null;
 
   @Override
   public void analyze(File file, String fileName) {
     
+    this.fileName = fileName;
+
     Map<String,Object> pdfMd = new HashMap<>();
     Map<String,String> versionMap = new HashMap<>();
     Map<String,String> complianceMap = new HashMap<>();
@@ -37,15 +42,15 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     
     String stout = pRunner.getStoutStr();
     
+    this.stout = stout;
+    
+    // create standard pdfInfo from stout via PdfInfoProvider
     pdfInfo = getPdfInfo(stout);
-    
     pdfACompl = new PdfACompliance();
-    
-    
+        
     
     Stream<String> resultLines  = stout.lines();
     Iterator<String> rlIt = resultLines.iterator();
-    
     
     
     while(rlIt.hasNext()) {
@@ -53,6 +58,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
       if(line.startsWith("Info")) {
         String[] split = line.split("\t");
         pdfMd.put(split[1], split[2]);
+        debugSb.append(line + "<br>");
       }
       
     }
@@ -65,16 +71,21 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
     }
     
+    // set PdfACompliance
+    pdfACompl.setIsPdfACompliant(false);
+    
     prefLabel = (String) pdfMd.get("PDFA");
     String stripPrefLabel = prefLabel.substring(6,8);
     
     if(Compliance.labelExists(stripPrefLabel)){
       complianceMap.put("prefLabel", stripPrefLabel);
       complianceMap.put("@id", Compliance.getComplianceUrl(stripPrefLabel));
+      pdfACompl.setIsPdfACompliant(true);
+      pdfACompl.setCompliance(stripPrefLabel);
     }
     
-    pdfMd.put("file", fileName);
-    pdfMd.put("PDF/A compliance", complianceMap);
+    // pdfMd.put("file", fileName);
+    // pdfMd.put("PDF/A compliance", complianceMap);
 
     // return pdfMd.toString();
   }
@@ -97,6 +108,9 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     resultBuffer.append("<p>" + fileName + "</p>");
     resultBuffer.append(pdfInfo.toHtml());
     resultBuffer.append(pdfACompl.toHtml());
+    
+    resultBuffer.append("<p>" + debugSb.toString() + "</p>");
+    
 
     resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
