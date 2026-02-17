@@ -23,8 +23,6 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
   public final static String PLUGIN_NAME = "pdfapilot";
-  
-  private String stout = null;
   private StringBuffer debugSb = null;
 
   @Override
@@ -41,8 +39,13 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     pRunner.executePdfATool(" --quickpdfinfo " + file.getAbsolutePath() );
     
     String stout = pRunner.getStoutStr();
+    String errStr = pRunner.getErrStr();
+    String exitStateStr = pRunner.getExitStateStr();
     
-    this.stout = stout;
+    debugSb = new StringBuffer();
+    debugSb.append("ExitState: " + exitStateStr + "<br>");
+    debugSb.append("stout: " + stout + "<br>");
+    debugSb.append("errStr: " + errStr + "<br>");
     
     // create standard pdfInfo from stout via PdfInfoProvider
     pdfInfo = getPdfInfo(stout);
@@ -58,7 +61,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
       if(line.startsWith("Info")) {
         String[] split = line.split("\t");
         pdfMd.put(split[1], split[2]);
-        debugSb.append(line + "<br>");
+        //debugSb.append(line + "<br>");
       }
       
     }
@@ -109,7 +112,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     resultBuffer.append(pdfInfo.toHtml());
     resultBuffer.append(pdfACompl.toHtml());
     
-    resultBuffer.append("<p>" + debugSb.toString() + "</p>");
+    //resultBuffer.append("<p>" + debugSb.toString() + "</p>");
     
 
     resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
