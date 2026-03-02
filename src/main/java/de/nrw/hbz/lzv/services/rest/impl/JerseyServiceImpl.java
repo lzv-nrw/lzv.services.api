@@ -264,16 +264,7 @@ public class JerseyServiceImpl {
 
     Analyzer pdfaPilotAnalyzer = Analyzer.getInstance("pdfapilot");
     pdfaPilotAnalyzer.analyze(file, fileName);
-
-    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n");
-    htmlResult.append(pdfaPilotAnalyzer.getHtml());
-    htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
-    // htmlResult.append(fileName);
-
-    htmlResult.append(HtmlTemplate.getHtmlFoot());
-    return htmlResult.toString();
-
+    return pdfaPilotAnalyzer.getHtml();
   }
 
   /**
@@ -359,7 +350,7 @@ public class JerseyServiceImpl {
   @Path("convert/pdfapilot")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-  public String createPdfA(@FormDataParam("file") InputStream fileInputStream,
+  public String createPdfAHtml(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition, @FormParam("flavour") String flavour) {
 
     String fileName = "unknown";
@@ -415,6 +406,64 @@ public class JerseyServiceImpl {
 
     return htmlResult.toString();
   }
+
+  @POST
+  @Path("convert/pdfapilot")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String createPdfAJson(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition, @FormParam("flavour") String flavour) {
+
+    String fileName = "unknown";
+    if (contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+
+    }
+
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
+
+    PdfACreator pdfaPilotCreator = PdfACreator.getInstance("pdfapilot");
+    PdfaPilotResult result = pdfaPilotCreator.createPdfa(file, fileName, flavour);
+
+    StringBuffer htmlResult = new StringBuffer();
+
+    for (int i = 0; i < result.getFixList().size(); i++) {
+      htmlResult.append("<li>" + result.getFixList().get(i) + "</li>");
+    }
+
+    htmlResult.append("</ul>\n");
+
+    htmlResult.append("<p>Summary:</p>\n" + "<ul>\n");
+
+    for (int i = 0; i < result.getSummaryList().size(); i++) {
+      htmlResult.append("<li>" + result.getSummaryList().get(i) + "</li>");
+    }
+
+    htmlResult.append("</ul>\n");
+
+    if (result.getErrorList() != null && result.getErrorList().size() > 0) {
+      htmlResult.append("<p>Error:</p>\n" + "<ul>\n");
+
+      for (int i = 0; i < result.getErrorList().size(); i++) {
+        htmlResult.append("<li>" + result.getErrorList().get(i) + "</li>");
+      }
+
+      htmlResult.append("</ul>\n");
+      htmlResult.append("<p>" + result.getExecuteString() + "</p>");
+    }
+
+    // htmlResult.append(result.getStout().replace("\n", "<br/>"));
+
+    if (result.getFileOutputLocation() != null) {
+      htmlResult.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + result.getFileOutputLocation() + "&origFileName="
+          + fileName + "\">PDF/A Datei herunterladen</a></p>");
+    }
+
+    htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/createpdfa\">Weiteres PDF umwandeln</a></p>");
+
+    return htmlResult.toString();
+  }
+  
 
   @GET
   @Path("download")

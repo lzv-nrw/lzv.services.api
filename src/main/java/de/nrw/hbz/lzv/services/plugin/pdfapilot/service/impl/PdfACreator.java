@@ -48,6 +48,8 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator{
         + "--substitute --fontfolder=/opt/pdfapilot/fontfolder"
         + " --onlypdfa --level=" + compliance 
         + " --outputfile=" + convertedFile.getAbsolutePath() + " " + file.getAbsolutePath();
+    log.info("PdfARunner calls pdfaPilot with" + executeString);
+ 
     pRunner.executePdfATool(executeString);
     
     pdfaRes.setExecuteString(executeString);

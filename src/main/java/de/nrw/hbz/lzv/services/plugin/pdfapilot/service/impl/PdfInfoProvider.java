@@ -21,24 +21,28 @@ public class PdfInfoProvider {
   
   public PdfInfoProvider(String stout) {
     this.stout = stout;
+    setPdfInfo();
   }
   
 
   public void setPdfInfo() {
     
+    pdfInfo = new PdfInfo();
     Stream<String> resultLines = stout.lines();
+    
     Iterator<String> rlIt = resultLines.iterator();
     
     while(rlIt.hasNext()) {
       String line = rlIt.next();
       if(line.startsWith("Info")) {
         String[] split = line.split("\t");
-        
+     
         LinkedHashMap<String,String> infoLabels = PdfInfoModel.getInfoLabel();
-        if(infoLabels.containsKey(split[1])) {
-          String key = infoLabels.get(split[1]);
+        if(infoLabels.containsKey(split[1].toLowerCase())) {
+          String key = split[1].toLowerCase();
           pdfInfo.setInfoElement(key, split[2]);
-          
+        } else {
+          pdfInfo.setInfoElement(split[1], split[2]);
         }
       }
     }
