@@ -79,6 +79,9 @@ div.submenu {
 	z-index: 10;
 }
 
+span.arrow {
+	font-size: 20px;
+}
 
 img.menu{
 	height: 24px;

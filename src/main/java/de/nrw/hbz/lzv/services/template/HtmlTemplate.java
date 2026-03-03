@@ -71,21 +71,26 @@ public class HtmlTemplate {
   
   private static String getDefaultMenu() {
     StringBuffer defMenu = new StringBuffer();
-    
-    // Datei
+
+    // Startseite
     defMenu.append("<div class='dropdown'>");
-    defMenu.append("<div class='menu'>Datei");
-    defMenu.append("<div class='submenu'>"
-        + "<ul>");
-    defMenu.append("<li><a href='/lzv-jsp/upload'>PDF-Datei hochladen</a></li>");
-    defMenu.append("<li><a href='/lzv-jsp/save'>PDF-Datei herunterladen</a></li>");
-    defMenu.append("</ul></div></div>");
-    defMenu.append("</div>");
-    
-    
+    defMenu.append("<div class='menu'><a href='/lzv-jsp/about'>Startseite</a>");
+    defMenu.append("</div></div>");
+
+    // Datei
+	/*
+	 * defMenu.append("<div class='dropdown'>");
+	 * defMenu.append("<div class='menu'>Datei");
+	 * defMenu.append("<div class='submenu'>" + "<ul>");
+	 * defMenu.append("<li><a href='/lzv-jsp/upload'>PDF-Datei hochladen</a></li>");
+	 * defMenu.append("<li><a href='/lzv-jsp/save'>PDF-Datei herunterladen</a></li>"
+	 * ); defMenu.append("</ul></div></div>"); defMenu.append("</div>");
+	 */
+
     // Bearbeiten
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Bearbeiten");
+    defMenu.append("<span class='arrow'>&#9662;</span>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     // defMenu.append("<li><a href='/lzv-jsp/editMd/form'>PDF-Metadaten ändern</a></li>");
@@ -96,6 +101,7 @@ public class HtmlTemplate {
     // Analyse
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Analyse");
+    defMenu.append("<span class='arrow'>&#9662;</span>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     defMenu.append("<li><a href='/lzv-jsp/pdfbox/upload'>PDF-Validierung (PDFbox)</a></li>");
@@ -107,6 +113,7 @@ public class HtmlTemplate {
     // Werkzeuge
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Werkzeuge");
+    defMenu.append("<span class='arrow'>&#9662;</span>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     defMenu.append("<li><a href='/lzv-api/version/pdfbox'>PDFbox</a></li>");
