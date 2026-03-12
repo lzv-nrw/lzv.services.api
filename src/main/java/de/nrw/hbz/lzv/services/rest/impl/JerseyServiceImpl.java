@@ -10,23 +10,14 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.ws.rs.core.StreamingOutput;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.StandardCharsets;
-import java.io.BufferedWriter;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.stream.Stream;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,9 +28,6 @@ import de.nrw.hbz.lzv.services.impl.Analyzer;
 import de.nrw.hbz.lzv.services.impl.FileController;
 import de.nrw.hbz.lzv.services.impl.PdfACreator;
 import de.nrw.hbz.lzv.services.impl.VersionInfo;
-import de.nrw.hbz.lzv.services.model.json.impl.PdfModelImpl;
-import de.nrw.hbz.lzv.services.model.pdfa.result.PdfaPilotResult;
-import de.nrw.hbz.lzv.services.plugin.verapdf.service.impl.ServiceImpl;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
@@ -362,49 +350,9 @@ public class JerseyServiceImpl {
     File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
 
     PdfACreator pdfaPilotCreator = PdfACreator.getInstance("pdfapilot");
-    PdfaPilotResult result = pdfaPilotCreator.createPdfa(file, fileName, flavour);
+    pdfaPilotCreator.createPdfa(file, fileName, flavour);
 
-    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-
-    htmlResult.append("<h3>Ergebnis der PDF/A-Erzeugung</h3>\n" + "<p>Operations:</p>\n" + "<ul>\n");
-
-    for (int i = 0; i < result.getFixList().size(); i++) {
-      htmlResult.append("<li>" + result.getFixList().get(i) + "</li>");
-    }
-
-    htmlResult.append("</ul>\n");
-
-    htmlResult.append("<p>Summary:</p>\n" + "<ul>\n");
-
-    for (int i = 0; i < result.getSummaryList().size(); i++) {
-      htmlResult.append("<li>" + result.getSummaryList().get(i) + "</li>");
-    }
-
-    htmlResult.append("</ul>\n");
-
-    if (result.getErrorList() != null && result.getErrorList().size() > 0) {
-      htmlResult.append("<p>Error:</p>\n" + "<ul>\n");
-
-      for (int i = 0; i < result.getErrorList().size(); i++) {
-        htmlResult.append("<li>" + result.getErrorList().get(i) + "</li>");
-      }
-
-      htmlResult.append("</ul>\n");
-      htmlResult.append("<p>" + result.getExecuteString() + "</p>");
-    }
-
-    // htmlResult.append(result.getStout().replace("\n", "<br/>"));
-
-    if (result.getFileOutputLocation() != null) {
-      htmlResult.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + result.getFileOutputLocation() + "&origFileName="
-          + fileName + "\">PDF/A Datei herunterladen</a></p>");
-    }
-
-    htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/createpdfa\">Weiteres PDF umwandeln</a></p>");
-
-    htmlResult.append(HtmlTemplate.getHtmlFoot());
-
-    return htmlResult.toString();
+    return pdfaPilotCreator.getHtml();
   }
 
   @POST
@@ -423,47 +371,11 @@ public class JerseyServiceImpl {
     File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
 
     PdfACreator pdfaPilotCreator = PdfACreator.getInstance("pdfapilot");
-    PdfaPilotResult result = pdfaPilotCreator.createPdfa(file, fileName, flavour);
+    pdfaPilotCreator.createPdfa(file, fileName, flavour);
 
-    StringBuffer htmlResult = new StringBuffer();
-
-    for (int i = 0; i < result.getFixList().size(); i++) {
-      htmlResult.append("<li>" + result.getFixList().get(i) + "</li>");
-    }
-
-    htmlResult.append("</ul>\n");
-
-    htmlResult.append("<p>Summary:</p>\n" + "<ul>\n");
-
-    for (int i = 0; i < result.getSummaryList().size(); i++) {
-      htmlResult.append("<li>" + result.getSummaryList().get(i) + "</li>");
-    }
-
-    htmlResult.append("</ul>\n");
-
-    if (result.getErrorList() != null && result.getErrorList().size() > 0) {
-      htmlResult.append("<p>Error:</p>\n" + "<ul>\n");
-
-      for (int i = 0; i < result.getErrorList().size(); i++) {
-        htmlResult.append("<li>" + result.getErrorList().get(i) + "</li>");
-      }
-
-      htmlResult.append("</ul>\n");
-      htmlResult.append("<p>" + result.getExecuteString() + "</p>");
-    }
-
-    // htmlResult.append(result.getStout().replace("\n", "<br/>"));
-
-    if (result.getFileOutputLocation() != null) {
-      htmlResult.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + result.getFileOutputLocation() + "&origFileName="
-          + fileName + "\">PDF/A Datei herunterladen</a></p>");
-    }
-
-    htmlResult.append("<p><a href=\"/lzv-jsp/pdfapilot/createpdfa\">Weiteres PDF umwandeln</a></p>");
-
-    return htmlResult.toString();
+    return pdfaPilotCreator.getJson();
   }
-  
+
 
   @GET
   @Path("download")
