@@ -126,8 +126,8 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     JSONObject resultJson = new JSONObject();
     
     resultJson.put("file", fileName);
-    resultJson.append("pdfInfo", pdfInfo.getJSONObject());
-    resultJson.append("pdfACompliance", pdfACompl.getJSONObject());
+    resultJson.put("pdfInfo", pdfInfo.getJSONObject());
+    resultJson.put("pdfACompliance", pdfACompl.getJSONObject());
     return resultJson.toString(3);
   }
 
