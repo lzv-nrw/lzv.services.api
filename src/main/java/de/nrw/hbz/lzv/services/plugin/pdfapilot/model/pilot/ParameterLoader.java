@@ -19,7 +19,6 @@ public class ParameterLoader {
   
   
   private String createParameterString() {
-    parameterBuffer.append(ComplianceLevel.getComplianceLevel(clKey));
     parameterBuffer.append(ReportLanguage.getLanguage(lang));
     
     return null;
