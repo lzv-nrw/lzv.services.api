@@ -9,12 +9,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
 import de.nrw.hbz.lzv.services.model.pdf.model.Compliance;
 import de.nrw.hbz.lzv.services.model.pdf.model.Version;
+import de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot.ParameterLoader;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
@@ -22,6 +25,7 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
  */
 public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
+  private static Logger log = LogManager.getLogger(PdfACreator.class);
   public final static String PLUGIN_NAME = "pdfapilot";
   private StringBuffer debugSb = null;
 
@@ -36,7 +40,18 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
     PilotRunner pRunner = new PilotRunner();
     
-    pRunner.executePdfATool(" --quickpdfinfo " + file.getAbsolutePath() );
+    StringBuilder cmd = new StringBuilder();
+
+    for (String flag : ParameterLoader.getAnalyzerFlags()) {
+      cmd.append(" ").append(flag);
+    }
+
+    cmd.append(" ").append(file.getAbsolutePath());
+
+    String executeString = cmd.toString();
+    log.info("PdfARunner calls pdfaPilot with" + executeString);
+
+    pRunner.executePdfATool(executeString);
     
     String stout = pRunner.getStoutStr();
     String errStr = pRunner.getErrStr();

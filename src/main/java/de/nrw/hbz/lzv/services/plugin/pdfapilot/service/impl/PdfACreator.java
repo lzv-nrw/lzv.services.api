@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import de.nrw.hbz.lzv.services.model.pdf.model.Compliance;
 import de.nrw.hbz.lzv.services.model.pdfa.result.PdfaPilotResult;
+import de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot.ParameterLoader;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
@@ -34,7 +35,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     pdfaRes = new PdfaPilotResult();
     pdfaRes.setLoadedFileName(fileName);
 
-    String compliance = "2b";
+    String compliance = ParameterLoader.getDefaultLevel();
 
     if (Compliance.labelExists(flavour)) {
       compliance = flavour;
@@ -50,9 +51,19 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     }
 
     PilotRunner pRunner = new PilotRunner();
-    String executeString = " --quick --noprogress " + "--substitute --fontfolder=/opt/pdfapilot/fontfolder"
-        + " --onlypdfa --level=" + compliance + " --outputfile=" + convertedFile.getAbsolutePath() + " "
-        + file.getAbsolutePath();
+
+    StringBuilder cmd = new StringBuilder();
+
+    for (String flag : ParameterLoader.getCreatorFlags()) {
+      cmd.append(" ").append(flag);
+    }
+
+    cmd.append(" --level=").append(compliance);
+
+    cmd.append(" --outputfile=").append(convertedFile.getAbsolutePath());
+    cmd.append(" ").append(file.getAbsolutePath());
+
+    String executeString = cmd.toString();
     log.info("PdfARunner calls pdfaPilot with" + executeString);
 
     pRunner.executePdfATool(executeString);
