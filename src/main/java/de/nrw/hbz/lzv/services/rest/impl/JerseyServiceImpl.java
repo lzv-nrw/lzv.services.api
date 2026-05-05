@@ -397,7 +397,7 @@ public class JerseyServiceImpl {
     logger.info("StreamingOutput: " + iS.toString());
 
     ResponseBuilder response = Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM);
-    response.header("Content-Disposition", "attachment; filename=" + origFileName.replace("pdf", "pdfa.pdf"));
+    response.header("Content-Disposition", "attachment; filename=" + origFileName.replace(".pdf", "_pdfa.pdf"));
 
     file.delete();
     return response.build();

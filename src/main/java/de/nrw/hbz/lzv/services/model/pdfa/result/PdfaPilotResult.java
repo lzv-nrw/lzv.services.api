@@ -19,6 +19,7 @@ public class PdfaPilotResult {
   private String stout = null;
   private String errOut = null;
   private String executeString = null;
+  private String reportOutputLocation = null;
   
   
   
@@ -78,6 +79,14 @@ public class PdfaPilotResult {
   public String getFileOutputLocation() {
     return fileOutputLocation;
   }
+
+  /**
+   * @return the reportOutputLocation
+   */
+  public String getReportOutputLocation() {
+    return reportOutputLocation;
+  }
+
   /**
    * @return the stout
    */
@@ -146,7 +155,14 @@ public class PdfaPilotResult {
   public void setFileOutputLocation(String fileOutputLocation) {
     this.fileOutputLocation = fileOutputLocation;
   }
-  
+
+  /**
+   * @param reportOutputLocation the reportOutputLocation to set
+   */
+  public void setReportOutputLocation(String reportOutputLocation) {
+    this.reportOutputLocation = reportOutputLocation;
+  }
+
   /**
    * @param loadedFileName the loadedFileName to set
    */

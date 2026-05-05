@@ -64,6 +64,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     cmd.append(" ").append(file.getAbsolutePath());
 
     String executeString = cmd.toString();
+
     log.info("PdfARunner calls pdfaPilot with" + executeString);
 
     pRunner.executePdfATool(executeString);
@@ -96,7 +97,10 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         String[] split = line.split("\\t");
         pdfaRes.setFileOutputLocation(split[1]);
       }
-
+      if (line.startsWith("Report")) {
+        String[] split = line.split("\\t");
+        pdfaRes.setReportOutputLocation(split[1]);
+      }
     }
 
     Stream<String> errLines = stout.lines();
@@ -144,6 +148,15 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         resultBuffer.append("</ul>\n");
       }
 
+      if (pdfaRes.getReportOutputLocation() != null) {
+        resultBuffer.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + pdfaRes.getReportOutputLocation()
+            + "&origFileName=report_"
+            + pdfaRes.getLoadedFileName().replace(".pdf",
+                "_pdf." + pdfaRes.getReportOutputLocation()
+                    .substring(pdfaRes.getReportOutputLocation().lastIndexOf('.') + 1))
+            + "\">Report herunterladen</a></p>");
+      }
+
       if (pdfaRes.getFileOutputLocation() != null) {
         resultBuffer.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + pdfaRes.getFileOutputLocation()
             + "&origFileName=" + pdfaRes.getLoadedFileName() + "\">PDF/A Datei herunterladen</a></p>");
@@ -185,6 +198,12 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         cleanedErrorsList.add(cleanedError);
       }
       resultJson.put("errorList", cleanedErrorsList);
+    }
+
+    if (pdfaRes.getReportOutputLocation() != null) {
+      resultJson.put("reportOutputLocation", "/lzv-api/download?fileName=" + pdfaRes.getReportOutputLocation()
+          + "&origFileName=report_" + pdfaRes.getLoadedFileName().replace(".pdf", "_pdf."
+              + pdfaRes.getReportOutputLocation().substring(pdfaRes.getReportOutputLocation().lastIndexOf('.') + 1)));
     }
 
     if (pdfaRes.getFileOutputLocation() != null) {

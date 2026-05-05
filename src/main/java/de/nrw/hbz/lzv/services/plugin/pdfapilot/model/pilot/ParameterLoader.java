@@ -29,6 +29,10 @@ public class ParameterLoader {
     }
   }
 
+  static {
+    loadPdfaPilotProperties();
+  }
+
   public static String getProgramPath() {
     return pdfaPilotProps.getProperty("pdfapilot.path");
   }
@@ -52,6 +56,16 @@ public class ParameterLoader {
 
     if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.quick"))) {
       flags.add("--quick");
+    }
+    if (!Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.quick"))
+        && Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.report"))) {
+      if (pdfaPilotProps.getProperty("pdfapilot.report.type") != null
+          && pdfaPilotProps.getProperty("pdfapilot.report.generate") != null
+          && pdfaPilotProps.getProperty("pdfapilot.report.path") != null) {
+        flags.add("--report=" + pdfaPilotProps.getProperty("pdfapilot.report.type") + ","
+            + pdfaPilotProps.getProperty("pdfapilot.report.generate") + "," + "PATH="
+            + pdfaPilotProps.getProperty("pdfapilot.report.path"));
+      }
     }
     if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.noprogress"))) {
       flags.add("--noprogress");

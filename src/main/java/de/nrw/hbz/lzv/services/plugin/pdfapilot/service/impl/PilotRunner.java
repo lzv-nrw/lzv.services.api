@@ -87,7 +87,7 @@ public class PilotRunner {
   public void executePdfATool(String paramString){
     ParameterLoader.loadPdfaPilotProperties();
     String programPath = new String(ParameterLoader.getProgramPath());
-    String executeString = programPath + " " + paramString;
+    String executeString = programPath + paramString;
         
     log.info("The complete execute String: " + executeString);
 
