@@ -33,7 +33,7 @@ public class HtmlTemplate {
     
     //headSb.append(getMenuEntry());
     
-    headSb.append("</div></div><div class=\"main\"><hr/>");
+    headSb.append("</div></div><div class=\"main\">");
 
     return headSb.toString();
   }
@@ -43,8 +43,8 @@ public class HtmlTemplate {
    */
   public static String getHtmlFoot() {
     StringBuffer footSb = new StringBuffer();
-    footSb.append("</div>\n<div class=\"footer\">");
-    footSb.append("<hr/><a class=\"fanker\" href=\"/lzv-jsp/about\">Über</a>");
+    footSb.append("</div>\n<footer class=\"footer\">");
+    footSb.append("<a class=\"fanker\" href=\"/lzv-jsp/about\">Über</a></footer>");
     footSb.append("</body>\n</html>");
 
     return footSb.toString();
