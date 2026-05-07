@@ -25,6 +25,7 @@ public class HtmlTemplate {
     StringBuffer headSb = new StringBuffer();
     headSb.append("<html>\n" + "<head>\n" + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
         + "<link rel=\"stylesheet\" href=\"/lzv-jsp/css/default.css\" />\n" 
+        + "<link rel=\"stylesheet\" href=\"/lzv-jsp/fontawesome/css/all.min.css\">"
         + "<title>hbz lzv services</title>\n" + "</head>\n<body>\n");
     headSb.append("<div class=\"head\">");
     
@@ -90,7 +91,7 @@ public class HtmlTemplate {
     // Bearbeiten
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Bearbeiten");
-    defMenu.append("<span class='arrow'>&#9662;</span>");
+    defMenu.append("<i class=\"fa-solid fa-chevron-down\"  style=\"margin-left:5px;\"></i>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     // defMenu.append("<li><a href='/lzv-jsp/editMd/form'>PDF-Metadaten ändern</a></li>");
@@ -101,7 +102,7 @@ public class HtmlTemplate {
     // Analyse
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Analyse");
-    defMenu.append("<span class='arrow'>&#9662;</span>");
+    defMenu.append("<i class=\"fa-solid fa-chevron-down\"  style=\"margin-left:5px;\"></i>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     defMenu.append("<li><a href='/lzv-jsp/pdfbox/upload'>PDF-Validierung (PDFbox)</a></li>");
@@ -113,7 +114,7 @@ public class HtmlTemplate {
     // Werkzeuge
     defMenu.append("<div class='dropdown'>");
     defMenu.append("<div class='menu'>Werkzeuge");
-    defMenu.append("<span class='arrow'>&#9662;</span>");
+    defMenu.append("<i class=\"fa-solid fa-chevron-down\"  style=\"margin-left:5px;\"></i>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
     defMenu.append("<li><a href='/lzv-api/version/pdfbox'>PDFbox</a></li>");
