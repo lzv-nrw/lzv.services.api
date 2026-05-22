@@ -46,6 +46,53 @@ public class JerseyServiceImpl {
   }
 
   @GET
+  @Path("tools")
+  @Produces({ MediaType.TEXT_HTML })
+  public String getToolsHTML() {
+
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append(HtmlTemplate.getHtmlHead());
+    sbVersion.append("<ul>");
+    sbVersion.append("<li><b>veraPDF:</b> Version ");
+    sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString() + "</li>");
+    sbVersion.append("<li><b>pdfaPilot:</b> Version ");
+    sbVersion.append(VersionInfo.getInstance("pdfapilot").getVersionString() + "</li>");
+    sbVersion.append("<li><b>Apache PDFBox:</b> Version ");
+    sbVersion.append(VersionInfo.getInstance("pdfbox").getVersionString() + "</li>");
+    sbVersion.append("</ul>");
+    sbVersion.append(HtmlTemplate.getHtmlFoot());
+
+    String version = sbVersion.toString();
+    return version;
+  }
+
+  @GET
+  @Path("tools")
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String getToolsJson() {
+    StringBuffer sbVersion = new StringBuffer();
+    sbVersion.append("[");
+    sbVersion.append("{\"plugin\" : \"PDFA-Validation with veraPDF\",");
+    sbVersion.append("\"serviceInfo\" : {");
+    sbVersion.append("\"veraPDF Version\" : " + "\"");
+    sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString() + "\"");
+    sbVersion.append("}},");
+    sbVersion.append("{\"plugin\" : \"PDFA-Validation with Callas pdfaPilot\",");
+    sbVersion.append("\"serviceInfo\" : {");
+    sbVersion.append("\"pdfapilot Version\" : " + "\"");
+    sbVersion.append(VersionInfo.getInstance("pdfapilot").getVersionString().replace("\n", "") + "\"");
+    sbVersion.append("}},");
+    sbVersion.append("{\"plugin\" : \"PDFA-Validation with Apache PDFbox\",");
+    sbVersion.append("\"serviceInfo\" : {");
+    sbVersion.append("\"Apache PDFbox Version\" : " + "\"");
+    sbVersion.append(VersionInfo.getInstance("pdfbox").getVersionString() + "\"");
+    sbVersion.append("}}");
+    sbVersion.append("]");
+    String version = sbVersion.toString();
+    return version;
+  }
+
+  @GET
   @Path("version/verapdf")
   @Produces({ MediaType.TEXT_HTML })
   public String getVeraPdfVersionHTML() {
@@ -92,7 +139,7 @@ public class JerseyServiceImpl {
     sbVersion.append("[{\"plugin\" : \"PDFA-Validation with Callas pdfaPilot\",");
     sbVersion.append("\"serviceInfo\" : {");
     sbVersion.append("\"pdfaPilot Version\" : " + "\"");
-    sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString() + "\"");
+    sbVersion.append(VersionInfo.getInstance("pdfapilot").getVersionString().replace("\n", "") + "\"");
     sbVersion.append("}}]");
 
     String version = sbVersion.toString();
@@ -124,7 +171,7 @@ public class JerseyServiceImpl {
     StringBuffer sbVersion = new StringBuffer();
     sbVersion.append("[{\"plugin\" : \"PDFA-Validation with Apache PDFbox\",");
     sbVersion.append("\"serviceInfo\" : {");
-    sbVersion.append("\"pdfaPilot Version\" : " + "\"");
+    sbVersion.append("\"Apache PDFbox Version\" : " + "\"");
     sbVersion.append(VersionInfo.getInstance("pdfbox").getVersionString() + "\"");
     sbVersion.append("}}]");
 

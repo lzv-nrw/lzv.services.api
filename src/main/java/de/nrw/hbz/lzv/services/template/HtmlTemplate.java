@@ -113,7 +113,7 @@ public class HtmlTemplate {
 
     // Werkzeuge
     defMenu.append("<div class='dropdown'>");
-    defMenu.append("<div class='menu'>Werkzeuge");
+    defMenu.append("<div class='menu'><a href='/lzv-api/tools'>Werkzeuge</a>");
     defMenu.append("<i class=\"fa-solid fa-chevron-down\"  style=\"margin-left:5px;\"></i>");
     defMenu.append("<div class='submenu'>"
         + "<ul>");
