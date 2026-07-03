@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.LinkedHashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +52,81 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     }
 
     PilotRunner pRunner = new PilotRunner();
+
+    if (flavour.equals("auto")) {
+      log.info("PdfARunner calls pdfaPilot with flavour " + flavour);
+      LinkedHashMap<String, String> labels = Compliance.getAllComplianceLabels();
+
+      for (String level : labels.keySet()) {
+
+        StringBuilder cmd = new StringBuilder();
+
+        for (String flag : ParameterLoader.getCreatorFlags()) {
+          cmd.append(" ").append(flag);
+        }
+
+        cmd.append(" --level=").append(level);
+        cmd.append(" --outputfile=").append(convertedFile.getAbsolutePath());
+        cmd.append(" ").append(file.getAbsolutePath());
+
+        String executeString = cmd.toString();
+
+        log.info("PdfARunner calls pdfaPilot with" + executeString);
+
+        pRunner.executePdfATool(executeString);
+
+        pdfaRes.setExecuteString(executeString);
+
+        String stout = pRunner.getStoutStr();
+        if (stout == null) {
+          stout = "Summary \t  run for test only";
+        }
+
+        String errOut = pRunner.getErrStr();
+        Stream<String> errLines = stout.lines();
+        Iterator<String> errIt = errLines.iterator();
+
+        if (!stout.contains("Hit")) {
+          Stream<String> resultLines = stout.lines();
+          Iterator<String> rlIt = resultLines.iterator();
+
+          while (rlIt.hasNext()) {
+            String line = rlIt.next();
+            if (line.startsWith("Fix")) {
+              String[] split = line.split("\\t");
+              pdfaRes.addFixMessage(split[1]);
+            }
+            if (line.startsWith("Summary")) {
+              String[] split = line.split("\\t", 2);
+              if (split.length > 1) {
+                pdfaRes.addSummaryMessage(split[1]);
+              }
+            }
+            if (line.startsWith("Output")) {
+              String[] split = line.split("\\t");
+              pdfaRes.setFileOutputLocation(split[1]);
+            }
+            if (line.startsWith("Report")) {
+              String[] split = line.split("\\t");
+              pdfaRes.setReportOutputLocation(split[1]);
+            }
+          }
+
+          while (errIt.hasNext()) {
+            String line = errIt.next();
+            if (line.contains("Hit")) {
+              pdfaRes.addErrorMessage(line.replace("Hit PDFA", "Fehlerhinweis:"));
+            }
+            pdfaRes.setStout(stout);
+            pdfaRes.setErrOut(errOut);
+          }
+          break;
+        }
+
+      }
+
+      return pdfaRes;
+    }
 
     StringBuilder cmd = new StringBuilder();
 
@@ -111,10 +187,8 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       if (line.contains("Hit")) {
         pdfaRes.addErrorMessage(line.replace("Hit PDFA", "Fehlerhinweis:"));
       }
-
       pdfaRes.setStout(stout);
       pdfaRes.setErrOut(errOut);
-
     }
 
     return pdfaRes;

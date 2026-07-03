@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
  * 
  */
 public class Compliance {
-        
+
     static LinkedHashMap<String,String> complianceFormat = setComplianceFormat();
     static LinkedHashMap<String,String> complianceLabel = setComplianceLabel();
 
@@ -26,8 +26,8 @@ public class Compliance {
     final static String _4 = "4";
     final static String _4E = "4e";
     final static String _4F = "4f";
-    
-       
+
+
     private static LinkedHashMap<String,String> setComplianceLabel() {
       LinkedHashMap<String,String> complianceLabel = new LinkedHashMap<>(); 
       complianceLabel.put("1A", _1A);
@@ -60,7 +60,7 @@ public class Compliance {
       complianceFormat.put( _4F, "fmt/1912");
       return complianceFormat;
     }
-    
+
     /**
      * check for supported version of PDF 
      * @param label
@@ -75,7 +75,7 @@ public class Compliance {
       return isLabel;
     }
 
-    
+
     /**
      * Convenience method to return Pronom Format for PDF/A flavour
      * @param key name of ComplianceFormat constant
@@ -94,6 +94,14 @@ public class Compliance {
     public static String getComplianceLabel(String key) {
       String cl = complianceLabel.get(key);
       return cl;
+    }
+
+    /**
+     * Convenience method to return all available PDF/A flavour labels.
+     * @return an map containing all flavour label keys and their values
+     */
+    public static LinkedHashMap<String, String> getAllComplianceLabels() {
+      return new LinkedHashMap<>(complianceLabel);
     }
 
     /**
