@@ -4,11 +4,9 @@
 package de.nrw.hbz.lzv.services.plugin.verapdf.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +20,7 @@ import org.verapdf.pdfa.PDFAParser;
 import org.verapdf.pdfa.PDFAValidator;
 import org.verapdf.pdfa.VeraPDFFoundry;
 import org.verapdf.pdfa.flavours.PDFAFlavour;
+import org.verapdf.pdfa.flavours.PDFFlavours;
 import org.verapdf.pdfa.results.ValidationResult;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 
@@ -38,107 +37,118 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   final static Logger log = LogManager.getLogger(Analyzer.class);
 
   private PDFAValidator validator = null;
-  private static PDFAParser pdfParser = null;
   private StringBuffer resultBuffer = new StringBuffer();
-   
+
   public Analyzer() {
-    GFFoundryProvider.setFoundry();  
+    GFFoundryProvider.setFoundry();
   }
-  
-  
+
   @Override
   public void analyze(File file, String fileName) {
-    VeraPDFFoundry vpf = Foundries.defaultInstance();
 
     this.fileName = fileName;
-    try {
-      FileInputStream fileInputStream = new FileInputStream(file);
-      pdfParser = vpf.createParser(fileInputStream);
-      PDFDocument pdfDocument  = pdfParser.getPDFDocument();
 
-      // get PDF information in generic form
-      pdfInfo = getPdfInfo(pdfDocument);
+    pdfACompl = new PdfACompliance();
+    pdfACompl.setIsPdfACompliant(false);
+    VeraPDFFoundry vpf = Foundries.defaultInstance();
 
-      // validate for PDF/A
-      validateAllFlavours(fileInputStream);
+    try (PDFAParser pdfParser = vpf.createParser(file)) {
 
-    } catch (FileNotFoundException | ModelParsingException | EncryptedPdfException e) {
+      PDFDocument pdfDocument = pdfParser.getPDFDocument();
+
+      if (pdfDocument.getInfoDictionary() != null) {
+        pdfInfo = getPdfInfo(pdfDocument);
+      } else {
+        pdfInfo = new PdfInfo();
+      }
+
+      validateAllFlavours(pdfParser, vpf);
+
+    } catch (IOException | ModelParsingException | EncryptedPdfException e) {
       StringBuffer eResult = new StringBuffer();
       eResult.append("<p class=\"error\">Something went wrong</p>");
       eResult.append("<p>" + e.getMessage() + "</p><p>");
       // return result = eResult.toString();
     }
-    
 
-   
   }
-  
-  private void validateAllFlavours(InputStream fileInputStream) {
-    Set<String> pdfaFlavours = PDFAFlavour.getFlavourIds();
-    Iterator<String> pfIt = pdfaFlavours.iterator();
+
+  private void validateAllFlavours(PDFAParser pdfParser, VeraPDFFoundry vpf) {
+    List<PDFAFlavour> detectedFlavours = pdfParser.getFlavours();
+    log.info("Detected flavours: {}", detectedFlavours);
+
+    List<PDFAFlavour> pdfaFlavours = new ArrayList<>();
 
     pdfACompl = new PdfACompliance();
     pdfACompl.setIsPdfACompliant(false);
-        
-    while (pfIt.hasNext()) {
-      String flavour = pfIt.next();
-      if (!flavour.equals("0") && !flavour.startsWith("w")) {
-        log.info("\t" + flavour);
-        validator = ValidatorFactory.createValidator(PDFAFlavour.fromString(flavour), true);
-        ValidationResult vResult = validate(fileInputStream);
-        
-        if (vResult.isCompliant()) {
-          pdfACompl.setIsPdfACompliant(true);
-          pdfACompl.setCompliance(pdfParser.getFlavour().getId());
-        } 
+
+    for (PDFAFlavour flavour : detectedFlavours) {
+
+      // Only PDF/A
+      if (PDFFlavours.isFlavourFamily(flavour, PDFAFlavour.SpecificationFamily.PDF_A)) {
+
+        pdfaFlavours.add(flavour);
       }
     }
-  }
-    
 
-  /**
-   * @param fileInputStream
-   * @return
-   */
-  private ValidationResult validate(InputStream fileInputStream) {
-    ValidationResult vResult = null;
+    if (pdfaFlavours.isEmpty()) {
+      return;
+    }
+
+    validator = vpf.createValidator(pdfaFlavours);
+
+    List<ValidationResult> results;
     try {
-      //pdfStream = fileInputStream;
-      vResult = validator.validate(pdfParser);
+      results = validator.validateAll(pdfParser);
 
+      for (int i = 0; i < results.size(); i++) {
+
+        ValidationResult result = results.get(i);
+        PDFAFlavour flavour = pdfaFlavours.get(i);
+
+        log.info("{} {}", flavour.getId(), result.isCompliant());
+
+        if (result.isCompliant()) {
+          pdfACompl.setIsPdfACompliant(true);
+          pdfACompl.setCompliance(flavour.getId());
+          break;
+        }
+      }
     } catch (ValidationException e) {
-      // TODO Auto-generated catch block
+      log.info("Something went wrong");
       e.printStackTrace();
     }
-    return vResult;
   }
 
   /**
-   * get the information stored in the PDF information part  
+   * get the information stored in the PDF information part
+   *
    * @return
    */
-  private PdfInfo getPdfInfo(PDFDocument pdfDocument){
-    PdfInfoProvider infoProvider = new PdfInfoProvider(pdfDocument.getInfoDictionary()); 
+  private PdfInfo getPdfInfo(PDFDocument pdfDocument) {
+    PdfInfoProvider infoProvider = new PdfInfoProvider(pdfDocument.getInfoDictionary());
     return infoProvider.getPdfInfo();
   }
-  
+
   /**
-   * set the flavour aka PDF/A level you wish to analyze PDF against 
+   * set the flavour aka PDF/A level you wish to analyze PDF against
+   *
    * @param flavour
    */
   public void setFlavour(String flavour) {
     validator = ValidatorFactory.createValidator(PDFAFlavour.fromString(flavour), true);
   }
 
-
   @Override
   public String getHtml() {
-    
+
     resultBuffer.append(HtmlTemplate.getHtmlHead());
 
     resultBuffer.append("<h1>Ergebnis der Prüfung</h1>\n");
     resultBuffer.append("<p>" + fileName + "</p>");
-    resultBuffer.append(pdfInfo.toHtml());
+    if (pdfInfo != null) {
+      resultBuffer.append(pdfInfo.toHtml());
+    }
     resultBuffer.append(pdfACompl.toHtml());
 
     resultBuffer.append("<p><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Validierung</a>");
@@ -147,17 +157,16 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     return resultBuffer.toString();
   }
 
-
   @Override
   public String getJson() {
     JSONObject resultJson = new JSONObject();
-    
+
     resultJson.put("file", fileName);
-    resultJson.put("pdfInfo", pdfInfo.getJSONObject());
+    if (pdfInfo != null) {
+      resultJson.put("pdfInfo", pdfInfo.getJSONObject());
+    }
     resultJson.put("pdfACompliance", pdfACompl.getJSONObject());
     return resultJson.toString(3);
   }
-
-  
 
 }
