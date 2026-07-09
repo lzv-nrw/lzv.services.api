@@ -18,7 +18,6 @@ import jakarta.ws.rs.core.StreamingOutput;
 import java.io.File;
 import java.io.InputStream;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
@@ -256,7 +255,7 @@ public class JerseyServiceImpl {
 
     Analyzer pdfBoxAnalyzer = Analyzer.getInstance("pdfbox");
     pdfBoxAnalyzer.analyze(file, fileName);
-    
+
     file.delete();
     return pdfBoxAnalyzer.getHtml();
 
@@ -304,7 +303,8 @@ public class JerseyServiceImpl {
   }
 
   /**
-   * provide RestFul endpoint for PDF validation with pdfaPilot 
+   * provide RestFul endpoint for PDF validation with pdfaPilot
+   * 
    * @param fileInputStream
    * @param contentDisposition
    * @return validation result as json
@@ -397,10 +397,9 @@ public class JerseyServiceImpl {
     }
 
     File file = FileUtil.saveTempFile(fileInputStream, "pdfapilot.pdf");
-
     PdfACreator pdfaPilotCreator = PdfACreator.getInstance("pdfapilot");
     pdfaPilotCreator.createPdfa(file, fileName, flavour);
-
+    file.delete();
     return pdfaPilotCreator.getHtml();
   }
 
@@ -425,7 +424,6 @@ public class JerseyServiceImpl {
     return pdfaPilotCreator.getJson();
   }
 
-
   @GET
   @Path("download")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -448,7 +446,6 @@ public class JerseyServiceImpl {
     ResponseBuilder response = Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM);
     response.header("Content-Disposition", "attachment; filename=" + origFileName.replace(".pdf", "_pdfa.pdf"));
 
-    file.delete();
     return response.build();
   }
 

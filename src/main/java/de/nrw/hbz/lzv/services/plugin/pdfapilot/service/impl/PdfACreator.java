@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import java.util.LinkedHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +30,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
 
   private static Logger log = LogManager.getLogger(PdfACreator.class);
   public final static String PLUGIN_NAME = "pdfapilot";
+  private static final ScheduledExecutorService DELETE_EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
   protected PdfaPilotResult pdfaRes = null;
 
@@ -124,7 +128,6 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         }
 
       }
-
       return pdfaRes;
     }
 
@@ -190,6 +193,22 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       pdfaRes.setStout(stout);
       pdfaRes.setErrOut(errOut);
     }
+    convertedFile.delete();
+
+    DELETE_EXECUTOR.schedule(() -> {
+      try {
+
+        File outputFile = new File(pdfaRes.getFileOutputLocation());
+
+        if (outputFile.exists()) {
+          if (!outputFile.delete()) {
+            log.warn("Cannot delete temop file " + pdfaRes.getFileOutputLocation());
+          }
+        }
+      } catch (Exception e) {
+        log.error("Error deleting the temp file " + pdfaRes.getFileOutputLocation(), e);
+      }
+    }, 30, TimeUnit.MINUTES);
 
     return pdfaRes;
   }
@@ -223,7 +242,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       }
 
       if (pdfaRes.getReportOutputLocation() != null) {
-        resultBuffer.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + pdfaRes.getReportOutputLocation()
+        resultBuffer.append("<p><a href=\"/lzv-api/download?fileName=" + pdfaRes.getReportOutputLocation()
             + "&origFileName=report_"
             + pdfaRes.getLoadedFileName().replace(".pdf",
                 "_pdf." + pdfaRes.getReportOutputLocation()
@@ -232,8 +251,8 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       }
 
       if (pdfaRes.getFileOutputLocation() != null) {
-        resultBuffer.append("<p class='error'><a href=\"/lzv-api/download?fileName=" + pdfaRes.getFileOutputLocation()
-            + "&origFileName=" + pdfaRes.getLoadedFileName() + "\">PDF/A Datei herunterladen</a></p>");
+        resultBuffer.append("<p><a href=\"/lzv-api/download?fileName=" + pdfaRes.getFileOutputLocation()
+            + "&origFileName=" + pdfaRes.getLoadedFileName() + "\">PDF/A Datei herunterladen</a> (<i class=\"fa-solid fa-triangle-exclamation\"></i> Link 30 Minuten gültig)</p>");
       }
     }
 
