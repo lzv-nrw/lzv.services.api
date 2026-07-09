@@ -59,8 +59,9 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     resultBuffer.append("<h1>Ergebnis der Prüfung</h1>\n");
     resultBuffer.append("<p>" + fileName + "</p>");
-    resultBuffer.append(pdfInfo.toHtml());
-
+    if (pdfInfo != null) {
+      resultBuffer.append(pdfInfo.toHtml());
+    }
     resultBuffer.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Validierung</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
@@ -73,7 +74,9 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     JSONObject resultJson = new JSONObject();
  
     resultJson.put("file", fileName);
-    resultJson.put("pdfInfo", pdfInfo.getJSONObject());
+    if (pdfInfo != null) {
+      resultJson.put("pdfInfo", pdfInfo.getJSONObject());
+    }
     return resultJson.toString(3);
   }
   
