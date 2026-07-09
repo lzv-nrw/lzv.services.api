@@ -23,7 +23,7 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 /**
  * 
  */
-public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
+public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
   private static Logger log = LogManager.getLogger(PdfACreator.class);
   public final static String PLUGIN_NAME = "pdfapilot";
@@ -31,15 +31,15 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
 
   @Override
   public void analyze(File file, String fileName) {
-    
+
     this.fileName = fileName;
 
-    Map<String,Object> pdfMd = new HashMap<>();
-    Map<String,String> versionMap = new HashMap<>();
-    Map<String,String> complianceMap = new HashMap<>();
+    Map<String, Object> pdfMd = new HashMap<>();
+    Map<String, String> versionMap = new HashMap<>();
+    Map<String, String> complianceMap = new HashMap<>();
 
     PilotRunner pRunner = new PilotRunner();
-    
+
     StringBuilder cmd = new StringBuilder();
 
     for (String flag : ParameterLoader.getAnalyzerFlags()) {
@@ -52,71 +52,73 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     log.info("PdfARunner calls pdfaPilot with" + executeString);
 
     pRunner.executePdfATool(executeString);
-    
+
     String stout = pRunner.getStoutStr();
     String errStr = pRunner.getErrStr();
     String exitStateStr = pRunner.getExitStateStr();
-    
+
     debugSb = new StringBuffer();
     debugSb.append("ExitState: " + exitStateStr + "<br>");
     debugSb.append("stout: " + stout + "<br>");
     debugSb.append("errStr: " + errStr + "<br>");
-    
+
     // create standard pdfInfo from stout via PdfInfoProvider
     pdfInfo = getPdfInfo(stout);
     pdfACompl = new PdfACompliance();
-        
-    
-    Stream<String> resultLines  = stout.lines();
+
+    Stream<String> resultLines = stout.lines();
     Iterator<String> rlIt = resultLines.iterator();
-    
-    
-    while(rlIt.hasNext()) {
+
+    while (rlIt.hasNext()) {
       String line = rlIt.next();
-      if(line.startsWith("Info")) {
+      if (line.startsWith("Info")) {
         String[] split = line.split("\t");
         pdfMd.put(split[1], split[2]);
-        //debugSb.append(line + "<br>");
+        // debugSb.append(line + "<br>");
       }
-      
+
     }
-    
+
     String prefLabel = (String) pdfMd.get("Version");
-    if(Version.labelExists(prefLabel)){
+    if (Version.labelExists(prefLabel)) {
       versionMap.put("prefLabel", prefLabel);
       versionMap.put("@id", Version.getVersionUrl(prefLabel));
       pdfMd.put("Version", versionMap);
 
     }
-    
+
     // set PdfACompliance
     pdfACompl.setIsPdfACompliant(false);
-    
+
     prefLabel = (String) pdfMd.get("PDFA");
-    String stripPrefLabel = prefLabel.substring(6,8);
-    
-    if(Compliance.labelExists(stripPrefLabel)){
-      complianceMap.put("prefLabel", stripPrefLabel);
-      complianceMap.put("@id", Compliance.getComplianceUrl(stripPrefLabel));
-      pdfACompl.setIsPdfACompliant(true);
-      pdfACompl.setCompliance(stripPrefLabel);
+
+    if (prefLabel != null && prefLabel.length() >= 8) {
+
+      String stripPrefLabel = prefLabel.substring(6, 8);
+
+      if (Compliance.labelExists(stripPrefLabel)) {
+        complianceMap.put("prefLabel", stripPrefLabel);
+        complianceMap.put("@id", Compliance.getComplianceUrl(stripPrefLabel));
+        pdfACompl.setIsPdfACompliant(true);
+        pdfACompl.setCompliance(stripPrefLabel);
+      }
     }
-    
+
     // pdfMd.put("file", fileName);
     // pdfMd.put("PDF/A compliance", complianceMap);
 
     // return pdfMd.toString();
   }
-  
+
   /**
-   * get the information stored in the PDF information part  
+   * get the information stored in the PDF information part
+   * 
    * @return
    */
-  private PdfInfo getPdfInfo(String stout){
-    PdfInfoProvider infoProvider = new PdfInfoProvider(stout); 
+  private PdfInfo getPdfInfo(String stout) {
+    PdfInfoProvider infoProvider = new PdfInfoProvider(stout);
     return infoProvider.getPdfInfo();
   }
-
 
   @Override
   public String getHtml() {
@@ -126,9 +128,8 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
     resultBuffer.append("<p>" + fileName + "</p>");
     resultBuffer.append(pdfInfo.toHtml());
     resultBuffer.append(pdfACompl.toHtml());
-    
-    //resultBuffer.append("<p>" + debugSb.toString() + "</p>");
-    
+
+    // resultBuffer.append("<p>" + debugSb.toString() + "</p>");
 
     resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
@@ -139,12 +140,11 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer{
   @Override
   public String getJson() {
     JSONObject resultJson = new JSONObject();
-    
+
     resultJson.put("file", fileName);
     resultJson.put("pdfInfo", pdfInfo.getJSONObject());
     resultJson.put("pdfACompliance", pdfACompl.getJSONObject());
     return resultJson.toString(3);
   }
-
 
 }
