@@ -299,6 +299,7 @@ public class JerseyServiceImpl {
 
     Analyzer pdfaPilotAnalyzer = Analyzer.getInstance("pdfapilot");
     pdfaPilotAnalyzer.analyze(file, fileName);
+    file.delete();
     return pdfaPilotAnalyzer.getHtml();
   }
 
@@ -328,6 +329,7 @@ public class JerseyServiceImpl {
     StringBuffer pilotSb = new StringBuffer();
     // pilotSb.append("{'pdfaPilot validation result :");
     pilotSb.append(pdfaPilotAnalyzer.getJson());
+    file.delete();
     return pilotSb.toString();
 
   }
