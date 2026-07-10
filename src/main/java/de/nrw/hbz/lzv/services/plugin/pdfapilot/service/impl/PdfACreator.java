@@ -195,6 +195,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     }
     convertedFile.delete();
 
+    int fileDeleteTime = ParameterLoader.getFileDeleteTime();
     DELETE_EXECUTOR.schedule(() -> {
       try {
 
@@ -208,7 +209,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       } catch (Exception e) {
         log.error("Error deleting the temp file " + pdfaRes.getFileOutputLocation(), e);
       }
-    }, 30, TimeUnit.MINUTES);
+    }, fileDeleteTime, TimeUnit.MINUTES);
 
     return pdfaRes;
   }
@@ -252,7 +253,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
 
       if (pdfaRes.getFileOutputLocation() != null) {
         resultBuffer.append("<p><a href=\"/lzv-api/download?fileName=" + pdfaRes.getFileOutputLocation()
-            + "&origFileName=" + pdfaRes.getLoadedFileName() + "\">PDF/A Datei herunterladen</a> (<i class=\"fa-solid fa-triangle-exclamation\"></i> Link 30 Minuten gültig)</p>");
+            + "&origFileName=" + pdfaRes.getLoadedFileName() + "\">PDF/A Datei herunterladen</a> (<i class=\"fa-solid fa-triangle-exclamation\"></i> Link " + ParameterLoader.getFileDeleteTime() + " Minuten gültig)</p>");
       }
     }
 

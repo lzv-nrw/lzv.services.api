@@ -37,6 +37,10 @@ public class ParameterLoader {
     return pdfaPilotProps.getProperty("pdfapilot.path");
   }
 
+  public static int getFileDeleteTime() {
+    return Integer.parseInt(pdfaPilotProps.getProperty("pdfapilot.fileDeleteTime"));
+  }
+
   public static String getDefaultLevel() {
     return pdfaPilotProps.getProperty("pdfapilot.level");
   }
