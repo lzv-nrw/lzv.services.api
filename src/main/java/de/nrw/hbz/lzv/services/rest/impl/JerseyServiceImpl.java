@@ -420,7 +420,7 @@ public class JerseyServiceImpl {
 
     PdfACreator pdfaPilotCreator = PdfACreator.getInstance("pdfapilot");
     pdfaPilotCreator.createPdfa(file, fileName, flavour);
-
+    file.delete();
     return pdfaPilotCreator.getJson();
   }
 
