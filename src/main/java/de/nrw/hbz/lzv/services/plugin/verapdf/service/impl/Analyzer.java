@@ -144,14 +144,18 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     resultBuffer.append(HtmlTemplate.getHtmlHead());
 
-    resultBuffer.append("<h1>Ergebnis der Prüfung</h1>\n");
-    resultBuffer.append("<p>" + fileName + "</p>");
-    if (pdfInfo != null) {
+    resultBuffer.append("<h1>Ergebnis der Prüfung mit veraPDF</h1>\n");
+    resultBuffer.append("<h2>Analysierte Datei: " + fileName + "</h2>");
+    if (pdfInfo == null || pdfInfo.getJSONObject().isEmpty()) {
+      resultBuffer
+      .append("<h3>PDF Informationen</h3><ul>\n<li>Keine Informationen verfügbar oder extrahierbar</li>\n</ul>\n");
+    } else {
       resultBuffer.append(pdfInfo.toHtml());
     }
+
     resultBuffer.append(pdfACompl.toHtml());
 
-    resultBuffer.append("<p><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Validierung</a>");
+    resultBuffer.append("<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/verapdf/upload\">Weitere PDF-Validierung</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();
@@ -164,6 +168,8 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     resultJson.put("file", fileName);
     if (pdfInfo != null) {
       resultJson.put("pdfInfo", pdfInfo.getJSONObject());
+    } else {
+      resultJson.put("pdfInfo", new JSONObject());
     }
     resultJson.put("pdfACompliance", pdfACompl.getJSONObject());
     return resultJson.toString(3);

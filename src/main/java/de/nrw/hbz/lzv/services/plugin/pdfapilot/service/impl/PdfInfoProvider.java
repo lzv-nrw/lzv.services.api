@@ -14,33 +14,33 @@ import de.nrw.hbz.lzv.services.model.json.model.PdfInfoModel;
  * 
  */
 public class PdfInfoProvider {
-  
+
   private String stout = null;
   private PdfInfo pdfInfo = null;
-  
-  
+
   public PdfInfoProvider(String stout) {
     this.stout = stout;
     setPdfInfo();
   }
-  
 
   public void setPdfInfo() {
-    
+
     pdfInfo = new PdfInfo();
     Stream<String> resultLines = stout.lines();
-    
+
     Iterator<String> rlIt = resultLines.iterator();
-    
-    while(rlIt.hasNext()) {
+
+    while (rlIt.hasNext()) {
       String line = rlIt.next();
-      if(line.startsWith("Info")) {
-        String[] split = line.split("\t");
-     
-        LinkedHashMap<String,String> infoLabels = PdfInfoModel.getInfoLabel();
-        if(infoLabels.containsKey(split[1].toLowerCase())) {
+      if (line.startsWith("Info")) {
+        String[] split = line.split("\t", -1);
+        LinkedHashMap<String, String> infoLabels = PdfInfoModel.getInfoLabel();
+        if (infoLabels.containsKey(split[1].toLowerCase())) {
           String key = split[1].toLowerCase();
-          pdfInfo.setInfoElement(key, split[2]);
+          String value = split.length > 2 ? split[2] : "";
+          if (!value.equals("<no entry>") && !value.equals("")) {
+            pdfInfo.setInfoElement(key, value);
+          }
         } else {
           pdfInfo.setInfoElement(split[1], split[2]);
         }
@@ -50,6 +50,7 @@ public class PdfInfoProvider {
 
   /**
    * Get a plug-in independent object representing PDF Information
+   * 
    * @return PdfInfo
    */
   public PdfInfo getPdfInfo() {

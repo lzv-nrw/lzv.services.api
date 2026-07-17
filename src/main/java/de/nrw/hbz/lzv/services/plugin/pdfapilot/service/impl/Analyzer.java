@@ -64,6 +64,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     // create standard pdfInfo from stout via PdfInfoProvider
     pdfInfo = getPdfInfo(stout);
+
     pdfACompl = new PdfACompliance();
 
     Stream<String> resultLines = stout.lines();
@@ -72,8 +73,9 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     while (rlIt.hasNext()) {
       String line = rlIt.next();
       if (line.startsWith("Info")) {
-        String[] split = line.split("\t");
-        pdfMd.put(split[1], split[2]);
+        String[] split = line.split("\t", -1);
+        String value = split.length > 2 ? split[2] : "";
+        pdfMd.put(split[1], value);
         // debugSb.append(line + "<br>");
       }
 
@@ -124,14 +126,21 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   public String getHtml() {
     resultBuffer.append(HtmlTemplate.getHtmlHead());
 
-    resultBuffer.append("<h1>Ergebnis der Prüfung</h1>\n");
-    resultBuffer.append("<p>" + fileName + "</p>");
-    resultBuffer.append(pdfInfo.toHtml());
+    resultBuffer.append("<h1>Ergebnis der Prüfung mit pdfaPilot</h1>\n");
+    resultBuffer.append("<h2>Analysierte Datei: " + fileName + "</h2>");
+    if (!pdfInfo.getJSONObject().isEmpty()) {
+      resultBuffer.append(pdfInfo.toHtml());
+    } else {
+      resultBuffer
+          .append("<h3>PDF Informationen</h3><ul>\n<li>Keine Informationen verfügbar oder extrahierbar</li>\n</ul>\n");
+    }
+
     resultBuffer.append(pdfACompl.toHtml());
 
     // resultBuffer.append("<p>" + debugSb.toString() + "</p>");
 
-    resultBuffer.append("<p><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
+    resultBuffer.append(
+        "<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();

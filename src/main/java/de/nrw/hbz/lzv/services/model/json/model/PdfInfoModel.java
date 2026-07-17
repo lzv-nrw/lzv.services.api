@@ -17,9 +17,12 @@ public class PdfInfoModel {
   public final static String CREATOR = "creator";
   public final static String PRODUCER = "producer";
   public final static String PAGES = "pages";
-  public final static String PAGESIZE = "pages";
+  public final static String PAGES_PDFAPILOT = "pagenumber";
+  public final static String PAGESIZE = "pagesize";
   public final static String CREATION_DATE = "creationDate";
+  public final static String CREATION_DATE_PDFAPILOT = "created";
   public final static String MODIFICATION_DATE = "modificationDate";
+  public final static String MODIFICATION_DATE_PDFAPILOT = "modified";
   public final static String KEYWORDS = "keywords";
   public final static String SUBJECT = "subject";
 
@@ -31,16 +34,19 @@ public class PdfInfoModel {
   private static LinkedHashMap<String,String> setInfoLabel() {
     
     infoLabel = new LinkedHashMap<>();
-    infoLabel.put(TITLE, "Title");
-    infoLabel.put(AUTHOR, "Author");
-    infoLabel.put(CREATOR, "Creator");
-    infoLabel.put(PRODUCER,"Production Tool");
-    infoLabel.put(PAGES, "Pages");
-    infoLabel.put(PAGESIZE, "Pagesize");
-    infoLabel.put(CREATION_DATE, "Creation Date");
-    infoLabel.put(MODIFICATION_DATE, "Modification Date");
-    infoLabel.put(KEYWORDS, "Keywords");
-    infoLabel.put(SUBJECT, "Subject");
+    infoLabel.put(TITLE, "Titel");
+    infoLabel.put(AUTHOR, "Autor");
+    infoLabel.put(CREATOR, "Erstellt mit");
+    infoLabel.put(PRODUCER,"PDF erstellt mit");
+    infoLabel.put(PAGES, "Seitenanzahl");
+    infoLabel.put(PAGES_PDFAPILOT, "Seitenanzahl");
+    infoLabel.put(PAGESIZE, "Seitengröße");
+    infoLabel.put(CREATION_DATE, "Erstellungsdatum");
+    infoLabel.put(CREATION_DATE_PDFAPILOT, "Erstellungsdatum");
+    infoLabel.put(KEYWORDS, "Schlagwörter");
+    infoLabel.put(SUBJECT, "Betreff");
+    infoLabel.put(MODIFICATION_DATE, "Änderungsdatum");
+    infoLabel.put(MODIFICATION_DATE_PDFAPILOT, "Änderungsdatum");
     return infoLabel; 
   }
   
@@ -56,10 +62,14 @@ public class PdfInfoModel {
     infoKeys.add(CREATOR);
     infoKeys.add(PRODUCER);
     infoKeys.add(PAGES);
+    infoKeys.add(PAGES_PDFAPILOT);
+    infoKeys.add(PAGESIZE);
     infoKeys.add(CREATION_DATE);
-    infoKeys.add(MODIFICATION_DATE);
+    infoKeys.add(CREATION_DATE_PDFAPILOT);
     infoKeys.add(KEYWORDS);
     infoKeys.add(SUBJECT);
+    infoKeys.add(MODIFICATION_DATE);
+    infoKeys.add(MODIFICATION_DATE_PDFAPILOT);
     return infoKeys; 
   }
 
