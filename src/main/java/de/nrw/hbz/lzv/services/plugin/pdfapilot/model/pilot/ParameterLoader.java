@@ -83,6 +83,9 @@ public class ParameterLoader {
     if (pdfaPilotProps.getProperty("pdfapilot.fontfolder") != null) {
       flags.add("--fontfolder=" + pdfaPilotProps.getProperty("pdfapilot.fontfolder"));
     }
+    if (pdfaPilotProps.getProperty("pdfapilot.language") != null) {
+      flags.add("--language=" + pdfaPilotProps.getProperty("pdfapilot.language"));
+    }
 
     return flags;
   }
