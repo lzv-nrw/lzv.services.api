@@ -16,6 +16,7 @@ public class PdfInfoModel {
   public final static String AUTHOR = "author";
   public final static String CREATOR = "creator";
   public final static String PRODUCER = "producer";
+  public final static String FILESIZE = "filesize";
   public final static String PAGES = "pages";
   public final static String PAGES_PDFAPILOT = "pagenumber";
   public final static String PAGESIZE = "pagesize";
@@ -38,6 +39,7 @@ public class PdfInfoModel {
     infoLabel.put(AUTHOR, "Autor");
     infoLabel.put(CREATOR, "Erstellt mit");
     infoLabel.put(PRODUCER,"PDF erstellt mit");
+    infoLabel.put(FILESIZE, "Dateigröße");
     infoLabel.put(PAGES, "Seitenanzahl");
     infoLabel.put(PAGES_PDFAPILOT, "Seitenanzahl");
     infoLabel.put(PAGESIZE, "Seitengröße");
@@ -61,6 +63,7 @@ public class PdfInfoModel {
     infoKeys.add(AUTHOR);
     infoKeys.add(CREATOR);
     infoKeys.add(PRODUCER);
+    infoKeys.add(FILESIZE);
     infoKeys.add(PAGES);
     infoKeys.add(PAGES_PDFAPILOT);
     infoKeys.add(PAGESIZE);

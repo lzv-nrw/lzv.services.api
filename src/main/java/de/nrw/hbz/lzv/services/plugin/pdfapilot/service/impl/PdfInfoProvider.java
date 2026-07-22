@@ -52,6 +52,8 @@ public class PdfInfoProvider {
               Calendar calendar = GregorianCalendar.from(odt.toZonedDateTime());
 
               pdfInfo.setInfoElement(key, TimePrefix.setFormat(calendar));
+            } else if (key.equals("filesize")) {
+              pdfInfo.setInfoElement(key, value + " Bytes");
             } else {
               pdfInfo.setInfoElement(key, value);
             }
