@@ -38,7 +38,7 @@ public class PdfInfoModel {
     infoLabel.put(TITLE, "Titel");
     infoLabel.put(AUTHOR, "Autor");
     infoLabel.put(CREATOR, "Erstellt mit");
-    infoLabel.put(PRODUCER,"PDF erstellt mit");
+    infoLabel.put(PRODUCER,"PDF erzeugt mit");
     infoLabel.put(FILESIZE, "Dateigröße");
     infoLabel.put(PAGES, "Seitenanzahl");
     infoLabel.put(PAGES_PDFAPILOT, "Seitenanzahl");
