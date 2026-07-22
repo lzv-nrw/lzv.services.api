@@ -35,8 +35,6 @@ public class PdfInfoProvider {
     }
     if (pdDocInfo.getModificationDate() != null) {
       pdfInfo.setPdfModificationDate(TimePrefix.setFormat(pdDocInfo.getModificationDate()));
-    } else {
-      pdfInfo.setPdfModificationDate(TimePrefix.getTimePrefix());
     }
   }
 
