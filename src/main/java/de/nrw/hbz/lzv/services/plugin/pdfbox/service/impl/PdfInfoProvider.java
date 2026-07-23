@@ -28,8 +28,12 @@ public class PdfInfoProvider {
     pdfInfo.setPdfAuthor(pdDocInfo.getAuthor());
     pdfInfo.setPdfCreator(pdDocInfo.getCreator());
     pdfInfo.setPdfProducer(pdDocInfo.getProducer());
-    pdfInfo.setPdfKeywords(pdDocInfo.getKeywords());
-    pdfInfo.setPdfSubject(pdDocInfo.getSubject());
+    if (pdDocInfo.getKeywords() != null && !pdDocInfo.getKeywords().isBlank()) {
+      pdfInfo.setPdfKeywords(pdDocInfo.getKeywords());
+    }
+    if (pdDocInfo.getSubject() != null && !pdDocInfo.getSubject().isBlank()) {
+      pdfInfo.setPdfSubject(pdDocInfo.getSubject());
+    }
     if (pdDocInfo.getCreationDate() != null) {
       pdfInfo.setPdfCreationDate(TimePrefix.setFormat(pdDocInfo.getCreationDate()));
     }
