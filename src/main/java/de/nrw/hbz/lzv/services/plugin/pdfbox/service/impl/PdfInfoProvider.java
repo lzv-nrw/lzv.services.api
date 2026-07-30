@@ -3,6 +3,7 @@
  */
 package de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
@@ -15,9 +16,11 @@ public class PdfInfoProvider {
 
   private PDDocumentInformation pdDocInfo = null;
   private PdfInfo pdfInfo = null;
+  private String pdfVersion = null;
 
-  public PdfInfoProvider(PDDocumentInformation docInf) {
-    this.pdDocInfo = docInf;
+  public PdfInfoProvider(PDDocument pdDocument) {
+    this.pdDocInfo = pdDocument.getDocumentInformation();
+    this.pdfVersion = Float.toString(pdDocument.getVersion());
     setPdfInfo();
   }
 
@@ -28,6 +31,7 @@ public class PdfInfoProvider {
     pdfInfo.setPdfAuthor(pdDocInfo.getAuthor());
     pdfInfo.setPdfCreator(pdDocInfo.getCreator());
     pdfInfo.setPdfProducer(pdDocInfo.getProducer());
+    pdfInfo.setPdfVersion(pdfVersion);
     if (pdDocInfo.getKeywords() != null && !pdDocInfo.getKeywords().isBlank()) {
       pdfInfo.setPdfKeywords(pdDocInfo.getKeywords());
     }

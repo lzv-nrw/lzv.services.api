@@ -8,7 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import org.verapdf.core.ModelParsingException;
+import org.verapdf.gf.model.impl.cos.GFCosDocument;
 import org.verapdf.metadata.fixer.entity.InfoDictionary;
+import org.verapdf.pdfa.PDFAParser;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
 import de.nrw.hbz.lzv.services.util.TimePrefix;
@@ -20,21 +23,42 @@ public class PdfInfoProvider {
 
   private InfoDictionary infoDict = null;
   private PdfInfo pdfInfo = null;
+  private String pdfVersion = null;
 
-  public PdfInfoProvider(InfoDictionary infoDict) {
-    this.infoDict = infoDict;
+  public PdfInfoProvider(PDFAParser pdfParser) {
+    this.infoDict = pdfParser.getPDFDocument().getInfoDictionary();
+    try {
+      GFCosDocument root = (GFCosDocument) pdfParser.getRoot();
+      this.pdfVersion = String.format("%.1f", root.getheaderVersion()).replace(',', '.');
+    } catch (ModelParsingException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     setPdfInfo();
   }
 
   public void setPdfInfo() {
     pdfInfo = new PdfInfo();
-    pdfInfo.setPdfTitle(infoDict.getTitle());
-    pdfInfo.setPdfAuthor(infoDict.getAuthor());
-    pdfInfo.setPdfCreator(infoDict.getCreator());
-    pdfInfo.setPdfProducer(infoDict.getProducer());
-    pdfInfo.setPdfKeywords(infoDict.getKeywords());
-    pdfInfo.setPdfSubject(infoDict.getSubject());
-    if (infoDict.getCreationDate() != null) {
+    if (infoDict != null) {
+      pdfInfo.setPdfTitle(infoDict.getTitle());
+    }
+    if (infoDict != null) {
+      pdfInfo.setPdfAuthor(infoDict.getAuthor());
+    }
+    if (infoDict != null) {
+      pdfInfo.setPdfCreator(infoDict.getCreator());
+    }
+    if (infoDict != null) {
+      pdfInfo.setPdfProducer(infoDict.getProducer());
+    }
+    pdfInfo.setPdfVersion(pdfVersion);
+    if (infoDict != null) {
+      pdfInfo.setPdfKeywords(infoDict.getKeywords());
+    }
+    if (infoDict != null) {
+      pdfInfo.setPdfSubject(infoDict.getSubject());
+    }
+    if (infoDict != null && infoDict.getCreationDate() != null) {
       String dateString = infoDict.getCreationDate();
       dateString = dateString.replaceFirst("([+-]\\d{2})'(\\d{2})'", "$1:$2");
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'D:'yyyyMMddHHmmssXXX");
@@ -43,7 +67,7 @@ public class PdfInfoProvider {
 
       pdfInfo.setPdfCreationDate(TimePrefix.setFormat(calendar));
     }
-    if (infoDict.getModificationDate() != null) {
+    if (infoDict != null && infoDict.getModificationDate() != null) {
       String dateString = infoDict.getModificationDate();
 
       dateString = dateString.replaceFirst("([+-]\\d{2})'(\\d{2})'", "$1:$2");

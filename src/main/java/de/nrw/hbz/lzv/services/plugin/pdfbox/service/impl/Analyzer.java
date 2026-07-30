@@ -9,7 +9,6 @@ import java.io.IOException;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.json.JSONObject;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
@@ -20,7 +19,6 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
  * 
  */
 public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
-
 
   @Override
   public void analyze(File file, String fileName) {
@@ -44,7 +42,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
    * @return
    */
   private PdfInfo getPdfInfo(PDDocument pdDocument) {
-    PdfInfoProvider infoProvider = new PdfInfoProvider(pdDocument.getDocumentInformation());
+    PdfInfoProvider infoProvider = new PdfInfoProvider(pdDocument);
     return infoProvider.getPdfInfo();
   }
 

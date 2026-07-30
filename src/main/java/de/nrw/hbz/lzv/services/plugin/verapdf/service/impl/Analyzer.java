@@ -56,12 +56,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
       PDFDocument pdfDocument = pdfParser.getPDFDocument();
 
-      if (pdfDocument.getInfoDictionary() != null) {
-        pdfInfo = getPdfInfo(pdfDocument);
-      } else {
-        pdfInfo = new PdfInfo();
-      }
-
+      pdfInfo = getPdfInfo(pdfParser);
       validateAllFlavours(pdfParser, vpf);
 
     } catch (IOException | ModelParsingException | EncryptedPdfException e) {
@@ -125,8 +120,8 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
    *
    * @return
    */
-  private PdfInfo getPdfInfo(PDFDocument pdfDocument) {
-    PdfInfoProvider infoProvider = new PdfInfoProvider(pdfDocument.getInfoDictionary());
+  private PdfInfo getPdfInfo(PDFAParser pdfParser) {
+    PdfInfoProvider infoProvider = new PdfInfoProvider(pdfParser);
     return infoProvider.getPdfInfo();
   }
 

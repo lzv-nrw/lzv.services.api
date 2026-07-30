@@ -11,11 +11,12 @@ public class PdfInfoModel {
 
   private static LinkedHashMap<String, String> infoLabel = setInfoLabel();
   private static Set<String> infoKeys = setKeys();
-  
+
   public final static String TITLE = "title";
   public final static String AUTHOR = "author";
   public final static String CREATOR = "creator";
   public final static String PRODUCER = "producer";
+  public final static String VERSION = "version";
   public final static String FILESIZE = "filesize";
   public final static String PAGES = "pages";
   public final static String PAGES_PDFAPILOT = "pagenumber";
@@ -27,18 +28,19 @@ public class PdfInfoModel {
   public final static String KEYWORDS = "keywords";
   public final static String SUBJECT = "subject";
 
-  public PdfInfoModel(){
+  public PdfInfoModel() {
     setInfoLabel();
     setKeys();
   }
-  
-  private static LinkedHashMap<String,String> setInfoLabel() {
-    
+
+  private static LinkedHashMap<String, String> setInfoLabel() {
+
     infoLabel = new LinkedHashMap<>();
     infoLabel.put(TITLE, "Titel");
     infoLabel.put(AUTHOR, "Autor");
     infoLabel.put(CREATOR, "Erstellt mit");
-    infoLabel.put(PRODUCER,"PDF erzeugt mit");
+    infoLabel.put(PRODUCER, "PDF erzeugt mit");
+    infoLabel.put(VERSION, "PDF-Version");
     infoLabel.put(FILESIZE, "Dateigröße");
     infoLabel.put(PAGES, "Seitenanzahl");
     infoLabel.put(PAGES_PDFAPILOT, "Seitenanzahl");
@@ -49,20 +51,21 @@ public class PdfInfoModel {
     infoLabel.put(SUBJECT, "Betreff");
     infoLabel.put(MODIFICATION_DATE, "Änderungsdatum");
     infoLabel.put(MODIFICATION_DATE_PDFAPILOT, "Änderungsdatum");
-    return infoLabel; 
+    return infoLabel;
   }
-  
+
   public static LinkedHashMap<String, String> getInfoLabel() {
     return infoLabel;
   }
 
   private static Set<String> setKeys() {
-    
+
     infoKeys = new HashSet<>();
     infoKeys.add(TITLE);
     infoKeys.add(AUTHOR);
     infoKeys.add(CREATOR);
     infoKeys.add(PRODUCER);
+    infoKeys.add(VERSION);
     infoKeys.add(FILESIZE);
     infoKeys.add(PAGES);
     infoKeys.add(PAGES_PDFAPILOT);
@@ -73,7 +76,7 @@ public class PdfInfoModel {
     infoKeys.add(SUBJECT);
     infoKeys.add(MODIFICATION_DATE);
     infoKeys.add(MODIFICATION_DATE_PDFAPILOT);
-    return infoKeys; 
+    return infoKeys;
   }
 
   public static Set<String> getKeys() {

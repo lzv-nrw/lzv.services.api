@@ -13,6 +13,8 @@ public interface PdfDocumentInformation {
 
   public void setPdfProducer(String productionTool);
 
+  public void setPdfVersion(String version);
+
   public void setPdfCreationDate(String creationDate);
 
   public void setPdfModificationDate(String modificationDate);

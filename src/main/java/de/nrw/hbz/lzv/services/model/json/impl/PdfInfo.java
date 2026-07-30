@@ -39,6 +39,11 @@ public class PdfInfo implements PdfDocumentInformation {
   }
 
   @Override
+  public void setPdfVersion(String version) {
+    pdfInfoMap.put(PdfInfoModel.VERSION, version);
+  }
+
+  @Override
   public void setPdfCreationDate(String creationDate) {
     pdfInfoMap.put(PdfInfoModel.CREATION_DATE, creationDate);
 
