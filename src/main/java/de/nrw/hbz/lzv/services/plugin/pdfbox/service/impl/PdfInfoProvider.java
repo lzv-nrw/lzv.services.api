@@ -27,10 +27,18 @@ public class PdfInfoProvider {
   public void setPdfInfo() {
 
     pdfInfo = new PdfInfo();
-    pdfInfo.setPdfTitle(pdDocInfo.getTitle());
-    pdfInfo.setPdfAuthor(pdDocInfo.getAuthor());
-    pdfInfo.setPdfCreator(pdDocInfo.getCreator());
-    pdfInfo.setPdfProducer(pdDocInfo.getProducer());
+    if (pdDocInfo.getTitle() != null && !pdDocInfo.getTitle().isBlank()) {
+      pdfInfo.setPdfTitle(pdDocInfo.getTitle());
+    }
+    if (pdDocInfo.getAuthor() != null && !pdDocInfo.getAuthor().isBlank()) {
+      pdfInfo.setPdfAuthor(pdDocInfo.getAuthor());
+    }
+    if (pdDocInfo.getCreator() != null && !pdDocInfo.getCreator().isBlank()) {
+      pdfInfo.setPdfCreator(pdDocInfo.getCreator());
+    }
+    if (pdDocInfo.getProducer() != null && !pdDocInfo.getProducer().isBlank()) {
+      pdfInfo.setPdfProducer(pdDocInfo.getProducer());
+    }
     pdfInfo.setPdfVersion(pdfVersion);
     if (pdDocInfo.getKeywords() != null && !pdDocInfo.getKeywords().isBlank()) {
       pdfInfo.setPdfKeywords(pdDocInfo.getKeywords());

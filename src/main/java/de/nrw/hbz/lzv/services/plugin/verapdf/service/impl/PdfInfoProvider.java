@@ -41,42 +41,46 @@ public class PdfInfoProvider {
     pdfInfo = new PdfInfo();
     if (infoDict != null) {
       pdfInfo.setPdfTitle(infoDict.getTitle());
-    }
-    if (infoDict != null) {
-      pdfInfo.setPdfAuthor(infoDict.getAuthor());
-    }
-    if (infoDict != null) {
-      pdfInfo.setPdfCreator(infoDict.getCreator());
-    }
-    if (infoDict != null) {
-      pdfInfo.setPdfProducer(infoDict.getProducer());
+
+      if (infoDict.getAuthor() != null && !infoDict.getAuthor().isBlank()) {
+        pdfInfo.setPdfAuthor(infoDict.getAuthor());
+      }
+      if (infoDict.getCreator() != null && !infoDict.getCreator().isBlank()) {
+        pdfInfo.setPdfCreator(infoDict.getCreator());
+      }
+      if (infoDict.getProducer() != null && !infoDict.getProducer().isBlank()) {
+        pdfInfo.setPdfProducer(infoDict.getProducer());
+      }
     }
     pdfInfo.setPdfVersion(pdfVersion);
     if (infoDict != null) {
-      pdfInfo.setPdfKeywords(infoDict.getKeywords());
-    }
-    if (infoDict != null) {
-      pdfInfo.setPdfSubject(infoDict.getSubject());
-    }
-    if (infoDict != null && infoDict.getCreationDate() != null) {
-      String dateString = infoDict.getCreationDate();
-      dateString = dateString.replaceFirst("([+-]\\d{2})'(\\d{2})'", "$1:$2");
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'D:'yyyyMMddHHmmssXXX");
-      OffsetDateTime odt = OffsetDateTime.parse(dateString, formatter);
-      Calendar calendar = GregorianCalendar.from(odt.toZonedDateTime());
+      if (infoDict.getKeywords() != null && !infoDict.getKeywords().isBlank()) {
+        pdfInfo.setPdfKeywords(infoDict.getKeywords());
+      }
+      if (infoDict.getSubject() != null && !infoDict.getSubject().isBlank()) {
+        pdfInfo.setPdfSubject(infoDict.getSubject());
+      }
+      if (infoDict.getCreationDate() != null) {
+        String dateString = infoDict.getCreationDate();
+        dateString = dateString.replaceFirst("([+-]\\d{2})'(\\d{2})'", "$1:$2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'D:'yyyyMMddHHmmssXXX");
+        OffsetDateTime odt = OffsetDateTime.parse(dateString, formatter);
+        Calendar calendar = GregorianCalendar.from(odt.toZonedDateTime());
 
-      pdfInfo.setPdfCreationDate(TimePrefix.setFormat(calendar));
-    }
-    if (infoDict != null && infoDict.getModificationDate() != null) {
-      String dateString = infoDict.getModificationDate();
+        pdfInfo.setPdfCreationDate(TimePrefix.setFormat(calendar));
+      }
+      if (infoDict.getModificationDate() != null) {
+        String dateString = infoDict.getModificationDate();
 
-      dateString = dateString.replaceFirst("([+-]\\d{2})'(\\d{2})'", "$1:$2");
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'D:'yyyyMMddHHmmssXXX");
-      OffsetDateTime odt = OffsetDateTime.parse(dateString, formatter);
-      Calendar calendar = GregorianCalendar.from(odt.toZonedDateTime());
+        dateString = dateString.replaceFirst("([+-]\\d{2})'(\\d{2})'", "$1:$2");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("'D:'yyyyMMddHHmmssXXX");
+        OffsetDateTime odt = OffsetDateTime.parse(dateString, formatter);
+        Calendar calendar = GregorianCalendar.from(odt.toZonedDateTime());
 
-      pdfInfo.setPdfModificationDate(TimePrefix.setFormat(calendar));
+        pdfInfo.setPdfModificationDate(TimePrefix.setFormat(calendar));
+      }
     }
+
   }
 
   /**
