@@ -47,8 +47,9 @@ public class PdfACompliance {
 
       String levelLabel = (String) pdfACompl.getJSONObject("complianceLevel").get("prefLabel");
       String formatUrl = Compliance.getComplianceUrl(levelLabel);
-      htmlBuffer.append("<li class=\"success\">Die Datei entspricht dem PDF/A-Standard, Version "
-          + "<a target='_blank' href='" + formatUrl + "' >" + levelLabel + "</li>");
+      htmlBuffer.append(
+          "<li class=\"success\">Die Datei entspricht dem PDF/A-Standard, Version " + "<a target='_blank' href='"
+              + formatUrl + "' >" + levelLabel + "<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>");
     } else {
 
       htmlBuffer.append("<li class=\"error\">Datei entspricht KEINEM PDF/A-Standard</li>");
