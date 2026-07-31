@@ -102,7 +102,7 @@ public class PdfInfo implements PdfDocumentInformation {
           String versionFormat = Version.getVersionFormat(entry.getValue().toString());
           String formatUrl = Version.getVersionUrl(entry.getValue().toString());
           htmlBuffer.append("<li>" + PdfInfoModel.getInfoLabel().get(entry.getKey()) + ": " + entry.getValue()
-              + ", Format " + "<a target='_blank' href='" + formatUrl + "' >" + versionFormat
+              + ",  PRONOM-ID " + "<a target='_blank' href='" + formatUrl + "' >" + versionFormat
               + "<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>\n");
         } else {
           htmlBuffer
