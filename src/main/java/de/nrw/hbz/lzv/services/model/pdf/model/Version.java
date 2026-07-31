@@ -49,7 +49,6 @@ public class Version {
       versionLabel.put("1.6", _1_6);
       versionLabel.put("1.7", _1_7);
       versionLabel.put("2", _2);
-      logger.info(versionLabel.get(_1_0));
       return versionLabel; 
     }
 

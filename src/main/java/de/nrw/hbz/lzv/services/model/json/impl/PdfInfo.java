@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import de.nrw.hbz.lzv.services.model.json.model.PdfDocumentInformation;
 import de.nrw.hbz.lzv.services.model.json.model.PdfInfoModel;
+import de.nrw.hbz.lzv.services.model.pdf.model.Version;
 
 /**
  * 
@@ -97,8 +98,16 @@ public class PdfInfo implements PdfDocumentInformation {
 
       if (entry.getValue() != null) {
         logger.debug(entry.getKey());
-        htmlBuffer
-            .append("<li>" + PdfInfoModel.getInfoLabel().get(entry.getKey()) + ": " + entry.getValue() + "</li>\n");
+        if (entry.getKey().equals("version")) {
+          String versionFormat = Version.getVersionFormat(entry.getValue().toString());
+          String formatUrl = Version.getVersionUrl(entry.getValue().toString());
+          htmlBuffer.append("<li>" + PdfInfoModel.getInfoLabel().get(entry.getKey()) + ": " + entry.getValue()
+              + ", Format " + "<a target='_blank' href='" + formatUrl + "' >" + versionFormat
+              + "<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>\n");
+        } else {
+          htmlBuffer
+              .append("<li>" + PdfInfoModel.getInfoLabel().get(entry.getKey()) + ": " + entry.getValue() + "</li>\n");
+        }
       }
     }
 
