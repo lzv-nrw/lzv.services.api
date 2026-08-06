@@ -52,7 +52,7 @@ public class PdfACompliance {
               + formatUrl + "' >" + levelLabel + "<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>");
     } else {
 
-      htmlBuffer.append("<li class=\"error\">Datei entspricht KEINEM PDF/A-Standard</li>");
+      htmlBuffer.append("<li class=\"error\">Die Datei entspricht KEINEM PDF/A-Standard</li>");
     }
 
     htmlBuffer.append(listEnd);
