@@ -265,6 +265,11 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     resultBuffer.append("<h2>Datei zur Konvertierung: " + pdfaRes.getLoadedFileName() + "</h2>\n");
     if (pdfaRes != null) {
 
+      if (pdfaRes.getFileOutputLocation() != null) {
+        resultBuffer.append("<h3 style=\"color: darkgreen;)\">Konvertierung erfolgreich <i class=\"fa-solid fa-check\"></i></h3>");
+      } else {
+        resultBuffer.append("<h3 style=\"color: red;)\">Konvertierung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></h3>");
+      }
       resultBuffer.append("<h3>Durchgeführte Maßnahmen:</h3>\n<ul>\n");
       for (int i = 0; i < pdfaRes.getFixList().size(); i++) {
         resultBuffer.append("<li>").append(pdfaRes.getFixList().get(i)).append("</li>");
