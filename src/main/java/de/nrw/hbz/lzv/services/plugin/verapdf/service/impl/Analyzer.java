@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.verapdf.core.EncryptedPdfException;
 import org.verapdf.core.ModelParsingException;
 import org.verapdf.core.ValidationException;
-import org.verapdf.metadata.fixer.entity.PDFDocument;
 import org.verapdf.pdfa.Foundries;
 import org.verapdf.pdfa.PDFAParser;
 import org.verapdf.pdfa.PDFAValidator;
@@ -53,8 +52,6 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     VeraPDFFoundry vpf = Foundries.defaultInstance();
 
     try (PDFAParser pdfParser = vpf.createParser(file)) {
-
-      PDFDocument pdfDocument = pdfParser.getPDFDocument();
 
       pdfInfo = getPdfInfo(pdfParser);
       validateAllFlavours(pdfParser, vpf);
