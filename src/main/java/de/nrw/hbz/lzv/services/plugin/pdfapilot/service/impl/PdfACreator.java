@@ -320,7 +320,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       return "{}";
     }
 
-    JSONObject resultJson = new org.json.JSONObject();
+    JSONObject resultJson = new JSONObject();
 
     resultJson.put("file", pdfaRes.getLoadedFileName());
 
