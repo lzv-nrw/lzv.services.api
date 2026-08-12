@@ -3,8 +3,8 @@
  */
 package lzv.services.pdf.veracore;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
@@ -47,7 +47,7 @@ public class VeraPDFTest {
   public void validate() {
     String result1 = null;
     String result2 = null;
-    
+
     File pdfa_1b = new File("src/test/resources/pdfa_1b.pdf");
     if (pdfa_1b.exists()) {
       System.out.println("Found test file at " + pdfa_1b.getAbsolutePath());
@@ -57,8 +57,8 @@ public class VeraPDFTest {
       System.out.println(result1);
     } else {
       System.out.println("no file found at " + pdfa_1b.getAbsolutePath());
-    }  
-    
+    }
+
     File pdf = new File("src/test/resources/pdf.pdf");
     if (pdf.exists()) {
       System.out.println("Found test file at " + pdf.getAbsolutePath());
@@ -68,9 +68,9 @@ public class VeraPDFTest {
       System.out.println(result2);
     } else {
       System.out.println("no file found at " + pdf.getAbsolutePath());
-    }  
-    // assertEquals(result1, "PDF is compliant to PDF/A, Version 1b");
-    // assertEquals(result2, "PDF is NOT compliant to any PDF/A flavour");
+    }
+    assertTrue(result1.contains("PDF is compliant to PDF/A, Version 1b"));
+    assertTrue(result2.contains("PDF is NOT compliant to any PDF/A flavour"));
   }
 
 }

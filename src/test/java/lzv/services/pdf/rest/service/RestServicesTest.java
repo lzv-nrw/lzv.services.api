@@ -4,6 +4,7 @@
 package lzv.services.pdf.rest.service;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.text.ParseException;
@@ -42,7 +43,7 @@ public class RestServicesTest {
     assertNotNull(result);
     
   }
-  
+
   @Test
   public void validateVeraPdf() {
     // TODO: learn how to set FormDataContentDisposition correctly
@@ -50,16 +51,18 @@ public class RestServicesTest {
     FormDataContentDisposition contDisp;
     try {
       File testFile = new File("src/test/resources/pdfa_1b.pdf");
-      
+
       contDisp = new FormDataContentDisposition("form-data;name=pdfa_1b.pdf;filename=pdfa_1b.pdf");
       String result = jSI.validateVeraPdfHtml(FileUtil.loadFile(testFile), contDisp);
       System.out.println(result);
+      assertTrue(result.contains("class=\"success\"") && result.contains("Die Datei entspricht dem PDF/A-Standard")
+          && result.contains("1b"));
     } catch (ParseException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
-  
+
   @Test
   public void validatePdfBox() {
     // TODO: learn how to set FormDataContentDisposition correctly
