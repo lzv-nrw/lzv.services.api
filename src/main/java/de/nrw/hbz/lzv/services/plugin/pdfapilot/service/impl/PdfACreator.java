@@ -194,22 +194,12 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         if (split.length > 1) {
           String message = split[1];
 
-          if (message.contains("Corrections")) {
             message = message.replace("Corrections", "Korrekturen:");
-          }
-
-          if (message.contains("Errors")) {
             message = message.replace("Errors", "Fehler:");
-          }
-
-          if (message.contains("Warnings")) {
             message = message.replace("Warnings", "Warnungen:");
-          }
-
-          if (message.contains("Infos")) {
             message = message.replace("Infos", "Informationen:");
-          }
-          pdfaRes.addSummaryMessage(message);
+
+            pdfaRes.addSummaryMessage(message);
         }
       }
       if (line.startsWith("Output")) {
