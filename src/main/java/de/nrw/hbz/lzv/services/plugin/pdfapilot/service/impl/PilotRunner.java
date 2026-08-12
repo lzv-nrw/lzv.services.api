@@ -44,7 +44,7 @@ public class PilotRunner {
 		// call to execute PDFA-Tool
 		
 		// Complete execute String 
-		String programPath = new String("/opt/pdfapilot/pdfaPilot"); 
+		String programPath = "/opt/pdfapilot/pdfaPilot";
 		String defaultParams = new String("--noprogress --nohits --substitute  " 
 				 + "--linkpath=https://pdfa.hbz-nrw.de/pdfa/reporttemplate "
 				 + "--fontfolder=/opt/pdfapilot/fontfolder --cachefolder=temp"
