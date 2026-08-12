@@ -3,6 +3,9 @@
  */
 package de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl;
 
+import org.apache.pdfbox.util.Version;
+
+
 /**
  * 
  */
@@ -17,7 +20,7 @@ public class VersionInfo extends de.nrw.hbz.lzv.services.impl.VersionInfo {
   @Override
   public String getVersionString() {
 
-    return "Apache PDFbox Version 3.0.4";
+    return Version.getVersion();
   }
 
   @Override
