@@ -3,6 +3,7 @@
  */
 package de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,17 +16,19 @@ import java.util.Properties;
  */
 public class ParameterLoader {
 
+  private static final String PROPERTIES_FILE = "/pdfaPilot.properties";
+
   private static final Properties pdfaPilotProps = new Properties();
 
   public static void loadPdfaPilotProperties() {
-    try (InputStream is = ParameterLoader.class.getResourceAsStream("/pdfaPilot.properties")) {
+    try (InputStream is = ParameterLoader.class.getResourceAsStream(PROPERTIES_FILE)) {
 
       if (is != null) {
         pdfaPilotProps.load(is);
       }
 
-    } catch (Exception e) {
-      throw new RuntimeException("Failed to load pdfaPilot.properties", e);
+    } catch (IOException e) {
+      throw new IllegalStateException("Failed to load pdfaPilot.properties", e);
     }
   }
 
