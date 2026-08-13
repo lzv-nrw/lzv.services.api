@@ -38,6 +38,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
   @Override
   public PdfaPilotResult createPdfa(File file, String fileName, String flavour) {
 
+    // set Result
     pdfaRes = new PdfaPilotResult();
     pdfaRes.setLoadedFileName(fileName);
 
