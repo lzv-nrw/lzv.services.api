@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,6 +23,7 @@ import de.nrw.hbz.lzv.services.model.pdf.model.Compliance;
 import de.nrw.hbz.lzv.services.model.pdfa.result.PdfaPilotResult;
 import de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot.ParameterLoader;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
+import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
 /**
  * 
@@ -30,7 +32,6 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
 
   private static Logger log = LogManager.getLogger(PdfACreator.class);
   public final static String PLUGIN_NAME = "pdfapilot";
-  private static final ScheduledExecutorService DELETE_EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
   protected PdfaPilotResult pdfaRes = null;
 
@@ -40,126 +41,48 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     pdfaRes = new PdfaPilotResult();
     pdfaRes.setLoadedFileName(fileName);
 
-    String compliance = ParameterLoader.getDefaultLevel();
+    // Prepare command for ProcessBuilder
+    ArrayList<String> cmdList = new ArrayList<>();
+    cmdList.add(ParameterLoader.getProgramPath());
 
-    if (Compliance.labelExists(flavour)) {
-      compliance = flavour;
+    for (String flag : ParameterLoader.getCreatorFlags()) {
+      cmdList.add(flag);
     }
 
+    String compliance = ParameterLoader.getDefaultLevel();
     File convertedFile = null;
-
     try {
       convertedFile = File.createTempFile(compliance + "_", file.getName());
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      log.error("Unable to create temp file", e.getMessage());
+    }
+    cmdList.add("--outputfile=" + convertedFile.getAbsolutePath());
+    cmdList.add(file.getAbsolutePath());
+
+    ArrayList<String> flavourList = null;
+    if (Compliance.labelExists(flavour)) {
+      flavourList = new ArrayList<>();
+      compliance = flavour;
+      flavourList.add("--level=" + compliance);
+    } else {
+      flavourList = new ArrayList<>();
+      Set<String> keys = Compliance.getAllComplianceLabels().keySet();
+      for (String key : keys) {
+        flavourList.add("--level=" + key);
+      }
     }
 
     PilotRunner pRunner = new PilotRunner();
 
-    if (flavour.equals("auto")) {
-      log.info("PdfARunner calls pdfaPilot with flavour " + flavour);
-      LinkedHashMap<String, String> labels = Compliance.getAllComplianceLabels();
-
-      int index = 0;
-      for (String level : labels.keySet()) {
-
-        StringBuilder cmd = new StringBuilder();
-
-        for (String flag : ParameterLoader.getCreatorFlags()) {
-          cmd.append(" ").append(flag);
-        }
-
-        cmd.append(" --level=").append(level);
-        cmd.append(" --outputfile=").append(convertedFile.getAbsolutePath());
-        cmd.append(" ").append(file.getAbsolutePath());
-
-        String executeString = cmd.toString();
-
-        log.info("PdfARunner calls pdfaPilot with" + executeString);
-
-        pRunner.executePdfATool(executeString);
-
-        pdfaRes.setExecuteString(executeString);
-
-        String stout = pRunner.getStoutStr();
-        if (stout == null) {
-          stout = "Summary \t  run for test only";
-        }
-
-        String errOut = pRunner.getErrStr();
-        Stream<String> errLines = stout.lines();
-        Iterator<String> errIt = errLines.iterator();
-
-        if (!stout.contains("Hit") || index == (labels.size() - 1)) {
-          Stream<String> resultLines = stout.lines();
-          Iterator<String> rlIt = resultLines.iterator();
-          if(index == (labels.size() - 1)) {
-            pdfaRes.addSummaryMessage("Alle Flavours ausprobiert");
-          }
-          while (rlIt.hasNext()) {
-            String line = rlIt.next();
-            if (line.startsWith("Fix")) {
-              String[] split = line.split("\\t");
-              pdfaRes.addFixMessage(split[1]);
-            }
-            if (line.startsWith("Summary")) {
-              String[] split = line.split("\\t", 2);
-              if (split.length > 1) {
-
-                String message = split[1];
-                message = unifiedMessage(message);
-                pdfaRes.addSummaryMessage(message);
-              }
-            }
-
-            if (line.startsWith("Output")) {
-              String[] split = line.split("\\t");
-              pdfaRes.setFileOutputLocation(split[1]);
-            }
-
-            if (line.startsWith("Report")) {
-              String[] split = line.split("\\t");
-              pdfaRes.setReportOutputLocation(split[1]);
-            }
-          }
-
-          while (errIt.hasNext()) {
-            String line = errIt.next();
-            if (line.contains("Hit")) {
-              pdfaRes.addErrorMessage(line.replace("Hit\\s+PDFA", ""));
-            }
-            if (line.contains("Error") && !line.contains("Errors")) {
-              pdfaRes.addErrorMessage(line.replaceAll("Error\\s+", "").replaceAll("/.*\\.pdf.*", ""));
-            }
-            pdfaRes.setStout(stout);
-            pdfaRes.setErrOut(errOut);
-          }
-          break;
-        }
-        index++;
+    for(String fl : flavourList) {
+      cmdList.add(fl);
+      pRunner = new PilotRunner();
+      pRunner.executePdfATool(cmdList);
+      cmdList.removeLast();
+      if (pRunner.getExitStateStr().equals("0")) {
+        break;
       }
-      return pdfaRes;
     }
-
-    StringBuilder cmd = new StringBuilder();
-
-    for (String flag : ParameterLoader.getCreatorFlags()) {
-      cmd.append(" ").append(flag);
-    }
-
-    cmd.append(" --level=").append(compliance);
-
-    cmd.append(" --outputfile=").append(convertedFile.getAbsolutePath());
-    cmd.append(" ").append(file.getAbsolutePath());
-
-    String executeString = cmd.toString();
-
-    log.info("PdfARunner calls pdfaPilot with" + executeString);
-
-    pRunner.executePdfATool(executeString);
-
-    pdfaRes.setExecuteString(executeString);
 
     String stout = pRunner.getStoutStr();
     if (stout == null) {
@@ -167,6 +90,8 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     }
 
     String errOut = pRunner.getErrStr();
+    Stream<String> errLines = stout.lines();
+    Iterator<String> errIt = errLines.iterator();
 
     Stream<String> resultLines = stout.lines();
     Iterator<String> rlIt = resultLines.iterator();
@@ -181,25 +106,25 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         String[] split = line.split("\\t", 2);
         if (split.length > 1) {
           String message = split[1];
-          
+
           message = unifiedMessage(message);
           pdfaRes.addSummaryMessage(message);
         }
       }
-      
+
       if (line.startsWith("Output")) {
         String[] split = line.split("\\t");
         pdfaRes.setFileOutputLocation(split[1]);
       }
-      
+
       if (line.startsWith("Report")) {
         String[] split = line.split("\\t");
         pdfaRes.setReportOutputLocation(split[1]);
       }
     }
 
-    Stream<String> errLines = stout.lines();
-    Iterator<String> errIt = errLines.iterator();
+    errLines = stout.lines();
+    errIt = errLines.iterator();
 
     while (errIt.hasNext()) {
       String line = errIt.next();
@@ -214,21 +139,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     }
     convertedFile.delete();
 
-    int fileDeleteTime = ParameterLoader.getFileDeleteTime();
-    DELETE_EXECUTOR.schedule(() -> {
-      try {
-
-        File outputFile = new File(pdfaRes.getFileOutputLocation());
-
-        if (outputFile.exists()) {
-          if (!outputFile.delete()) {
-            log.warn("Cannot delete temop file " + pdfaRes.getFileOutputLocation());
-          }
-        }
-      } catch (Exception e) {
-        log.error("Error deleting the temp file " + pdfaRes.getFileOutputLocation(), e);
-      }
-    }, fileDeleteTime, TimeUnit.MINUTES);
+    FileUtil.scheduledDelete(pdfaRes.getFileOutputLocation());
 
     return pdfaRes;
   }
@@ -239,16 +150,14 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
    */
   private String unifiedMessage(String Message) {
     String message = Message;
-    message = message.replace("Corrections", "Korrekturen:")
-    .replace("Errors", "Fehler:")
-    .replace("Warnings", "Warnungen:")
-    .replace("Infos", "Informationen:");
-    
+    message = message.replace("Corrections", "Korrekturen:").replace("Errors", "Fehler:")
+        .replace("Warnings", "Warnungen:").replace("Infos", "Informationen:");
+
     return message;
   }
 
   /**
-   * method generates HTML Output of the PDF/A creation results 
+   * method generates HTML Output of the PDF/A creation results
    */
   @Override
   public String getHtml() {
@@ -259,9 +168,11 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     if (pdfaRes != null) {
 
       if (pdfaRes.getFileOutputLocation() != null) {
-        resultBuffer.append("<h3 style=\"color: darkgreen;)\">Konvertierung erfolgreich <i class=\"fa-solid fa-check\"></i></h3>");
+        resultBuffer.append(
+            "<h3 style=\"color: darkgreen;)\">Konvertierung erfolgreich <i class=\"fa-solid fa-check\"></i></h3>");
       } else {
-        resultBuffer.append("<h3 style=\"color: red;)\">Konvertierung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></h3>");
+        resultBuffer
+            .append("<h3 style=\"color: red;)\">Konvertierung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></h3>");
       }
       resultBuffer.append("<h3>Durchgeführte Maßnahmen:</h3>\n<ul>\n");
       for (int i = 0; i < pdfaRes.getFixList().size(); i++) {
@@ -306,7 +217,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
 
     return resultBuffer.toString();
   }
-  
+
   /**
    * method generates JSON Output of the the the PDF/A creation results
    */

@@ -25,11 +25,15 @@ package de.nrw.hbz.lzv.services.util.file;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot.ParameterLoader;
 import jakarta.ws.rs.core.StreamingOutput;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -43,6 +47,8 @@ import java.nio.charset.StandardCharsets;
  *
  */
 public class FileUtil {
+  
+  private static final ScheduledExecutorService DELETE_EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
 	// Initiate Logger for filteUtil
 	private static Logger log = LogManager.getLogger(FileUtil.class);
@@ -304,7 +310,26 @@ public class FileUtil {
       }
     }
     file.delete();
+  }    
+  
+  public static void scheduledDelete(String fileName) {
     
+    int fileDeleteTime = ParameterLoader.getFileDeleteTime();
+    DELETE_EXECUTOR.schedule(() -> {
+      try {
+
+        File outputFile = new File(fileName);
+
+        if (outputFile.exists()) {
+          if (!outputFile.delete()) {
+            log.warn("Cannot delete temop file " + fileName);
+          }
+        }
+      } catch (Exception e) {
+        log.error("Error deleting the temp file " + fileName, e);
+      }
+    }, fileDeleteTime, TimeUnit.MINUTES);
+
   }
 
 }

@@ -64,6 +64,7 @@ public class ParameterLoader {
 
     String creator = "pdfapilot.creator.";
     String report = "pdfapilot.report.";
+    
     List<String> flags = new ArrayList<>();
 
     if (Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "quick"))) {
@@ -71,7 +72,7 @@ public class ParameterLoader {
     }
     if (!Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "quick"))
         && Boolean.parseBoolean(pdfaPilotProps.getProperty(report))) {
-      if (pdfaPilotProps.getProperty("pdfapilot.report.type") != null
+      if (pdfaPilotProps.getProperty(report + "type") != null
           && pdfaPilotProps.getProperty(report + "generate") != null
           && pdfaPilotProps.getProperty(report + "path") != null) {
         flags.add("--report=" + pdfaPilotProps.getProperty(report + "type") + ","
@@ -79,20 +80,20 @@ public class ParameterLoader {
             + pdfaPilotProps.getProperty(report + "path"));
       }
     }
-    if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.noprogress"))) {
+    if (Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "noprogress"))) {
       flags.add("--noprogress");
     }
-    if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.substitute"))) {
+    if (Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "substitute"))) {
       flags.add("--substitute");
     }
-    if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.onlypdfa"))) {
+    if (Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "onlypdfa"))) {
       flags.add("--onlypdfa");
     }
-    if (pdfaPilotProps.getProperty("pdfapilot.fontfolder") != null) {
-      flags.add("--fontfolder=" + pdfaPilotProps.getProperty("pdfapilot.fontfolder"));
+    if (pdfaPilotProps.getProperty(creator + "fontfolder") != null) {
+      flags.add("--fontfolder=" + pdfaPilotProps.getProperty(creator + "fontfolder"));
     }
-    if (pdfaPilotProps.getProperty("pdfapilot.language") != null) {
-      flags.add("--language=" + pdfaPilotProps.getProperty("pdfapilot.language"));
+    if (pdfaPilotProps.getProperty(creator + "language") != null) {
+      flags.add("--language=" + pdfaPilotProps.getProperty(creator + "language"));
     }
 
     return flags;
