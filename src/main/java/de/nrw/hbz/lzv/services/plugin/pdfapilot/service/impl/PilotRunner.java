@@ -98,59 +98,6 @@ public class PilotRunner {
   }
 
   /**
-   * Method creates the command line string with all parameters given. Then
-   * executes the shell command
-   * 
-   * @param paramString
-   * 
-   */
-  public void executePdfATool(String paramString) {
-    ParameterLoader.loadPdfaPilotProperties();
-    String programPath = ParameterLoader.getProgramPath();
-    String executeString = programPath + paramString;
-
-    log.info("The complete execute String: " + executeString);
-
-    StringBuffer lineBuffer = new StringBuffer("run for test only");
-    StringBuffer errLineBuffer = new StringBuffer("run for test run");
-    int exitState = -1;
-
-    try {
-      Process proc = java.lang.Runtime.getRuntime().exec(executeString);
-      exitState = proc.waitFor();
-      InputStream stout = proc.getInputStream();
-      InputStream err = proc.getErrorStream();
-
-      InputStreamReader isr = new InputStreamReader(stout);
-      BufferedReader br = new BufferedReader(isr);
-      String line = null;
-
-      lineBuffer = new StringBuffer();
-      while ((line = br.readLine()) != null) {
-        lineBuffer.append(line + "\n");
-      }
-
-      InputStreamReader eIR = new InputStreamReader(stout);
-      BufferedReader eBR = new BufferedReader(eIR);
-      String errLine = null;
-      errLineBuffer = new StringBuffer();
-      while ((errLine = eBR.readLine()) != null) {
-        errLineBuffer.append(errLine + "\n");
-      }
-
-      log.info("STOUT: " + lineBuffer.toString());
-      log.info("Exit State: " + exitState);
-      stoutStr = lineBuffer.toString();
-      errStr = errLineBuffer.toString();
-      exitStateStr = Integer.toString(exitState);
-
-    } catch (Exception Exc) {
-      log.error(Exc);
-    }
-
-  }
-
-  /**
    * @return Error messages as string
    */
   public String getErrStr() {
