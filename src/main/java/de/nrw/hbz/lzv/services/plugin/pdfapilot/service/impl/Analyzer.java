@@ -4,6 +4,7 @@
 package de.nrw.hbz.lzv.services.plugin.pdfapilot.service.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,18 +41,23 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     PilotRunner pRunner = new PilotRunner();
 
+    ArrayList<String> cmdList = new ArrayList<>();
     StringBuilder cmd = new StringBuilder();
 
+    cmdList.add(ParameterLoader.getProgramPath());
+    
     for (String flag : ParameterLoader.getAnalyzerFlags()) {
       cmd.append(" ").append(flag);
+      cmdList.add(flag);
     }
 
     cmd.append(" ").append(file.getAbsolutePath());
+    cmdList.add(file.getAbsolutePath());
 
     String executeString = cmd.toString();
     log.info("PdfARunner calls pdfaPilot with" + executeString);
 
-    pRunner.executePdfATool(executeString);
+    pRunner.executePdfATool(cmdList);
 
     String stout = pRunner.getStoutStr();
     String errStr = pRunner.getErrStr();

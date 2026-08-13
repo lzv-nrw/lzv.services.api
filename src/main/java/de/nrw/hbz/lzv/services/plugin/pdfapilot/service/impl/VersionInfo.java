@@ -24,7 +24,7 @@ public class VersionInfo extends de.nrw.hbz.lzv.services.impl.VersionInfo {
 
     ArrayList<String> cmdList = new ArrayList<String>();
     cmdList.add(ParameterLoader.getProgramPath());
-    cmdList.add(ParameterLoader.getParameter("pdfapilot.version"));
+    cmdList.add(ParameterLoader.getParameter("pdfapilot.version.version"));
     pRunner.executePdfATool(cmdList);
         
     StringBuffer runnerSb = new StringBuffer();

@@ -46,7 +46,6 @@ public class PilotRunner {
    */
   public void executePdfATool(ArrayList<String> cmdParams) {
 
-    StringBuffer cmdString = new StringBuffer();
     StringBuffer lineBuffer = new StringBuffer("run for test only");
     StringBuffer errLineBuffer = new StringBuffer("run for test run");
     int exitState = -1;
