@@ -49,9 +49,11 @@ public class ParameterLoader {
   }
 
   public static List<String> getAnalyzerFlags() {
+
+    String analyzer = "pdfapilot.analyzer.";
     List<String> flags = new ArrayList<>();
 
-    if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.quickpdfinfo"))) {
+    if (Boolean.parseBoolean(pdfaPilotProps.getProperty(analyzer + "quickpdfinfo"))) {
       flags.add("--quickpdfinfo");
     }
 
@@ -59,19 +61,22 @@ public class ParameterLoader {
   }
 
   public static List<String> getCreatorFlags() {
+
+    String creator = "pdfapilot.creator.";
+    String report = "pdfapilot.report.";
     List<String> flags = new ArrayList<>();
 
-    if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.quick"))) {
+    if (Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "quick"))) {
       flags.add("--quick");
     }
-    if (!Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.quick"))
-        && Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.report"))) {
+    if (!Boolean.parseBoolean(pdfaPilotProps.getProperty(creator + "quick"))
+        && Boolean.parseBoolean(pdfaPilotProps.getProperty(report))) {
       if (pdfaPilotProps.getProperty("pdfapilot.report.type") != null
-          && pdfaPilotProps.getProperty("pdfapilot.report.generate") != null
-          && pdfaPilotProps.getProperty("pdfapilot.report.path") != null) {
-        flags.add("--report=" + pdfaPilotProps.getProperty("pdfapilot.report.type") + ","
-            + pdfaPilotProps.getProperty("pdfapilot.report.generate") + "," + "PATH="
-            + pdfaPilotProps.getProperty("pdfapilot.report.path"));
+          && pdfaPilotProps.getProperty(report + "generate") != null
+          && pdfaPilotProps.getProperty(report + "path") != null) {
+        flags.add("--report=" + pdfaPilotProps.getProperty(report + "type") + ","
+            + pdfaPilotProps.getProperty(report + "generate") + "," + "PATH="
+            + pdfaPilotProps.getProperty(report + "path"));
       }
     }
     if (Boolean.parseBoolean(pdfaPilotProps.getProperty("pdfapilot.noprogress"))) {
@@ -118,6 +123,10 @@ public class ParameterLoader {
     while (opIt.hasNext()) {
       parameterBuffer.append(operationalParameter.get(opIt.next()));
     }
+  }
+  
+  public static String getParameter(String key) {
+    return pdfaPilotProps.getProperty(key);
   }
 
 }
