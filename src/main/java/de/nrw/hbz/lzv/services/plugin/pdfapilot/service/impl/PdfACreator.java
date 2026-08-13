@@ -106,20 +106,18 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
             if (line.startsWith("Summary")) {
               String[] split = line.split("\\t", 2);
               if (split.length > 1) {
+
                 String message = split[1];
-
-                  message = message.replace("Corrections", "Korrekturen:");
-                  message = message.replace("Errors", "Fehler:");
-                  message = message.replace("Warnings", "Warnungen:");
-                  message = message.replace("Infos", "Informationen:");
-
-                  pdfaRes.addSummaryMessage(message);
+                message = unifiedMessage(message);
+                pdfaRes.addSummaryMessage(message);
               }
             }
+
             if (line.startsWith("Output")) {
               String[] split = line.split("\\t");
               pdfaRes.setFileOutputLocation(split[1]);
             }
+
             if (line.startsWith("Report")) {
               String[] split = line.split("\\t");
               pdfaRes.setReportOutputLocation(split[1]);
@@ -183,19 +181,17 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
         String[] split = line.split("\\t", 2);
         if (split.length > 1) {
           String message = split[1];
-
-            message = message.replace("Corrections", "Korrekturen:");
-            message = message.replace("Errors", "Fehler:");
-            message = message.replace("Warnings", "Warnungen:");
-            message = message.replace("Infos", "Informationen:");
-
-            pdfaRes.addSummaryMessage(message);
+          
+          message = unifiedMessage(message);
+          pdfaRes.addSummaryMessage(message);
         }
       }
+      
       if (line.startsWith("Output")) {
         String[] split = line.split("\\t");
         pdfaRes.setFileOutputLocation(split[1]);
       }
+      
       if (line.startsWith("Report")) {
         String[] split = line.split("\\t");
         pdfaRes.setReportOutputLocation(split[1]);
@@ -237,6 +233,23 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     return pdfaRes;
   }
 
+  /**
+   * @param Message
+   * @return String with replacements
+   */
+  private String unifiedMessage(String Message) {
+    String message = Message;
+    message = message.replace("Corrections", "Korrekturen:")
+    .replace("Errors", "Fehler:")
+    .replace("Warnings", "Warnungen:")
+    .replace("Infos", "Informationen:");
+    
+    return message;
+  }
+
+  /**
+   * method generates HTML Output of the PDF/A creation results 
+   */
   @Override
   public String getHtml() {
     resultBuffer.append(HtmlTemplate.getHtmlHead());
@@ -293,7 +306,10 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
 
     return resultBuffer.toString();
   }
-
+  
+  /**
+   * method generates JSON Output of the the the PDF/A creation results
+   */
   @Override
   public String getJson() {
     if (pdfaRes == null) {
