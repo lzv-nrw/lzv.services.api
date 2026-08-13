@@ -31,59 +31,14 @@ public class PilotRunner {
 	private String stoutStr = null;
   private String errStr = null;
 	
-	/**
-	 * <p><em>Title: </em></p>
-	 * <p>Description: Method creates the command line string with all parameters given. 
-	 * Then executes the shell command </p>
-	 * 
-	 * @param paramString
-	 * @param fileName 
-	 */
-	@Deprecated
-  public void executePdfATool(String paramString, String fileName){
-		// call to execute PDFA-Tool
-		
-		// Complete execute String 
-		String programPath = "/opt/pdfapilot/pdfaPilot";
-		String defaultParams = new String("--noprogress --nohits --substitute  " 
-				 + "--linkpath=https://pdfa.hbz-nrw.de/pdfa/reporttemplate "
-				 + "--fontfolder=/opt/pdfapilot/fontfolder --cachefolder=temp"
-				);
-		String executeString = new String(programPath + " " 
-				+ defaultParams 
-				+ paramString 
-				+ " --outputfile=" + Configuration.getResultDirPath() + fileName 
-				+ " " + Configuration.getTempDirPath() + fileName); 
 
-		log.info("The complete execute String: " + executeString);
-		try{
-			//Process proc = java.lang.Runtime.getRuntime().exec("echo " + executeString);
-			Process proc = java.lang.Runtime.getRuntime().exec(executeString);
-			int exitState = proc.waitFor();
-			InputStream stout = proc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(stout);
-            BufferedReader br = new BufferedReader(isr);
-            String line = null;
-            StringBuffer lineBuffer = new StringBuffer();
-            while ((line = br.readLine()) != null){
-                lineBuffer.append(line + "\n");
-            }
-            log.debug("STOUT: " + lineBuffer.toString());
-            log.info("Exit State: " + exitState);
-            stoutStr = lineBuffer.toString();
-            exitStateStr = Integer.toString(exitState);
-		}catch(Exception Exc){
-			log.error(Exc);
-		}
-		
-		//unlink temp file
-		if(new File(Configuration.getTempDirPath() + fileName).isFile()){
-			new File(Configuration.getTempDirPath() + fileName).delete();
-		}
-		// TODO: das Ausführen des PDFA Tools kann etwas dauern... was mache
-		// ich um festzustellen, dass das Tool seine Arbeit beendet hat? 		
-	}
-
+  /**
+   * Method creates the command line string with all parameters given. 
+   * Then executes the shell command
+   * 
+   * @param paramString
+   * 
+   */
   public void executePdfATool(String paramString){
     ParameterLoader.loadPdfaPilotProperties();
     String programPath = new String(ParameterLoader.getProgramPath());
@@ -132,14 +87,23 @@ public class PilotRunner {
   }
 
 	
+  /**
+   * @return Error messages as string
+   */
   public String getErrStr(){
     return errStr;
   }
 
+	/**
+	 * @return Standard Output messages as string
+	 */
 	public String getStoutStr(){
 		return stoutStr;
 	}
 
+	/**
+	 * @return numeric Exit State value as string
+	 */
 	public String getExitStateStr(){
 		return exitStateStr;
 	}
