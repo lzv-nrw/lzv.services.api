@@ -33,7 +33,7 @@ public class PilotRunner {
   // Initiate Logger for PilotRunner
   private static Logger log = LogManager.getLogger(PilotRunner.class);
 
-  private String exitStateStr = null;
+  private String exitStateStr = "-1";
   private String stoutStr = null;
   private String errStr = null;
 
