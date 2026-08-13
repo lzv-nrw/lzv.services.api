@@ -119,5 +119,9 @@ public class ParameterLoader {
       parameterBuffer.append(operationalParameter.get(opIt.next()));
     }
   }
+  
+  public static String getParameter(String key) {
+    return pdfaPilotProps.getProperty(key);
+  }
 
 }
