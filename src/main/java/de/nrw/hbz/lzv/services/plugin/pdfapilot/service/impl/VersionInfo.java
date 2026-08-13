@@ -13,8 +13,6 @@ import de.nrw.hbz.lzv.services.plugin.pdfapilot.model.pilot.ParameterLoader;
 public class VersionInfo extends de.nrw.hbz.lzv.services.impl.VersionInfo {
 
   public VersionInfo() {
-
-    ParameterLoader.loadPdfaPilotProperties();
   }
   
   public final static String PLUGIN_NAME = "pdfapilot";
@@ -22,11 +20,13 @@ public class VersionInfo extends de.nrw.hbz.lzv.services.impl.VersionInfo {
   @Override
   public String getVersionString() {
     PilotRunner pRunner = new PilotRunner();
+    ParameterLoader.loadPdfaPilotProperties();
 
     ArrayList<String> cmdList = new ArrayList<String>();
+    cmdList.add(ParameterLoader.getProgramPath());
     cmdList.add(ParameterLoader.getParameter("pdfapilot.version"));
     pRunner.executePdfATool(cmdList);
-    
+        
     StringBuffer runnerSb = new StringBuffer();
     runnerSb.append("StandardOut: " + pRunner.getStoutStr() + "\n");
     runnerSb.append("ExitState: " + pRunner.getExitStateStr() + "\n");

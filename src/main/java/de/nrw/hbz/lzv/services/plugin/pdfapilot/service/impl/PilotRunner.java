@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,19 +45,25 @@ public class PilotRunner {
    * 
    */
   public void executePdfATool(ArrayList<String> cmdParams) {
-    ParameterLoader.loadPdfaPilotProperties();
 
-    ArrayList<String> cmd = new ArrayList<String>();
-    cmd.add(new String(ParameterLoader.getProgramPath()));
-    cmd.addAll(cmdParams);
-
+    StringBuffer cmdString = new StringBuffer();
     StringBuffer lineBuffer = new StringBuffer("run for test only");
     StringBuffer errLineBuffer = new StringBuffer("run for test run");
     int exitState = -1;
-
+    
+    Iterator<String> cmdIt = cmdParams.iterator();
+        
+    while (cmdIt.hasNext()) {
+      String value = cmdIt.next();
+      // cmdString.append(value);
+      log.info("Command Parameter: " + value);
+    }
+        
+        
     try {
       ProcessBuilder procBuilder = new ProcessBuilder();
-      procBuilder.command(cmd);
+      procBuilder.command(cmdParams);
+      procBuilder.directory(null);
       Process proc = procBuilder.start();
       exitState = proc.waitFor();
       InputStream stout = proc.getInputStream();
@@ -100,8 +107,8 @@ public class PilotRunner {
    */
   public void executePdfATool(String paramString) {
     ParameterLoader.loadPdfaPilotProperties();
-    String programPath = new String(ParameterLoader.getProgramPath());
-    String[] executeString = new String[] { programPath, paramString };
+    String programPath = ParameterLoader.getProgramPath();
+    String executeString = programPath + paramString;
 
     log.info("The complete execute String: " + executeString);
 
