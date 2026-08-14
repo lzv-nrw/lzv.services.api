@@ -31,7 +31,8 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
 /**
- * Implementation of Restful Endpoints
+ * Implementation of Restful endpoints for the different plugins (tools) integrated
+ * 
  */
 @Path("/")
 public class JerseyServiceImpl {
@@ -44,6 +45,12 @@ public class JerseyServiceImpl {
     logger.info("Jersey Service startet");
   }
 
+  /**
+  /**
+   * provide RestFul endpoint for listing the tools in use
+   * 
+   * @return version information as HTML
+   */
   @GET
   @Path("tools")
   @Produces({ MediaType.TEXT_HTML })
@@ -65,6 +72,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for listing the tools in use
+   * 
+   * @return version information as JSON
+   */
   @GET
   @Path("tools")
   @Produces({ MediaType.APPLICATION_JSON })
@@ -91,6 +103,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for exposing Version of the tool in use
+   * 
+   * @return version information as HTML
+   */
   @GET
   @Path("version/verapdf")
   @Produces({ MediaType.TEXT_HTML })
@@ -114,6 +131,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for exposing Version of the tool in use
+   * 
+   * @return version information as JSON
+   */
   @GET
   @Path("version/verapdf")
   @Produces({ MediaType.APPLICATION_JSON })
@@ -130,6 +152,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for exposing Version of the tool in use
+   * 
+   * @return version information as JSON
+   */
   @GET
   @Path("version/pdfapilot")
   @Produces({ MediaType.APPLICATION_JSON })
@@ -145,6 +172,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for exposing Version of the tool in use
+   * 
+   * @return version information as HTML
+   */
   @GET
   @Path("version/pdfapilot")
   @Produces({ MediaType.TEXT_HTML })
@@ -163,6 +195,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for exposing Version of the tool in use
+   * 
+   * @return version information as JSON
+   */
   @GET
   @Path("version/pdfbox")
   @Produces({ MediaType.APPLICATION_JSON })
@@ -178,6 +215,11 @@ public class JerseyServiceImpl {
     return version;
   }
 
+  /**
+   * provide RestFul endpoint for exposing Version of the tool in use
+   * 
+   * @return version information as HTML
+   */
   @GET
   @Path("version/pdfbox")
   @Produces({ MediaType.TEXT_HTML })
@@ -196,7 +238,14 @@ public class JerseyServiceImpl {
     return version;
   }
 
-  @POST
+  /**
+   * provide RestFul endpoint for PDF analyzing with pdfBOX
+   * 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as HTML
+   */
+@POST
   @Path("validate/verapdf")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
@@ -217,7 +266,14 @@ public class JerseyServiceImpl {
     return veraPdfAnalyzer.getHtml();
   }
 
-  @POST
+  /**
+   * provide RestFul endpoint for PDF analyzing with veraPDF
+   * 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as json
+   */
+@POST
   @Path("validate/verapdf")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.APPLICATION_JSON })
@@ -239,6 +295,13 @@ public class JerseyServiceImpl {
 
   }
 
+  /**
+   * provide RestFul endpoint for PDF analyzing with pdfBOX
+   * 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as HTML
+   */
   @POST
   @Path("validate/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -261,6 +324,13 @@ public class JerseyServiceImpl {
 
   }
 
+  /**
+   * provide RestFul endpoint for PDF analyzing with pdfBOX
+   * 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as json
+   */
   @POST
   @Path("validate/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -282,6 +352,13 @@ public class JerseyServiceImpl {
 
   }
 
+  /**
+   * provide RestFul endpoint for PDF analyzing with pdfaPilot
+   * 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @return validation result as HTML
+   */
   @POST
   @Path("validate/pdfapilot")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -303,7 +380,7 @@ public class JerseyServiceImpl {
   }
 
   /**
-   * provide RestFul endpoint for PDF validation with pdfaPilot
+   * provide RestFul endpoint for PDF analyzing with pdfaPilot
    * 
    * @param fileInputStream
    * @param contentDisposition
@@ -334,31 +411,15 @@ public class JerseyServiceImpl {
 
   }
 
-  @POST
-  @Path("format/pdfbox")
-  @Consumes({ MediaType.MULTIPART_FORM_DATA })
-  @Produces({ MediaType.TEXT_HTML })
-  public String format(@FormDataParam("file") InputStream fileInputStream,
-      @FormDataParam("file") FormDataContentDisposition contentDisposition) {
-
-    String fileName = null;
-    if (contentDisposition != null) {
-      fileName = contentDisposition.getFileName();
-    }
-
-    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
-    String result = serviceImpl.getFileFormat(fileInputStream);
-
-    StringBuffer htmlResult = new StringBuffer(HtmlTemplate.getHtmlHead());
-    htmlResult.append("<h1>Ergebnis der Prüfung</h1>\n<p>Dateiname: " + fileName + "</p>\n" + result);
-
-    htmlResult.append("<p><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Version ermitteln</a></p>");
-
-    htmlResult.append(HtmlTemplate.getHtmlFoot());
-    return htmlResult.toString();
-
-  }
-
+  /**
+   * provide RestFul endpoint for editing PdfInfo with pdfaBOX
+   * 
+   * @param fileInputStream
+   * @param contentDisposition
+   * @param key
+   * @param value
+   * @return
+   */
   @POST
   @Path("editmd/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -383,6 +444,14 @@ public class JerseyServiceImpl {
     return resultFile;
   }
 
+  /**
+   * provide RestFul endpoint for creating PDF/A with pdfaPilot
+   *
+   * @param fileInputStream
+   * @param contentDisposition
+   * @param flavour
+   * @return
+   */
   @POST
   @Path("convert/pdfapilot")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -403,6 +472,14 @@ public class JerseyServiceImpl {
     return pdfaPilotCreator.getHtml();
   }
 
+  /**
+   * provide RestFul endpoint for creating PDF/A with pdfaPilot
+   *
+   * @param fileInputStream
+   * @param contentDisposition
+   * @param flavour
+   * @return
+   */
   @POST
   @Path("convert/pdfapilot")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
@@ -424,6 +501,14 @@ public class JerseyServiceImpl {
     return pdfaPilotCreator.getJson();
   }
 
+  /**
+   * provide RestFul endpoint for downloading PDF/A
+   *
+   * @param fileInputStream
+   * @param contentDisposition
+   * @param flavour
+   * @return
+   */
   @GET
   @Path("download")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
