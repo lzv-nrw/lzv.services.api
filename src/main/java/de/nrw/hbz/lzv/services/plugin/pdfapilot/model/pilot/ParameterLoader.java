@@ -117,6 +117,10 @@ public class ParameterLoader {
     lang = " --language=" + key;
   }
 
+  /**
+   * method sets operational parameters provides as HashMap
+   * @param operationalParameter
+   */
   public void setOperation(LinkedHashMap<String, String> operationalParameter) {
 
     Iterator<String> opIt = operationalParameter.keySet().iterator();
@@ -126,6 +130,11 @@ public class ParameterLoader {
     }
   }
   
+  /**
+   * method return any parameter value from pdfaPilot.properties
+   * @param key
+   * @return parameter value
+   */
   public static String getParameter(String key) {
     return pdfaPilotProps.getProperty(key);
   }
