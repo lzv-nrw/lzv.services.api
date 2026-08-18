@@ -95,8 +95,7 @@ public class HtmlTemplate {
     defMenu.append("<div class='menu'>Bearbeiten");
     defMenu.append("<i class=\"fa-solid fa-chevron-down\"  style=\"margin-left:5px;\"></i>");
     defMenu.append("<div class='submenu'>" + "<ul>");
-    // defMenu.append("<li><a href='/lzv-jsp/editMd/form'>PDF-Metadaten
-    // ändern</a></li>");
+    defMenu.append("<li><a href='/lzv-jsp/pdfbox/editMd'>PDF-Metadaten ändern</a></li>");
     defMenu.append("<li><a href='/lzv-jsp/pdfapilot/createpdfa'>PDF/A erzeugen</a></li>");
     defMenu.append("</ul></div></div>");
     defMenu.append("</div>");
