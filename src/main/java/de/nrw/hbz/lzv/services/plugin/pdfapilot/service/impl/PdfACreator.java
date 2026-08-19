@@ -196,7 +196,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       }
 
       if (pdfaRes.getReportOutputLocation() != null) {
-        resultBuffer.append("<p><i class=\"fa-regular fa-file-lines\"></i><a href=\"/lzv-api/download?fileName="
+        resultBuffer.append("<p><i class=\"fa-regular fa-file-lines\"></i><a href=\"/lzv-api/downloadpdfa?fileName="
             + pdfaRes.getReportOutputLocation() + "&origFileName=report_"
             + pdfaRes.getLoadedFileName().replace(".pdf",
                 "_pdf." + pdfaRes.getReportOutputLocation()
@@ -205,7 +205,7 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       }
 
       if (pdfaRes.getFileOutputLocation() != null) {
-        resultBuffer.append("<p><i class=\"fa-solid fa-download\"></i><a href=\"/lzv-api/download?fileName="
+        resultBuffer.append("<p><i class=\"fa-solid fa-download\"></i><a href=\"/lzv-api/downloadpdfa?fileName="
             + pdfaRes.getFileOutputLocation() + "&origFileName=" + pdfaRes.getLoadedFileName()
             + "\">PDF/A Datei herunterladen</a> (Link " + ParameterLoader.getFileDeleteTime() + " Minuten gültig)</p>");
       }
@@ -253,13 +253,13 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
     }
 
     if (pdfaRes.getReportOutputLocation() != null) {
-      resultJson.put("reportOutputLocation", "/lzv-api/download?fileName=" + pdfaRes.getReportOutputLocation()
+      resultJson.put("reportOutputLocation", "/lzv-api/downloadpdfa?fileName=" + pdfaRes.getReportOutputLocation()
           + "&origFileName=report_" + pdfaRes.getLoadedFileName().replace(".pdf", "_pdf."
               + pdfaRes.getReportOutputLocation().substring(pdfaRes.getReportOutputLocation().lastIndexOf('.') + 1)));
     }
 
     if (pdfaRes.getFileOutputLocation() != null) {
-      resultJson.put("fileOutputLocation", "/lzv-api/download?fileName=" + pdfaRes.getFileOutputLocation()
+      resultJson.put("fileOutputLocation", "/lzv-api/downloadpdfa?fileName=" + pdfaRes.getFileOutputLocation()
           + "&origFileName=" + pdfaRes.getLoadedFileName());
     }
 

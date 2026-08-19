@@ -26,6 +26,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import de.nrw.hbz.lzv.services.impl.Analyzer;
 import de.nrw.hbz.lzv.services.impl.FileController;
 import de.nrw.hbz.lzv.services.impl.PdfACreator;
+import de.nrw.hbz.lzv.services.impl.PdfMdEditor;
 import de.nrw.hbz.lzv.services.impl.VersionInfo;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
@@ -424,7 +425,7 @@ public class JerseyServiceImpl {
   @Path("editmd/pdfbox")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces({ MediaType.TEXT_HTML })
-  public File editMDPdfBox(@FormDataParam("file") InputStream fileInputStream,
+  public String editMDPdfBoxHtml(@FormDataParam("file") InputStream fileInputStream,
       @FormDataParam("file") FormDataContentDisposition contentDisposition, @FormParam("field") String key,
       @FormParam("value") String value) {
 
@@ -432,16 +433,38 @@ public class JerseyServiceImpl {
     if (contentDisposition != null) {
       fileName = contentDisposition.getFileName();
     }
-    File origFile = FileUtil.saveTempFile(fileInputStream, fileName);
+    File file = FileUtil.saveTempFile(fileInputStream, fileName);
 
-    de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl serviceImpl = new de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.ServiceImpl();
-    File editedFile = serviceImpl.editPDFInfo(origFile, key, value);
+    PdfMdEditor pdfBoxEditor = PdfMdEditor.getInstance("pdfbox");
+    pdfBoxEditor.editPdfMd(file, fileName, key, value);
 
-    FileUtil.copyFile(editedFile, fileName);
-    File resultFile = new File(fileName);
     logger.info(new File(fileName).getAbsolutePath());
 
-    return resultFile;
+    file.delete();
+    return pdfBoxEditor.getHtml();
+  }
+
+  @POST
+  @Path("editmd/pdfbox")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces({ MediaType.APPLICATION_JSON })
+  public String editMDPdfBoxJson(@FormDataParam("file") InputStream fileInputStream,
+      @FormDataParam("file") FormDataContentDisposition contentDisposition, @FormDataParam("field") String key,
+      @FormDataParam("value") String value) {
+
+    String fileName = "-";
+    if (contentDisposition != null) {
+      fileName = contentDisposition.getFileName();
+    }
+    File file = FileUtil.saveTempFile(fileInputStream, fileName);
+
+    PdfMdEditor pdfBoxEditor = PdfMdEditor.getInstance("pdfbox");
+    pdfBoxEditor.editPdfMd(file, fileName, key, value);
+
+    logger.info(new File(fileName).getAbsolutePath());
+
+    file.delete();
+    return pdfBoxEditor.getJson();
   }
 
   /**
@@ -510,10 +533,10 @@ public class JerseyServiceImpl {
    * @return
    */
   @GET
-  @Path("download")
+  @Path("downloadpdfa")
   @Consumes({ MediaType.MULTIPART_FORM_DATA })
   @Produces("application/pdf")
-  public Response downloadPdf(@QueryParam("fileName") String fileName,
+  public Response downloadPdfa(@QueryParam("fileName") String fileName,
       @QueryParam("origFileName") String origFileName) {
 
     File file = new File(fileName);
@@ -530,6 +553,31 @@ public class JerseyServiceImpl {
 
     ResponseBuilder response = Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM);
     response.header("Content-Disposition", "attachment; filename=" + origFileName.replace(".pdf", "_pdfa.pdf"));
+
+    return response.build();
+  }
+
+  @GET
+  @Path("downloadedit")
+  @Consumes({ MediaType.MULTIPART_FORM_DATA })
+  @Produces("application/pdf")
+  public Response downloadEditedPdf(@QueryParam("fileName") String fileName,
+      @QueryParam("origFileName") String origFileName) {
+
+    File file = new File(fileName);
+    InputStream iS = FileUtil.loadFile(file);
+
+    if (origFileName == null) {
+      origFileName = file.getName();
+    }
+
+    FileUtil fileUtil = new FileUtil();
+    StreamingOutput fileStream = fileUtil.getStreamingOutput(iS);
+
+    logger.info("StreamingOutput: " + iS.toString());
+
+    ResponseBuilder response = Response.ok(fileStream, MediaType.APPLICATION_OCTET_STREAM);
+    response.header("Content-Disposition", "attachment; filename=" + origFileName.replace(".pdf", "_edited.pdf"));
 
     return response.build();
   }
