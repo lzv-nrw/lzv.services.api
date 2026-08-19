@@ -149,10 +149,8 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 
 					File outputFile = new File(pdfEditRes.getFileOutputLocation());
 
-					if (outputFile.exists()) {
-						if (!outputFile.delete()) {
-							logger.warn("Cannot delete temp file " + pdfEditRes.getFileOutputLocation());
-						}
+					if (outputFile.exists() && !outputFile.delete()) {
+						logger.warn("Cannot delete temp file " + pdfEditRes.getFileOutputLocation());
 					}
 				} catch (Exception e) {
 					logger.error("Error deleting the temp file " + pdfEditRes.getFileOutputLocation(), e);
