@@ -1,5 +1,6 @@
 package de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
 import de.nrw.hbz.lzv.services.model.json.model.PdfInfoModel;
+import de.nrw.hbz.lzv.services.model.pdf.edit.MetadataToUpdate;
 import de.nrw.hbz.lzv.services.model.pdf.edit.PdfBoxEditResult;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
@@ -39,6 +41,7 @@ import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 
 	private static Logger logger = LogManager.getLogger(PdfMdEditor.class);
+
 	private static final ScheduledExecutorService DELETE_EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
 	protected PdfBoxEditResult pdfEditRes = null;
@@ -90,76 +93,41 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	 * @param the new metadata value
 	 */
 	@Override
-	public PdfBoxEditResult editPdfMd(File file, String fileName, String key, String value) {
+	public PdfBoxEditResult editPdfMd(File file, String fileName, MetadataToUpdate metadataToUpdate) {
 
 		pdfEditRes = new PdfBoxEditResult();
 
 		pdfEditRes.setLoadedFileName(fileName);
-		PDDocument pdDoc;
-		File editedFile = null;
 
 		logger.info("Filename: " + pdfEditRes.getLoadedFileName());
 		logger.info("File: " + file.getAbsolutePath());
 
-		try {
-			pdDoc = Loader.loadPDF(file);
-			pdfInfo = getPdfInfo(pdDoc);
-			pdfEditRes.setOldMetadatatPair(
-					new AbstractMap.SimpleEntry<>(key, pdfInfo.getJSONObject().optString(key.toLowerCase())));
+		try (PDDocument pdDoc = Loader.loadPDF(file)) {
 
-			editedFile = File.createTempFile("edited_", ".pdf");
-			logger.info("Output file: " + editedFile.getAbsolutePath());
+			updateMetadata(pdDoc, metadataToUpdate);
+			File editedFile = saveEditedPdf(pdDoc);
 
-			pdfEditRes.setNewMetadatatPair(new AbstractMap.SimpleEntry<>(key, value));
-			pdDoc.setDocumentInformation(setPdfInfo(pdDoc.getDocumentInformation(), key, value));
-
-			PDMetadata metadata = pdDoc.getDocumentCatalog().getMetadata();
-
-			XMPMetadata xmp;
-
-			if (metadata != null) {
-
-				try (InputStream is = metadata.exportXMPMetadata()) {
-					DomXmpParser parser = new DomXmpParser();
-					xmp = parser.parse(is);
-				}
-
-			} else {
-				xmp = XMPMetadata.createXMPMetadata();
-			}
-
-			setXMP(xmp, key, value);
-
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			XmpSerializer serializer = new XmpSerializer();
-			serializer.serialize(xmp, baos, true);
-
-			PDMetadata newMetadata = new PDMetadata(pdDoc, new java.io.ByteArrayInputStream(baos.toByteArray()));
-
-			pdDoc.getDocumentCatalog().setMetadata(newMetadata);
-
-			pdDoc.save(editedFile);
-			pdfEditRes.setFileOutputLocation(editedFile.getAbsolutePath());
-			logger.info("Edited PDF successfully saved to: " + editedFile.getAbsolutePath());
+			String outputFilePath = editedFile.getAbsolutePath();
+			pdfEditRes.setFileOutputLocation(outputFilePath);
+			logger.info("Edited PDF successfully saved to: " + outputFilePath);
 
 			int fileDeleteTime = 120;
 			DELETE_EXECUTOR.schedule(() -> {
 				try {
 
-					File outputFile = new File(pdfEditRes.getFileOutputLocation());
+					File outputFile = new File(outputFilePath);
 
 					if (outputFile.exists() && !outputFile.delete()) {
-						logger.warn("Cannot delete temp file " + pdfEditRes.getFileOutputLocation());
+						logger.info("Cannot delete temp file " + outputFilePath);
 					}
 				} catch (Exception e) {
-					logger.error("Error deleting the temp file " + pdfEditRes.getFileOutputLocation(), e);
+					logger.info("Error deleting the temp file " + outputFilePath, e);
 				}
 			}, fileDeleteTime, TimeUnit.MINUTES);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info("Error while editing PDF metadata for file: " + fileName, e);
+			pdfEditRes.setFileOutputLocation(null);
 		}
 
 		return pdfEditRes;
@@ -176,6 +144,45 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	}
 
 	/**
+	 * Updates the PDF Info Dictionary and XMP metadata.
+	 *
+	 * @param pdDoc            the PDF document
+	 * @param metadataToUpdate the metadata to update
+	 * @throws Exception if metadata processing fails
+	 */
+	private void updateMetadata(PDDocument pdDoc, MetadataToUpdate metadataToUpdate) throws Exception {
+
+		String key = metadataToUpdate.getKey();
+		String value = metadataToUpdate.getValue();
+
+		if (key == null || key.isBlank()) {
+
+			throw new IllegalArgumentException("Metadata key must not be empty");
+		}
+
+		pdfInfo = getPdfInfo(pdDoc);
+
+		pdfEditRes
+				.setOldMetadatatPair(new AbstractMap.SimpleEntry<>(key, pdfInfo.getJSONObject().optString(key.toLowerCase())));
+
+		pdfEditRes.setNewMetadatatPair(new AbstractMap.SimpleEntry<>(key, value));
+
+		updatePdfInfo(pdDoc, metadataToUpdate);
+		updateXmpMetadata(pdDoc, metadataToUpdate);
+	}
+
+	/**
+	 * Updates the PDF Info Dictionary metadata.
+	 *
+	 * @param pdDoc            the PDF document
+	 * @param metadataToUpdate the metadata to update
+	 */
+	private void updatePdfInfo(PDDocument pdDoc, MetadataToUpdate metadataToUpdate) {
+
+		pdDoc.setDocumentInformation(setPdfInfo(pdDoc.getDocumentInformation(), metadataToUpdate));
+	}
+
+	/**
 	 * Sets a PDF Info Dictionary metadata value.
 	 * 
 	 * @param documentInfo the PDF document information
@@ -184,7 +191,11 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	 *
 	 * @return the modified document information
 	 */
-	private PDDocumentInformation setPdfInfo(PDDocumentInformation documentInfo, String key, String value) {
+	private PDDocumentInformation setPdfInfo(PDDocumentInformation documentInfo, MetadataToUpdate metadataToUpdate) {
+
+		String key = metadataToUpdate.getKey();
+		String value = metadataToUpdate.getValue();
+
 		logger.info("Original PdfInfo: " + documentInfo.getCOSObject().toString());
 
 		BiConsumer<PDDocumentInformation, String> setter = PDF_INFO_SETTERS.get(key);
@@ -199,6 +210,43 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	}
 
 	/**
+	 * Updates the XMP metadata.
+	 *
+	 * @param pdDoc            the PDF document
+	 * @param metadataToUpdate the metadata to update
+	 * @throws Exception if XMP processing fails
+	 */
+	private void updateXmpMetadata(PDDocument pdDoc, MetadataToUpdate metadataToUpdate) throws Exception {
+
+		PDMetadata metadata = pdDoc.getDocumentCatalog().getMetadata();
+
+		XMPMetadata xmp;
+
+		if (metadata != null) {
+
+			try (InputStream is = metadata.exportXMPMetadata()) {
+				DomXmpParser parser = new DomXmpParser();
+				xmp = parser.parse(is);
+			}
+
+		} else {
+			xmp = XMPMetadata.createXMPMetadata();
+		}
+
+		setXMP(xmp, metadataToUpdate);
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		XmpSerializer serializer = new XmpSerializer();
+
+		serializer.serialize(xmp, baos, true);
+
+		PDMetadata newMetadata = new PDMetadata(pdDoc, new ByteArrayInputStream(baos.toByteArray()));
+
+		pdDoc.getDocumentCatalog().setMetadata(newMetadata);
+	}
+
+	/**
 	 * Sets a XMP metadata value.
 	 * 
 	 * @param xmp   the XMP metadata
@@ -207,51 +255,52 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	 * 
 	 * @return the modified PdfInfo object
 	 */
-	private XMPMetadata setXMP(XMPMetadata xmp, String key, String value) {
+	private XMPMetadata setXMP(XMPMetadata xmp, MetadataToUpdate metadataToUpdate) {
+
+		String key = metadataToUpdate.getKey();
+		String value = metadataToUpdate.getValue();
 
 		logXmp(xmp, "XMP original");
 
-		DublinCoreSchema dc = xmp.getDublinCoreSchema();
-
-		if (dc == null) {
-			dc = xmp.createAndAddDublinCoreSchema();
-		}
-
-		AdobePDFSchema pdf = xmp.getAdobePDFSchema();
-
-		if (pdf == null) {
-			pdf = xmp.createAndAddAdobePDFSchema();
-		}
-
 		XMPBasicSchema xmpBasic = xmp.getXMPBasicSchema();
+
+		if (PDF_XMP_DC_SETTERS.get(key) != null) {
+
+			DublinCoreSchema dc = xmp.getDublinCoreSchema();
+
+			if (dc == null) {
+				dc = xmp.createAndAddDublinCoreSchema();
+			}
+
+			PDF_XMP_DC_SETTERS.get(key).accept(dc, value);
+
+		} else if (PDF_XMP_ADOBE_PDF_SETTERS.get(key) != null) {
+
+			AdobePDFSchema pdf = xmp.getAdobePDFSchema();
+
+			if (pdf == null) {
+				pdf = xmp.createAndAddAdobePDFSchema();
+			}
+
+			PDF_XMP_ADOBE_PDF_SETTERS.get(key).accept(pdf, value);
+
+		} else if (PDF_XMP_BASIC_SETTERS.get(key) != null) {
+
+			if (xmpBasic == null) {
+				xmpBasic = xmp.createAndAddXMPBasicSchema();
+			}
+
+			PDF_XMP_BASIC_SETTERS.get(key).accept(xmpBasic, value);
+
+		} else {
+			throw new IllegalArgumentException("Unknown PDF XMP metadata key: " + key);
+		}
 
 		if (xmpBasic == null) {
 			xmpBasic = xmp.createAndAddXMPBasicSchema();
 		}
 
-		BiConsumer<DublinCoreSchema, String> dcSetter = PDF_XMP_DC_SETTERS.get(key);
-
-		if (dcSetter != null) {
-			dcSetter.accept(dc, value);
-		} else {
-
-			BiConsumer<AdobePDFSchema, String> pdfSetter = PDF_XMP_ADOBE_PDF_SETTERS.get(key);
-
-			if (pdfSetter != null) {
-				pdfSetter.accept(pdf, value);
-			} else {
-
-				BiConsumer<XMPBasicSchema, String> basicSetter = PDF_XMP_BASIC_SETTERS.get(key);
-
-				if (basicSetter != null) {
-					basicSetter.accept(xmpBasic, value);
-					xmpBasic.setModifyDate(Calendar.getInstance());
-
-				} else {
-					throw new IllegalArgumentException("Unknown PDF XMP metadata key: " + key);
-				}
-			}
-		}
+		xmpBasic.setModifyDate(Calendar.getInstance());
 
 		logXmp(xmp, "XMP edited");
 
@@ -282,8 +331,26 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 			logger.info(message + ": " + out.toString(StandardCharsets.UTF_8));
 
 		} catch (TransformerException e) {
-			logger.error("Could not serialize XMP metadata for logging", e);
+			logger.info("Could not serialize XMP metadata for logging", e);
 		}
+	}
+
+	/**
+	 * Saves the edited PDF to a file.
+	 *
+	 * @param pdDoc the PDF document
+	 * @return the edited PDF file
+	 * @throws Exception if the file cannot be created or saved
+	 */
+	private File saveEditedPdf(PDDocument pdDoc) throws Exception {
+
+		File editedFile = File.createTempFile("edited_", ".pdf");
+
+		logger.info("Output file: " + editedFile.getAbsolutePath());
+
+		pdDoc.save(editedFile);
+
+		return editedFile;
 	}
 
 	@Override
@@ -294,13 +361,14 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 		resultBuffer.append("<h2>Datei zur Bearbeitung: " + pdfEditRes.getLoadedFileName() + "</h2>\n");
 
 		if (pdfEditRes.getFileOutputLocation() != null) {
-			resultBuffer.append(
-					"<h3 style=\"color: darkgreen;)\">Bearbeitung erfolgreich <i class=\"fa-solid fa-check\"></i></h3>\n");
+			resultBuffer
+					.append("<h3 style=\"color: darkgreen;\">Bearbeitung erfolgreich <i class=\"fa-solid fa-check\"></i></h3>\n");
 		} else {
 			resultBuffer
-					.append("<h3 style=\"color: red;)\">Bearbeitung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></h3>\n");
+					.append("<h3 style=\"color: red;\">Bearbeitung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></h3>\n");
 		}
-		if (pdfInfo != null && !pdfInfo.getJSONObject().isEmpty()) {
+		if (pdfInfo != null && !pdfInfo.getJSONObject().isEmpty() && pdfEditRes.getOldMetadataPair() != null
+				&& pdfEditRes.getNewMetadataPair() != null) {
 			resultBuffer.append("<h3>Alte Metadaten:</h3>\n<ul>\n");
 			resultBuffer.append("<li>")
 					.append(PdfInfoModel.getInfoLabel().get(pdfEditRes.getOldMetadataPair().getKey().toLowerCase())).append(": ")
@@ -335,15 +403,19 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 
 		resultJson.put("file", pdfEditRes.getLoadedFileName());
 
-		JSONObject oldMetadataPair = new JSONObject();
-		oldMetadataPair.put("key", pdfEditRes.getOldMetadataPair().getKey());
-		oldMetadataPair.put("value", pdfEditRes.getOldMetadataPair().getValue());
-		resultJson.put("oldMetadataPair", oldMetadataPair);
+		if (pdfEditRes.getOldMetadataPair() != null) {
+			JSONObject oldMetadataPair = new JSONObject();
+			oldMetadataPair.put("key", pdfEditRes.getOldMetadataPair().getKey());
+			oldMetadataPair.put("value", pdfEditRes.getOldMetadataPair().getValue());
+			resultJson.put("oldMetadataPair", oldMetadataPair);
+		}
 
-		JSONObject newMetadataPair = new JSONObject();
-		newMetadataPair.put("key", pdfEditRes.getNewMetadataPair().getKey());
-		newMetadataPair.put("value", pdfEditRes.getNewMetadataPair().getValue());
-		resultJson.put("newMetadataPair", newMetadataPair);
+		if (pdfEditRes.getNewMetadataPair() != null) {
+			JSONObject newMetadataPair = new JSONObject();
+			newMetadataPair.put("key", pdfEditRes.getNewMetadataPair().getKey());
+			newMetadataPair.put("value", pdfEditRes.getNewMetadataPair().getValue());
+			resultJson.put("newMetadataPair", newMetadataPair);
+		}
 
 		if (pdfEditRes.getFileOutputLocation() != null) {
 			resultJson.put("fileOutputLocation", "/lzv-api/downloadedit?fileName=" + pdfEditRes.getFileOutputLocation()
