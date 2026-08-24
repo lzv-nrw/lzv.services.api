@@ -28,6 +28,7 @@ import de.nrw.hbz.lzv.services.impl.FileController;
 import de.nrw.hbz.lzv.services.impl.PdfACreator;
 import de.nrw.hbz.lzv.services.impl.PdfMdEditor;
 import de.nrw.hbz.lzv.services.impl.VersionInfo;
+import de.nrw.hbz.lzv.services.model.pdf.edit.MetadataToUpdate;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 import de.nrw.hbz.lzv.services.util.file.FileUtil;
 
@@ -373,9 +374,10 @@ public class JerseyServiceImpl {
       fileName = contentDisposition.getFileName();
     }
     File file = FileUtil.saveTempFile(fileInputStream, fileName);
+    MetadataToUpdate metadataToUpdate = new MetadataToUpdate(key, value);
 
     PdfMdEditor pdfBoxEditor = PdfMdEditor.getInstance("pdfbox");
-    pdfBoxEditor.editPdfMd(file, fileName, key, value);
+    pdfBoxEditor.editPdfMd(file, fileName, metadataToUpdate);
 
     logger.info(new File(fileName).getAbsolutePath());
 
@@ -396,9 +398,10 @@ public class JerseyServiceImpl {
       fileName = contentDisposition.getFileName();
     }
     File file = FileUtil.saveTempFile(fileInputStream, fileName);
+    MetadataToUpdate metadataToUpdate = new MetadataToUpdate(key, value);
 
     PdfMdEditor pdfBoxEditor = PdfMdEditor.getInstance("pdfbox");
-    pdfBoxEditor.editPdfMd(file, fileName, key, value);
+    pdfBoxEditor.editPdfMd(file, fileName, metadataToUpdate);
 
     logger.info(new File(fileName).getAbsolutePath());
 

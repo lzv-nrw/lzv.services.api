@@ -5,6 +5,7 @@ import java.util.Hashtable;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
+import de.nrw.hbz.lzv.services.model.pdf.edit.MetadataToUpdate;
 import de.nrw.hbz.lzv.services.model.pdf.edit.PdfBoxEditResult;
 
 /**
@@ -35,7 +36,7 @@ public abstract class PdfMdEditor {
 
 	}
 
-	public abstract PdfBoxEditResult editPdfMd(File file, String fileName, String key, String value);
+	public abstract PdfBoxEditResult editPdfMd(File file, String fileName, MetadataToUpdate metadataToUpdate);
 
 	public abstract String getHtml();
 
