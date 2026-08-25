@@ -434,7 +434,7 @@ public class JerseyServiceImpl {
     if (contentDisposition != null) {
       fileName = contentDisposition.getFileName();
     }
-    File file = FileUtil.saveTempFile(fileInputStream, fileName);
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
     MetadataToUpdate metadataToUpdate = new MetadataToUpdate(key, value);
 
     PdfMdEditor pdfBoxEditor = PdfMdEditor.getInstance("pdfbox");
@@ -458,7 +458,7 @@ public class JerseyServiceImpl {
     if (contentDisposition != null) {
       fileName = contentDisposition.getFileName();
     }
-    File file = FileUtil.saveTempFile(fileInputStream, fileName);
+    File file = FileUtil.saveTempFile(fileInputStream, "pdfbox.pdf");
     MetadataToUpdate metadataToUpdate = new MetadataToUpdate(key, value);
 
     PdfMdEditor pdfBoxEditor = PdfMdEditor.getInstance("pdfbox");
