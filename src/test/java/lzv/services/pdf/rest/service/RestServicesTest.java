@@ -89,9 +89,8 @@ public class RestServicesTest {
     File testFile = new File("src/test/resources/pdfa_1b.pdf");
     try {
       contDisp = new FormDataContentDisposition("form-data;name=pdfa_1b.pdf;filename=pdfa_1b.pdf");
-      File editedFile =  jSI.editMDPdfBox(FileUtil.loadFile(testFile), contDisp, "Author", "aquast");
-      
-      logger.info(editedFile.getAbsolutePath());
+      String editedMd =  jSI.editMDPdfBoxHtml(FileUtil.loadFile(testFile), contDisp, "Author", "testauthor");
+      assertTrue(editedMd.contains("testauthor"));
     } catch (ParseException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
