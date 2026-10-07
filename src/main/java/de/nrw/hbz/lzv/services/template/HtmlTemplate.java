@@ -76,7 +76,7 @@ public class HtmlTemplate {
 		StringBuffer defMenu = new StringBuffer();
 
 		// Startseite/Logo
-		defMenu.append("<a id='portal-logo' title='lzv.nrw' href='https://www.lzv.nrw'>");
+		defMenu.append("<a id='portal-logo' title='valify' href='/lzv-jsp/about'>");
 		defMenu.append("<img src='/lzv-jsp/images/valify_bildmarke.png' alt='ValiFY' title='ValiFY'></a>");
 
 		// Datei
