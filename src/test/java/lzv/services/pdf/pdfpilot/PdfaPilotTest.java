@@ -31,20 +31,6 @@ public class PdfaPilotTest {
     
 
   }
-  
-  @Test
-  public void getPdfaPilotVersion() {
-   VersionInfo versInfo = VersionInfo.getInstance("pdfapilot");
-   System.out.println(versInfo.getPluginName());
-   //assertNotNull(ServiceImpl.getVersion());
-  }
-  
-  @Test
-  public void getVersionInfoInstance() {
-   
-    //System.out.println(new VersionInfo().getPluginName());
-   //assertNotNull(ServiceImpl.getVersion());
-  }
 
   @Test
   public void getPluginName() {
