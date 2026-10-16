@@ -132,13 +132,13 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
   public String getHtml() {
     resultBuffer.append(HtmlTemplate.getHtmlHead());
 
-    resultBuffer.append("<h1>Ergebnis der Prüfung mit pdfaPilot</h1>\n");
-    resultBuffer.append("<h2>Analysierte Datei: " + fileName + "</h2>");
+    resultBuffer.append("<header><h1 class=\"documentFirstHeading\">Ergebnis der Analyse und Validierung mit pdfaPilot</h1>\n");
+    resultBuffer.append("<div class=\"selectedFile\">zur Analyse ausgewählte Datei: " + fileName + "</div></header>");
     if (!pdfInfo.getJSONObject().isEmpty()) {
       resultBuffer.append(pdfInfo.toHtml());
     } else {
       resultBuffer
-          .append("<h3>PDF Informationen</h3><ul>\n<li>Keine Informationen verfügbar oder extrahierbar</li>\n</ul>\n");
+          .append("<div class=\"contentHeading\">ausgelesene PDF-Metadaten</div><ul>\n<li>Keine Informationen verfügbar oder extrahierbar</li>\n</ul>\n");
     }
 
     resultBuffer.append(pdfACompl.toHtml());
@@ -146,7 +146,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     // resultBuffer.append("<p>" + debugSb.toString() + "</p>");
 
     resultBuffer.append(
-        "<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfapilot/upload\">Weitere PDF-Validierung</a>");
+        "<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfapilot/upload\">nächstes PDF analysieren</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();

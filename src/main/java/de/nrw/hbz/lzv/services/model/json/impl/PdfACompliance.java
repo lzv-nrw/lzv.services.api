@@ -37,7 +37,7 @@ public class PdfACompliance {
    * @return PdfModel as html fragment
    */
   public String toHtml() {
-    String listStart = "<h3>Information zur PDF/A Compliance</h3><ul>\n";
+    String listStart = "<div class=\"contentHeading\">ermittelter PDF/A-Standard und weitergehende Informationen:</div><ul>\n";
     String listEnd = "</ul>\n";
     StringBuffer htmlBuffer = new StringBuffer();
 
@@ -47,12 +47,20 @@ public class PdfACompliance {
 
       String levelLabel = (String) pdfACompl.getJSONObject("complianceLevel").get("prefLabel");
       String formatUrl = Compliance.getComplianceUrl(levelLabel);
+      String kostUrl = Compliance.getKostUrl(levelLabel);
       htmlBuffer.append(
-          "<li class=\"success\">Die Datei entspricht dem PDF/A-Standard, Version " + "<a target='_blank' href='"
-              + formatUrl + "' >" + levelLabel + "<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>");
+          "<li class=\"success\">Die Datei entspricht dem PDF/A-Standard.</li>");
+      htmlBuffer.append("<ul><li>Version und Konformitätsstufe der Datei: " + levelLabel  + "</li></ul></li>" );
+      htmlBuffer.append("<li>weitergehende Informationen zum PDF/A-Standard und der Konformitätsstufe:");
+      htmlBuffer.append("<ul>");
+      if (kostUrl != null) {
+        htmlBuffer.append("<li><a target='_blank' href='" + kostUrl + "' >KOST<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>");
+      }
+      htmlBuffer.append("<li><a target='_blank' href='" + formatUrl + "' >PRONOM<i class=\"fa-solid fa-arrow-up-right-from-square\"></i></a></li>");
+      htmlBuffer.append("</ul>" );
     } else {
 
-      htmlBuffer.append("<li class=\"error\">Die Datei entspricht KEINEM PDF/A-Standard</li>");
+      htmlBuffer.append("<li class=\"error\">Die Datei entspricht keinem PDF/A-Standard.</li>");
     }
 
     htmlBuffer.append(listEnd);

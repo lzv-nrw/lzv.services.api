@@ -164,31 +164,31 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
   public String getHtml() {
     resultBuffer.append(HtmlTemplate.getHtmlHead());
 
-    resultBuffer.append("<h1>Ergebnis der PDF/A-Erzeugung mit pdfaPilot</h1>\n");
-    resultBuffer.append("<h2>Datei zur Konvertierung: " + pdfaRes.getLoadedFileName() + "</h2>\n");
+    resultBuffer.append("<header><h1 class=\"documentFirstHeading\">Ergebnis der PDF/A-Erzeugung mit pdfaPilot</h1>\n");
+    resultBuffer.append("<div class=\"selectedFile\">zur Konvertierung ausgewählte Datei: " + pdfaRes.getLoadedFileName() + "</div></header>");
     if (pdfaRes != null) {
 
       if (pdfaRes.getFileOutputLocation() != null) {
         resultBuffer.append(
-            "<h3 style=\"color: darkgreen;)\">Konvertierung erfolgreich <i class=\"fa-solid fa-check\"></i></h3>");
+            "<div class=\"contentHeading\" style=\"color: darkgreen;)\">Konvertierung erfolgreich <i class=\"fa-solid fa-check\"></i></div>");
       } else {
         resultBuffer
-            .append("<h3 style=\"color: red;)\">Konvertierung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></h3>");
+            .append("<div class=\"contentHeading\" style=\"color: red;)\">Konvertierung fehlgeschlagen <i class=\"fa-solid fa-xmark\"></i></div>");
       }
-      resultBuffer.append("<h3>Durchgeführte Maßnahmen:</h3>\n<ul>\n");
+      resultBuffer.append("<div class=\"contentHeading\">durchgeführte Bearbeitungsschritte:</div>\n<ul>\n");
       for (int i = 0; i < pdfaRes.getFixList().size(); i++) {
         resultBuffer.append("<li>").append(pdfaRes.getFixList().get(i)).append("</li>");
       }
       resultBuffer.append("</ul>\n");
 
-      resultBuffer.append("<h3>Zusammenfassung:</h3>\n<ul>\n");
+      resultBuffer.append("<div class=\"contentHeading\">Zusammenfassung:</div>\n<ul>\n");
       for (int i = 0; i < pdfaRes.getSummaryList().size(); i++) {
         resultBuffer.append("<li>").append(pdfaRes.getSummaryList().get(i)).append("</li>");
       }
       resultBuffer.append("</ul>\n");
 
       if (pdfaRes.getErrorList() != null && !pdfaRes.getErrorList().isEmpty()) {
-        resultBuffer.append("<h3>Fehlerhinweise:</h3>\n<ul>\n");
+        resultBuffer.append("<div class=\"contentHeading\">Fehlerhinweise:</div>\n<ul>\n");
         for (int i = 0; i < pdfaRes.getErrorList().size(); i++) {
           resultBuffer.append("<li>").append(pdfaRes.getErrorList().get(i)).append("</li>");
         }
@@ -207,12 +207,12 @@ public class PdfACreator extends de.nrw.hbz.lzv.services.impl.PdfACreator {
       if (pdfaRes.getFileOutputLocation() != null) {
         resultBuffer.append("<p><i class=\"fa-solid fa-download\"></i><a href=\"/lzv-api/download?fileName="
             + pdfaRes.getFileOutputLocation() + "&origFileName=" + pdfaRes.getLoadedFileName()
-            + "\">PDF/A Datei herunterladen</a> (Link " + ParameterLoader.getFileDeleteTime() + " Minuten gültig)</p>");
+            + "\">PDF/A-Datei herunterladen</a> (Link " + ParameterLoader.getFileDeleteTime() + " Minuten gültig)</p>");
       }
     }
 
     resultBuffer.append(
-        "<p><i class=\"fa-solid fa-repeat\"></i><a href=\"/lzv-jsp/pdfapilot/createpdfa\">Weitere PDF Umwandlung</a></p>");
+        "<p><i class=\"fa-solid fa-repeat\"></i><a href=\"/lzv-jsp/pdfapilot/createpdfa\">nächstes PDF umwandeln</a></p>");
 
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 

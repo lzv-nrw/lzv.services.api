@@ -88,7 +88,7 @@ public class PdfInfo implements PdfDocumentInformation {
    */
   @Override
   public String toHtml() {
-    String listStart = "<h3>PDF Informationen</h3><ul>\n";
+    String listStart = "<div class=\"contentHeading\">ausgelesene PDF-Metadaten:</div><ul>\n";
     String listEnd = "</ul>\n";
     StringBuffer htmlBuffer = new StringBuffer();
 

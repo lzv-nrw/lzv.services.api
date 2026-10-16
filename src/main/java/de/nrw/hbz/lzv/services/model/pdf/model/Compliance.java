@@ -12,6 +12,7 @@ public class Compliance {
 
     static LinkedHashMap<String,String> complianceFormat = setComplianceFormat();
     static LinkedHashMap<String,String> complianceLabel = setComplianceLabel();
+    static LinkedHashMap<String,String> kostUrlMap = setKostUrl();
 
     final static String pronomUrl = "https://www.nationalarchives.gov.uk/pronom/";
     
@@ -46,7 +47,7 @@ public class Compliance {
 
     private static LinkedHashMap<String,String> setComplianceFormat() {
 
-      LinkedHashMap<String,String> complianceFormat = new LinkedHashMap<>(); 
+      LinkedHashMap<String,String> complianceFormat = new LinkedHashMap<>();
       complianceFormat.put( _1A, "fmt/95");
       complianceFormat.put( _1B, "fmt/354");
       complianceFormat.put( _2A, "fmt/476");
@@ -59,6 +60,23 @@ public class Compliance {
       complianceFormat.put( _4E, "fmt/1911");
       complianceFormat.put( _4F, "fmt/1912");
       return complianceFormat;
+    }
+
+    private static LinkedHashMap<String,String> setKostUrl() {
+
+      LinkedHashMap<String,String> kostUrlMap = new LinkedHashMap<>();
+      kostUrlMap.put( _1A, "https://kost-ceco.ch/cms/pdf-a-1");
+      kostUrlMap.put( _1B, "https://kost-ceco.ch/cms/pdf-a-1");
+      kostUrlMap.put( _2A, "https://kost-ceco.ch/cms/pdf-a-2");
+      kostUrlMap.put( _2U, "https://kost-ceco.ch/cms/pdf-a-2");
+      kostUrlMap.put( _2B, "https://kost-ceco.ch/cms/pdf-a-2");
+      kostUrlMap.put( _3A, "https://kost-ceco.ch/cms/pdf-a-3.html");
+      kostUrlMap.put( _3U, "https://kost-ceco.ch/cms/pdf-a-3.html");
+      kostUrlMap.put( _3B, "https://kost-ceco.ch/cms/pdf-a-3.html");
+      kostUrlMap.put( _4,  null);
+      kostUrlMap.put( _4E, null);
+      kostUrlMap.put( _4F, null);
+      return kostUrlMap;
     }
 
     /**
@@ -112,6 +130,16 @@ public class Compliance {
     public static String getComplianceUrl(String key) {
       String clUrl = pronomUrl + complianceFormat.get(key);
       return clUrl;
+    }
+
+    /**
+     * Convenience method to return KOST Url for PDF/A flavour
+     * @param key name of ComplianceFormat constant
+     * @return String value of KOST URL as String
+     */
+    public static String getKostUrl(String key) {
+      String kostUrl = kostUrlMap.get(key);
+      return kostUrl;
     }
 
 

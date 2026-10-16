@@ -51,15 +51,15 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     resultBuffer.append(HtmlTemplate.getHtmlHead());
 
-    resultBuffer.append("<h1>Ergebnis der Prüfung mit PDFBox</h1>\n");
-    resultBuffer.append("<h2>Analysierte Datei: " + fileName + "</h2>");
+    resultBuffer.append("<header><h1 class=\"documentFirstHeading\">Ergebnis der Analyse mit PDFBox</h1>\n");
+    resultBuffer.append("<div class=\"selectedFile\">zur Analyse ausgewählte Datei: " + fileName + "</div></header>");
     if (pdfInfo == null || pdfInfo.getJSONObject().isEmpty()) {
       resultBuffer
-      .append("<h3>PDF Informationen</h3><ul>\n<li>Keine Informationen verfügbar oder extrahierbar</li>\n</ul>\n");
+      .append("<div class=\"contentHeading\">ausgelesene PDF-Metadaten:</div><ul>\n<li>Keine Informationen verfügbar oder extrahierbar</li>\n</ul>\n");
     } else {
       resultBuffer.append(pdfInfo.toHtml());
     }
-    resultBuffer.append("<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfbox/upload\">Weitere PDF-Validierung</a>");
+    resultBuffer.append("<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfbox/upload\">nächstes PDF analysieren</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();
