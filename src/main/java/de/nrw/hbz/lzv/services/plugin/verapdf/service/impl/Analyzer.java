@@ -147,7 +147,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
 
     resultBuffer.append(pdfACompl.toHtml());
 
-    resultBuffer.append("<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/verapdf/upload\">nächstes PDF analysieren</a>");
+    resultBuffer.append("<p class='moreMarginTop'><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/verapdf/upload\">nächstes PDF analysieren</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();
