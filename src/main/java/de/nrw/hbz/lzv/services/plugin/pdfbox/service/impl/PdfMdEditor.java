@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.Calendar;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +45,30 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	private static final ScheduledExecutorService DELETE_EXECUTOR = Executors.newSingleThreadScheduledExecutor();
 
 	protected PdfBoxEditResult pdfEditRes = null;
+
+	private static final Map<String, Function<XMPMetadata, String>> XMP_GETTERS = Map.of("Title", xmp -> {
+		try {
+			return xmp.getDublinCoreSchema() == null ? null : xmp.getDublinCoreSchema().getTitle();
+		} catch (BadFieldValueException e) {
+			logger.warn("Could not read XMP metadata field: Title", e);
+			return null;
+		}
+	}, "Author", xmp -> {
+		if (xmp.getDublinCoreSchema() == null) {
+			return null;
+		}
+		List<String> creators = xmp.getDublinCoreSchema().getCreators();
+		return creators == null || creators.isEmpty() ? null : String.join(", ", creators);
+	}, "Subject", xmp -> {
+		try {
+			return xmp.getDublinCoreSchema() == null ? null : xmp.getDublinCoreSchema().getDescription();
+		} catch (BadFieldValueException e) {
+			logger.warn("Could not read XMP metadata field: Subject", e);
+			return null;
+		}
+	}, "Keywords", xmp -> xmp.getAdobePDFSchema() == null ? null : xmp.getAdobePDFSchema().getKeywords(), "Producer",
+			xmp -> xmp.getAdobePDFSchema() == null ? null : xmp.getAdobePDFSchema().getProducer(), "Creator",
+			xmp -> xmp.getXMPBasicSchema() == null ? null : xmp.getXMPBasicSchema().getCreatorTool());
 
 	/**
 	 * Maps PDF metadata keys to their corresponding PdfInfo setters
@@ -212,6 +237,7 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 
 	/**
 	 * Updates the XMP metadata.
+	 * Missing XMP values are populated from the PDF Info Dictionary before.
 	 *
 	 * @param pdDoc            the PDF document
 	 * @param metadataToUpdate the metadata to update
@@ -219,48 +245,101 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	 */
 	private void updateXmpMetadata(PDDocument pdDoc, MetadataToUpdate metadataToUpdate) throws Exception {
 
-		PDMetadata metadata = pdDoc.getDocumentCatalog().getMetadata();
+		XMPMetadata xmp = loadXmpMetadata(pdDoc);
 
-		XMPMetadata xmp;
-
-		if (metadata != null) {
-
-			try (InputStream is = metadata.exportXMPMetadata()) {
-				DomXmpParser parser = new DomXmpParser();
-				xmp = parser.parse(is);
-			}
-
-		} else {
-			xmp = XMPMetadata.createXMPMetadata();
-		}
-
-		PDDocumentInformation info = pdDoc.getDocumentInformation();
-
-		Map<String, String> values = Map.of("Title", info.getTitle() == null ? "" : info.getTitle(), "Author",
-				info.getAuthor() == null ? "" : info.getAuthor(), "Subject", info.getSubject() == null ? "" : info.getSubject(),
-				"Keywords", info.getKeywords() == null ? "" : info.getKeywords(), "Creator",
-				info.getCreator() == null ? "" : info.getCreator(), "Producer",
-				info.getProducer() == null ? "" : info.getProducer());
-
-		for (Map.Entry<String, String> entry : values.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-
-			if (!value.isBlank()) {
-				String current = getXmpValue(xmp, key);
-
-				if (current == null || current.isBlank()) {
-					setXMP(xmp, new MetadataToUpdate(key, value));
-				}
-			}
-		}
+		updateMissingXmpValues(xmp, pdDoc.getDocumentInformation());
 
 		setXMP(xmp, metadataToUpdate);
+
+		saveXmpMetadata(pdDoc, xmp);
+	}
+
+	/**
+	 * Loads the XMP metadata from the PDF document. If the document does not
+	 * contain any XMP metadata, a new XMP metadata object is created.
+	 *
+	 * @param pdDoc the PDF document
+	 * @return the loaded or newly created XMP metadata
+	 * @throws Exception if the existing XMP metadata cannot be parsed
+	 */
+	private XMPMetadata loadXmpMetadata(PDDocument pdDoc) throws Exception {
+
+		PDMetadata metadata = pdDoc.getDocumentCatalog().getMetadata();
+
+		if (metadata == null) {
+			return XMPMetadata.createXMPMetadata();
+		}
+
+		try (InputStream is = metadata.exportXMPMetadata()) {
+			DomXmpParser parser = new DomXmpParser();
+			return parser.parse(is);
+		}
+	}
+
+	/**
+	 * Populates missing XMP metadata fields using non-blank values from
+	 * the PDF Info Dictionary.
+	 * Existing non-blank XMP values are preserved.
+	 *
+	 * @param xmp the XMP metadata to update
+	 * @param pdfInfo the PDF Info Dictionary containing fallback values
+	 */
+	private void updateMissingXmpValues(XMPMetadata xmp, PDDocumentInformation pdfInfo) {
+
+		Map<String, String> values = Map.of("Title", normalize(pdfInfo.getTitle()), "Author", normalize(pdfInfo.getAuthor()),
+				"Subject", normalize(pdfInfo.getSubject()), "Keywords", normalize(pdfInfo.getKeywords()), "Creator",
+				normalize(pdfInfo.getCreator()), "Producer", normalize(pdfInfo.getProducer()));
+
+		for (Map.Entry<String, String> entry : values.entrySet()) {
+			updateMissingXmpValue(xmp, entry.getKey(), entry.getValue());
+		}
+	}
+
+	/**
+	 * Sets an XMP metadata field from the specified value only if the value
+	 * is non-blank and the corresponding XMP field is missing or blank.
+	 *
+	 * @param xmp the XMP metadata to update
+	 * @param key the metadata key to update
+	 * @param value the fallback value to apply
+	 */
+	private void updateMissingXmpValue(XMPMetadata xmp, String key, String value) {
+
+		if (value.isBlank()) {
+			return;
+		}
+
+		String current = getXmpValue(xmp, key);
+
+		if (current != null && !current.isBlank()) {
+			return;
+		}
+
+		setXMP(xmp, new MetadataToUpdate(key, value));
+	}
+
+	/**
+	 * Converts a {@code null} string to an empty string.
+	 *
+	 * @param value the string to normalize
+	 * @return the original string, or an empty string if the input is {@code null}
+	 */
+	private String normalize(String value) {
+		return value == null ? "" : value;
+	}
+
+	/**
+	 * Serializes the specified XMP metadata and attaches it to the PDF document.
+	 *
+	 * @param pdDoc the PDF document to which the XMP metadata is attached
+	 * @param xmp the XMP metadata to serialize and save
+	 * @throws Exception if serialization or metadata creation fails
+	 */
+	private void saveXmpMetadata(PDDocument pdDoc, XMPMetadata xmp) throws Exception {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		XmpSerializer serializer = new XmpSerializer();
-
 		serializer.serialize(xmp, baos, true);
 
 		PDMetadata newMetadata = new PDMetadata(pdDoc, new ByteArrayInputStream(baos.toByteArray()));
@@ -278,43 +357,8 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	 *         not exist or the key is unknown
 	 */
 	private String getXmpValue(XMPMetadata xmp, String key) {
-		switch (key) {
-		case "Title": {
-			DublinCoreSchema dc = xmp.getDublinCoreSchema();
-			try {
-				return dc != null ? dc.getTitle() : null;
-			} catch (BadFieldValueException e) {
-				e.printStackTrace();
-			}
-		}
-		case "Author": {
-			DublinCoreSchema dc = xmp.getDublinCoreSchema();
-			return dc != null && dc.getCreators() != null && !dc.getCreators().isEmpty() ? String.join(", ", dc.getCreators())
-					: null;
-		}
-		case "Subject": {
-			DublinCoreSchema dc = xmp.getDublinCoreSchema();
-			try {
-				return dc != null ? dc.getDescription() : null;
-			} catch (BadFieldValueException e) {
-				e.printStackTrace();
-			}
-		}
-		case "Keywords": {
-			AdobePDFSchema pdf = xmp.getAdobePDFSchema();
-			return pdf != null ? pdf.getKeywords() : null;
-		}
-		case "Producer": {
-			AdobePDFSchema pdf = xmp.getAdobePDFSchema();
-			return pdf != null ? pdf.getProducer() : null;
-		}
-		case "Creator": {
-			XMPBasicSchema basic = xmp.getXMPBasicSchema();
-			return basic != null ? basic.getCreatorTool() : null;
-		}
-		default:
-			return null;
-		}
+		Function<XMPMetadata, String> getter = XMP_GETTERS.get(key);
+		return getter == null ? null : getter.apply(xmp);
 	}
 
 	/**
@@ -324,7 +368,7 @@ public class PdfMdEditor extends de.nrw.hbz.lzv.services.impl.PdfMdEditor {
 	 * @param key   the metadata key
 	 * @param value the new metadata value
 	 * 
-	 * @return the modified PdfInfo object
+	 * @return the modified XMP metadata
 	 */
 	private XMPMetadata setXMP(XMPMetadata xmp, MetadataToUpdate metadataToUpdate) {
 
