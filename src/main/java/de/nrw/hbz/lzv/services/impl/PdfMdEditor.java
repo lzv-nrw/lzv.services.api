@@ -2,6 +2,7 @@ package de.nrw.hbz.lzv.services.impl;
 
 import java.io.File;
 import java.util.Hashtable;
+import java.util.List;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfACompliance;
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
@@ -36,7 +37,7 @@ public abstract class PdfMdEditor {
 
 	}
 
-	public abstract PdfBoxEditResult editPdfMd(File file, String fileName, MetadataToUpdate metadataToUpdate);
+	public abstract PdfBoxEditResult editPdfMd(File file, String fileName, List<MetadataToUpdate> metadataUpdates);
 
 	public abstract String getHtml();
 

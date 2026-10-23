@@ -38,7 +38,7 @@ public class PdfInfoModel {
     infoLabel = new LinkedHashMap<>();
     infoLabel.put(TITLE, "Titel");
     infoLabel.put(AUTHOR, "Autor");
-    infoLabel.put(CREATOR, "Erstellt mit");
+    infoLabel.put(CREATOR, "PDF erstellt mit");
     infoLabel.put(PRODUCER, "PDF erzeugt mit");
     infoLabel.put(VERSION, "PDF-Version");
     infoLabel.put(FILESIZE, "Dateigröße");

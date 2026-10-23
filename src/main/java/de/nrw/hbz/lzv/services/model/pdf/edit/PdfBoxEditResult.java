@@ -1,42 +1,50 @@
 package de.nrw.hbz.lzv.services.model.pdf.edit;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class PdfBoxEditResult {
 
-	private Map.Entry<String, String> oldMetadataPair = new AbstractMap.SimpleEntry<>(null, null);
-	private Map.Entry<String, String> newMetadataPair = new AbstractMap.SimpleEntry<>(null, null);
+	private List<Map.Entry<String, String>> oldMetadataPairs = new ArrayList<>();
+	private List<Map.Entry<String, String>> newMetadataPairs = new ArrayList<>();
 
 	private String fileOutputLocation = null;
 	private String loadedFileName = null;
 
 	/**
-	 * @return the metadata key value pair for editing
+	 * @return the list of old metadata key-value pairs
 	 */
-	public Map.Entry<String, String> getOldMetadataPair() {
-		return oldMetadataPair;
+	public List<Map.Entry<String, String>> getOldMetadataPairs() {
+		return oldMetadataPairs;
 	}
 
 	/**
-	 * @param pair the pair to set
+	 * Adds an old metadata key-value pair to the list.
+	 *
+	 * @param key   the metadata key
+	 * @param value the metadata value
 	 */
-	public void setOldMetadatatPair(Map.Entry<String, String> oldMetadataPair) {
-		this.oldMetadataPair = oldMetadataPair;
+	public void addOldMetadataPair(String key, String value) {
+		oldMetadataPairs.add(new AbstractMap.SimpleEntry<>(key, value));
 	}
 
 	/**
-	 * @return the metadata key value pair for editing
+	 * @return the list of new metadata key-value pairs
 	 */
-	public Map.Entry<String, String> getNewMetadataPair() {
-		return newMetadataPair;
+	public List<Map.Entry<String, String>> getNewMetadataPairs() {
+		return newMetadataPairs;
 	}
 
 	/**
-	 * @param pair the pair to set
+	 * Adds a new metadata key-value pair to the list.
+	 *
+	 * @param key   the metadata key
+	 * @param value the metadata value
 	 */
-	public void setNewMetadatatPair(Map.Entry<String, String> newMetadataPair) {
-		this.newMetadataPair = newMetadataPair;
+	public void addNewMetadataPair(String key, String value) {
+		newMetadataPairs.add(new AbstractMap.SimpleEntry<>(key, value));
 	}
 
 	/**

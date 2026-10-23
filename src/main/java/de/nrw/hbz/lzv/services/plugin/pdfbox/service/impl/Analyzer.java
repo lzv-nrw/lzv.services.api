@@ -4,7 +4,6 @@
 package de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.apache.pdfbox.Loader;
@@ -12,7 +11,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.json.JSONObject;
 
 import de.nrw.hbz.lzv.services.model.json.impl.PdfInfo;
-import de.nrw.hbz.lzv.services.plugin.pdfbox.service.impl.PdfInfoProvider;
 import de.nrw.hbz.lzv.services.template.HtmlTemplate;
 
 /**
@@ -59,7 +57,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     } else {
       resultBuffer.append(pdfInfo.toHtml());
     }
-    resultBuffer.append("<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfbox/upload\">nächstes PDF analysieren</a>");
+    resultBuffer.append("<p class='moreMarginTop'><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfbox/upload\">nächstes PDF analysieren</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();

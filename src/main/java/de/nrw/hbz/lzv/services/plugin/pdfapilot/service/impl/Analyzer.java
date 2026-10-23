@@ -146,7 +146,7 @@ public class Analyzer extends de.nrw.hbz.lzv.services.impl.Analyzer {
     // resultBuffer.append("<p>" + debugSb.toString() + "</p>");
 
     resultBuffer.append(
-        "<p><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfapilot/upload\">nächstes PDF analysieren</a>");
+        "<p class='moreMarginTop'><i class=\"fa-solid fa-magnifying-glass\"></i><a href=\"/lzv-jsp/pdfapilot/upload\">nächstes PDF analysieren</a>");
     resultBuffer.append(HtmlTemplate.getHtmlFoot());
 
     return resultBuffer.toString();
