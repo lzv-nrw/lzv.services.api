@@ -85,26 +85,30 @@ public class JerseyServiceImpl {
 	@Path("tools")
 	@Produces({ MediaType.APPLICATION_JSON })
 	public String getToolsJson() {
-		StringBuffer sbVersion = new StringBuffer();
-		sbVersion.append("[");
-		sbVersion.append("{\"plugin\" : \"PDFA-Validation with veraPDF\",");
-		sbVersion.append("\"serviceInfo\" : {");
-		sbVersion.append("\"veraPDF Version\" : " + "\"");
-		sbVersion.append(VersionInfo.getInstance("verapdf").getVersionString() + "\"");
-		sbVersion.append("}},");
-		sbVersion.append("{\"plugin\" : \"PDFA-Validation with Callas pdfaPilot\",");
-		sbVersion.append("\"serviceInfo\" : {");
-		sbVersion.append("\"pdfapilot Version\" : " + "\"");
-		sbVersion.append(VersionInfo.getInstance("pdfapilot").getVersionString().replace("\n", "") + "\"");
-		sbVersion.append("}},");
-		sbVersion.append("{\"plugin\" : \"PDFA-Validation with Apache PDFbox\",");
-		sbVersion.append("\"serviceInfo\" : {");
-		sbVersion.append("\"Apache PDFbox Version\" : " + "\"");
-		sbVersion.append(VersionInfo.getInstance("pdfbox").getVersionString() + "\"");
-		sbVersion.append("}}");
-		sbVersion.append("]");
-		String version = sbVersion.toString();
-		return version;
+		String veraPdfVersion = VersionInfo.getInstance("verapdf").getVersionString();
+		String pdfaPilotVersion = VersionInfo.getInstance("pdfapilot").getVersionString();
+		String pdfBoxVersion = VersionInfo.getInstance("pdfbox").getVersionString();
+
+		if (veraPdfVersion == null) {
+			veraPdfVersion = "not available";
+		}
+		if (pdfaPilotVersion == null) {
+			pdfaPilotVersion = "not available";
+		}
+		if (pdfBoxVersion == null) {
+			pdfBoxVersion = "not available";
+		}
+
+		org.json.JSONArray tools = new org.json.JSONArray();
+
+		tools.put(new org.json.JSONObject().put("name", "veraPDF").put("version", veraPdfVersion.trim())
+				.put("website", "https://verapdf.org").put("github", "https://github.com/verapdf"));
+		tools.put(new org.json.JSONObject().put("name", "pdfaPilot").put("version", pdfaPilotVersion.trim()).put("website",
+				"https://callassoftware.com/de/products/pdfapilot"));
+		tools.put(new org.json.JSONObject().put("name", "PDFBox").put("version", pdfBoxVersion.trim())
+				.put("website", "https://pdfbox.apache.org").put("github", "https://github.com/apache/pdfbox"));
+
+		return tools.toString();
 	}
 
 	/**
