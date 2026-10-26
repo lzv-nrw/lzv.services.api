@@ -114,8 +114,14 @@ public class HtmlTemplate {
 
 		// Werkzeuge
 		defMenu.append("<div class='dropdown'>");
-		defMenu.append("<div class='menu'><a href='/lzv-api/tools'>Werkzeuge</a>");
-		defMenu.append("</div></div></div>");
+		defMenu.append("<div class='menu'>weitere Infos");
+		defMenu.append("<i class='fa-solid fa-chevron-down'></i>");
+		defMenu.append("<div class='submenu'>" + "<ul>");
+		defMenu.append("<li><a href='/lzv-api/tools'>Werkzeuge</a></li>");
+		defMenu.append("</ul></div></div>");
+		defMenu.append("</div>");
+
+		defMenu.append("</div>");
 
 		// Logo lzv.nrw
 		defMenu.append("<a id='portal-logo-lzv' title='lzv.nrw' href='www.lzv.nrw'>");
