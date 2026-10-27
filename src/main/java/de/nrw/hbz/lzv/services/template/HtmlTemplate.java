@@ -76,11 +76,11 @@ public class HtmlTemplate {
 	private static String getDefaultMenu() {
 		StringBuffer defMenu = new StringBuffer();
 
-		// Startseite/Logo
+		// Home/Logo
 		defMenu.append("<a id='portal-logo' title='valify' href='/lzv-jsp/about'>");
 		defMenu.append("<img src='/lzv-jsp/images/valify_bildmarke.png' alt='ValiFY' title='ValiFY'></a>");
 
-		// Datei
+		// File
 		/*
 		 * defMenu.append("<div class='dropdown'>");
 		 * defMenu.append("<div class='menu todo'>Datei");
@@ -92,7 +92,7 @@ public class HtmlTemplate {
 
 		defMenu.append("<div class='navigation'>");
 
-		// Bearbeiten
+		// Edit
 		defMenu.append("<div class='dropdown'>");
 		defMenu.append("<div class='menu'>Bearbeiten");
 		defMenu.append("<i class='fa-solid fa-chevron-down'></i>");
@@ -102,7 +102,7 @@ public class HtmlTemplate {
 		defMenu.append("</ul></div></div>");
 		defMenu.append("</div>");
 
-		// Analyse
+		// Analysis
 		defMenu.append("<div class='dropdown'>");
 		defMenu.append("<div class='menu'>Analyse");
 		defMenu.append("<i class='fa-solid fa-chevron-down'></i>");
@@ -113,12 +113,13 @@ public class HtmlTemplate {
 		defMenu.append("</ul></div></div>");
 		defMenu.append("</div>");
 
-		// Werkzeuge
+		// More informationen
 		defMenu.append("<div class='dropdown'>");
 		defMenu.append("<div class='menu'>weitere Infos");
 		defMenu.append("<i class='fa-solid fa-chevron-down'></i>");
 		defMenu.append("<div class='submenu'>" + "<ul>");
 		defMenu.append("<li><a href='/lzv-jsp/tools'>Werkzeuge</a></li>");
+		defMenu.append("<li><a href='/lzv-jsp/lzvnrw'>LZV.nrw</a></li>");
 		defMenu.append("</ul></div></div>");
 		defMenu.append("</div>");
 
