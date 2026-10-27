@@ -27,6 +27,7 @@ public class HtmlTemplate {
 		headSb.append("<html>\n" + "<head>\n" + "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"
 				+ "<link rel=\"stylesheet\" href=\"/lzv-jsp/css/default.css\" />\n"
 				+ "<link rel=\"stylesheet\" href=\"/lzv-jsp/fontawesome/css/all.min.css\">"
+				+ "<link rel=\"icon\" type=\"image/x-icon\" href=\"/lzv-jsp/images/favicon.png\">"
 				+ "<title>LZV.nrw - ValiFY</title>\n" + "</head>\n<body>\n");
 		headSb.append("<div class=\"head\">");
 
